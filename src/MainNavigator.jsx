@@ -1,8 +1,6 @@
 import React from "react";
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
-
-import BookListScreen from "./screens/BookListScreen";
-import UserMenu from "./screens/UserMenu";
+import HomeNavi from "./screens/HomeNavi";
 
 
 // Root Stack of App
@@ -49,8 +47,8 @@ function MainNavigator() {
       }}
       detachInactiveScreens={false}
     >
-      {/* <BookStack.Screen name="Home" component={BookListScreen} /> */}
-      <BookStack.Screen name="HomeNavi" component={UserMenu} />
+      <BookStack.Screen name="HomeNavi" component={HomeNavi} />
+      {/* <BookStack.Screen name="Home" component={HomeNavi} /> */}
     </BookStack.Navigator>
   );
 }
