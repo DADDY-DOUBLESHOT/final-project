@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GenresScreen = () => {
+const GenresScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   const loader = useSelector((state) => state.LOADER);
@@ -128,9 +128,10 @@ const GenresScreen = () => {
       setSelected([...selected, id]);
     }
   };
-  const handleNext = () => {
-    dispatch(loaderStart());
-    dispatch(userRegister(selected));
+  const handleNext = async() => {
+    await dispatch(loaderStart());
+    await dispatch(userRegister(selected));
+    
   };
   return (
     <View style={styles.container}>

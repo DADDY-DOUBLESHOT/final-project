@@ -4,8 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Provider, useSelector } from "react-redux";
 import store from "./store";
-import LoginScreen from "./src/screens/LoginScreen";
-import BookListScreen from "./src/screens/BookListScreen";
 import { useEffect } from "react";
 import getTheme from "./src/theme";
 import MainNavigator from "./src/MainNavigator";
@@ -24,7 +22,7 @@ const AppWrapper = () => {
 const App = () => {
   const scheme = useColorScheme();
   const user = useSelector((state) => state.USER);
-  console.log(user);
+  console.log("About user", user);
   useEffect(() => {}, [user && user.logged]);
   return (
     <NavigationContainer theme={getTheme(scheme)}>

@@ -26,6 +26,9 @@ export const userReducer = (state = initialState, action) => {
     case SIGNUP:
       return {
         ...state,
+        logged: action.payload.logged,
+        token: action.payload.token,
+        user: action.payload.user,
       };
     case SIGNUP_PRE:
       return {
