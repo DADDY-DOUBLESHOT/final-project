@@ -5,6 +5,8 @@ import BookListScreen from "./screens/BookListScreen";
 import GenresScreen from "./screens/GenresScreen";
 import LoginScreen from "./screens/LoginScreen";
 import UserMenu from "./screens/UserMenu";
+import UploadBook from "./screens/UploadBook";
+
 
 
 // Root Stack of App
@@ -51,7 +53,8 @@ function LoginNavigator() {
       detachInactiveScreens={false}
     >
       <LoginStack.Screen name="Login" component={LoginScreen} />
-      <LoginStack.Screen name="UserMenu" component={UserMenu} />
+      <LoginStack.Screen name="UploadBook" component={UploadBook} />
+      {/* <LoginStack.Screen name="UserMenu" component={UserMenu} /> */}
       <LoginStack.Screen name="Genre" component={GenresScreen} />
     </LoginStack.Navigator>
   );
