@@ -4,7 +4,7 @@ import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import profile from "../images/profile.png";
 import camera from "../images/camera.png"
-import upload from "../images/upload.png"
+// import upload from "../images/upload.png"
 // Tab ICons...
 import home from "../images/home.png";
 import search from "../images/search.png";
@@ -21,6 +21,7 @@ import close from "../images/close.png";
 // Photo
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
+import UploadBook from './UploadBook';
 
 export default function HomeNavi() {
   const [currentTab, setCurrentTab] = useState("Home");
@@ -164,7 +165,10 @@ export default function HomeNavi() {
             currentTab==='Home'&&
             <HomeScreen2/>
           }
-
+          {
+            currentTab==='Upload Book'&&
+            <UploadBook/>
+          }
 
         </Animated.View>
 
