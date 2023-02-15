@@ -4,6 +4,7 @@ import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View
 import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import profile from "../images/profile.png";
 import camera from "../images/camera.png"
+import upload from "../images/upload.png"
 // Tab ICons...
 import home from "../images/home.png";
 import search from "../images/search.png";
@@ -19,10 +20,9 @@ import close from "../images/close.png";
 
 // Photo
 import photo from "../images/photo.jpg";
-//Components
-import BookListScreen from "./BookListScreen";
+import HomeScreen2 from './HomeScreen2';
 
-export default function UserMenu() {
+export default function HomeNavi() {
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
@@ -80,9 +80,8 @@ export default function UserMenu() {
           }
 
           {TabButton(currentTab, setCurrentTab, "Home", home)}
-          {TabButton(currentTab, setCurrentTab, "Bookmark", bookmark)}
+          {TabButton(currentTab, setCurrentTab, "Wishlist", bookmark)}
           {TabButton(currentTab, setCurrentTab, "Upload Book", upload)}
-          {TabButton(currentTab, setCurrentTab, "Settings", settings)}
 
         </View>
 
@@ -161,12 +160,10 @@ export default function UserMenu() {
 
           </TouchableOpacity>
 
-          <Text style={{
-            fontSize: 30,
-            fontWeight: 'bold',
-            color: 'black',
-            paddingTop: 20
-          }}>{currentTab}</Text>
+          {
+            currentTab==='Home'&&
+            <HomeScreen2/>
+          }
 
 
         </Animated.View>

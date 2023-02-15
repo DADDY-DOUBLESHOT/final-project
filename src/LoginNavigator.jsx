@@ -4,9 +4,7 @@ import { createSharedElementStackNavigator } from "react-navigation-shared-eleme
 import BookListScreen from "./screens/BookListScreen";
 import GenresScreen from "./screens/GenresScreen";
 import LoginScreen from "./screens/LoginScreen";
-import UserMenu from "./screens/UserMenu";
-import UploadBook from "./screens/UploadBook";
-
+import UserMenu from "./screens/HomeNavi";
 
 
 // Root Stack of App
