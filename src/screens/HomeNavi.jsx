@@ -20,7 +20,7 @@ import close from "../images/close.png";
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
 
-export default function HomeNavi() {
+export default function HomeNavi({navigation}) {
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
@@ -159,7 +159,7 @@ export default function HomeNavi() {
 
           {
             currentTab==='Home'&&
-            <HomeScreen2/>
+            <HomeScreen2 navigation={navigation}/>
           }
 
           
