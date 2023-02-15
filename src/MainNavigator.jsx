@@ -41,7 +41,7 @@ function MainNavigator() {
 
   return (
     <BookStack.Navigator
-      initialRouteName="BookList"
+      initialRouteName="HomeNavi"
       screenOptions={{
         headerShown: false,
         cardOverlayEnabled: true,
@@ -49,8 +49,8 @@ function MainNavigator() {
       }}
       detachInactiveScreens={false}
     >
-      {/* <BookStack.Screen name="BookList" component={BookListScreen} /> */}
-      <BookStack.Screen name="UserMenu" component={UserMenu} />
+      {/* <BookStack.Screen name="Home" component={BookListScreen} /> */}
+      <BookStack.Screen name="HomeNavi" component={UserMenu} />
     </BookStack.Navigator>
   );
 }

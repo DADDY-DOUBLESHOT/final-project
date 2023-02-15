@@ -1,6 +1,7 @@
 import { LOADER_STOP, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
 import axios from "axios";
 import store from "../../../store";
+import { APP_IP } from "@env";
 export const userLogin = (email, password) => async (dispatch) => {
   var data = JSON.stringify({
     email: email,
@@ -9,7 +10,7 @@ export const userLogin = (email, password) => async (dispatch) => {
 
   var config = {
     method: "post",
-    url: "http://localhost:5000/api/v1/login",
+    url: `http://${APP_IP}:5000/api/v1/login`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -36,7 +37,7 @@ export const userLogin = (email, password) => async (dispatch) => {
     dispatch({
       type: LOGIN,
       payload: {
-        logged: true,
+        logged: false,
         token: null,
         user: null,
       },
@@ -69,7 +70,7 @@ export const userRegister = (genres) => async (dispatch) => {
 
   var config = {
     method: "post",
-    url: "http://localhost:5000/api/v1/login",
+    url: `http://${APP_IP}:5000/api/v1/register`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -77,24 +78,26 @@ export const userRegister = (genres) => async (dispatch) => {
   };
 
   try {
-    const response = await axios(config);
-    console.log(JSON.stringify(response.data));
-
-    dispatch({
-      type: LOGIN,
-      payload: {
-        logged: true,
-        token: response.data.token,
-        user: email,
-      },
-    });
-
-    dispatch({ type: LOADER_STOP });
+    console.log("Ip ", APP_IP);
+    await axios(config)
+      .then(function (response) {
+        dispatch({
+          type: SIGNUP,
+          payload: {
+            logged: true,
+            token: response.data.token,
+            user: response.data.user,
+          },
+        });
+      })
+      .catch(function (error) {
+        console.log("Error in register", error);
+      });
+    return dispatch({ type: LOADER_STOP });
   } catch (error) {
     console.log("error in backend ", error);
-
     dispatch({
-      type: LOGIN,
+      type: SIGNUP,
       payload: {
         logged: true,
         token: null,
@@ -102,7 +105,7 @@ export const userRegister = (genres) => async (dispatch) => {
       },
     });
 
-    dispatch({ type: LOADER_STOP });
+    return dispatch({ type: LOADER_STOP });
   }
 };
 export const userLogout = async (dispatch) => {
