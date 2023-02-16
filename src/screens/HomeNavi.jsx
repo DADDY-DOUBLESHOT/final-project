@@ -19,6 +19,7 @@ import close from "../images/close.png";
 // Photo
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
+import UploadBook from './UploadBook';
 
 export default function HomeNavi({navigation}) {
   const [currentTab, setCurrentTab] = useState("Home");
@@ -160,6 +161,10 @@ export default function HomeNavi({navigation}) {
           {
             currentTab==='Home'&&
             <HomeScreen2 navigation={navigation}/>
+          }
+          {
+            currentTab==='Upload Book'&&
+            <UploadBook navigation={navigation}/>
           }
 
           
