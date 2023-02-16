@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
 import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
 import profile from "../images/profile.png";
 import camera from "../images/camera.png"
-import upload from "../images/upload.png"
+// import upload from "../images/upload.png"
 // Tab ICons...
 import home from "../images/home.png";
 import search from "../images/search.png";
@@ -12,6 +13,7 @@ import settings from "../images/settings.png";
 import logout from "../images/logout.png";
 import bookmark from "../images/bookmark.png";
 import edit from "../images/edit.png";
+import upload from "../images/upload.png"
 // Menu
 import menu from "../images/menu.png";
 import close from "../images/close.png";
@@ -19,6 +21,7 @@ import close from "../images/close.png";
 // Photo
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
+import UploadBook from './UploadBook';
 
 export default function HomeNavi({navigation}) {
   const [currentTab, setCurrentTab] = useState("Home");
@@ -32,8 +35,10 @@ export default function HomeNavi({navigation}) {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
 
+  const UserStack = createSharedElementStackNavigator();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <><SafeAreaView style={styles.container}>
 
       <View style={{ justifyContent: 'flex-start', padding: 15 }}>
         <Image source={profile} style={{
@@ -42,16 +47,16 @@ export default function HomeNavi({navigation}) {
           borderRadius: 50,
           marginTop: 70,
           alignItems: 'center',
-          marginStart:45
+          marginStart: 45
         }}></Image>
 
-       <Image source={camera} style={{
+        <Image source={camera} style={{
           width: 30,
           height: 20,
-          borderRadius:5,
+          borderRadius: 5,
           marginTop: -25,
           alignItems: 'center',
-          marginStart:120
+          marginStart: 120
         }}></Image>
 
         <Text style={{
@@ -60,14 +65,14 @@ export default function HomeNavi({navigation}) {
           color: 'white',
           marginTop: 20,
           alignItems: 'center',
-          marginStart:40
+          marginStart: 40
         }}>Jenna Ezarik</Text>
 
-       <Image source={edit} style={{
+        <Image source={edit} style={{
           width: 20,
           height: 20,
           marginTop: -25,
-          marginStart:160
+          marginStart: 160
         }}></Image>
 
         <View style={{ flexGrow: 1, marginTop: 50 }}>
@@ -126,7 +131,7 @@ export default function HomeNavi({navigation}) {
               duration: 300,
               useNativeDriver: true
             })
-              .start()
+              .start();
 
             Animated.timing(offsetValue, {
               // YOur Random Value...
@@ -134,7 +139,7 @@ export default function HomeNavi({navigation}) {
               duration: 300,
               useNativeDriver: true
             })
-              .start()
+              .start();
 
             Animated.timing(closeButtonOffset, {
               // YOur Random Value...
@@ -142,17 +147,16 @@ export default function HomeNavi({navigation}) {
               duration: 300,
               useNativeDriver: true
             })
-              .start()
+              .start();
 
             setShowMenu(!showMenu);
-          }}>
+          } }>
 
             <Image source={showMenu ? close : menu} style={{
               width: 20,
               height: 20,
               tintColor: 'black',
               marginTop: 40,
-
             }}></Image>
 
           </TouchableOpacity>
@@ -161,13 +165,29 @@ export default function HomeNavi({navigation}) {
             currentTab==='Home'&&
             <HomeScreen2 navigation={navigation}/>
           }
+          {
+            currentTab==='Upload Book'&&
+            <UploadBook/>
+          }
 
-          
         </Animated.View>
 
       </Animated.View>
 
     </SafeAreaView>
+    
+    {/* <UserStack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+      }} detachInactiveScreens={false}
+    >
+      <UserStack.Screen name="Home" component={BookListScreen}/>
+
+      </UserStack.Navigator> */}
+      
+    </>
+
   );
 }
 

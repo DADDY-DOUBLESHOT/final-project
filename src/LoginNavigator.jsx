@@ -51,7 +51,8 @@ function LoginNavigator() {
       detachInactiveScreens={false}
     >
       <LoginStack.Screen name="Login" component={LoginScreen} />
-      <LoginStack.Screen name="UserMenu" component={UserMenu} />
+      <LoginStack.Screen name="UploadBook" component={UploadBook} />
+      {/* <LoginStack.Screen name="UserMenu" component={UserMenu} /> */}
       <LoginStack.Screen name="Genre" component={GenresScreen} />
     </LoginStack.Navigator>
   );
