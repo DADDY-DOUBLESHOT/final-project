@@ -26,7 +26,8 @@ const App = () => {
   useEffect(() => {}, [user && user.logged]);
   return (
     <NavigationContainer theme={getTheme(scheme)}>
-      <MainNavigator />
+      {user && user.logged ? <MainNavigator /> : <LoginNavigator />}
+      {/* { <MainNavigator />} */}
     </NavigationContainer>
   );
 };

@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const GenresScreen = ({navigation}) => {
+const GenresScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [selected, setSelected] = useState([]);
   const loader = useSelector((state) => state.LOADER);
@@ -128,10 +128,9 @@ const GenresScreen = ({navigation}) => {
       setSelected([...selected, id]);
     }
   };
-  const handleNext = async() => {
+  const handleNext = async () => {
     await dispatch(loaderStart());
     await dispatch(userRegister(selected));
-    
   };
   return (
     <View style={styles.container}>
@@ -163,7 +162,7 @@ const GenresScreen = ({navigation}) => {
                     selected.includes(item.id) && styles.selectedCard,
                   ]}
                   resizeMode="cover"
-                  blurRadius={4}
+                  blurRadius={5}
                   source={item.img}
                 >
                   {selected.includes(item.id) ? (
@@ -188,22 +187,32 @@ const GenresScreen = ({navigation}) => {
           keyExtractor={(item) => item.id.toString()}
         />
         {selected.length > 0 && (
-          <TouchableNativeFeedback onPress={() => { handleNext() }}>
+          <TouchableNativeFeedback
+            onPress={() => {
+              handleNext();
+            }}
+          >
             <View
               style={{
                 width: "100%",
                 padding: 5,
-                paddingVertical:15,
+                paddingVertical: 15,
                 backgroundColor: "rgba(1,89,213,1)",
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 10,
-                display:"flex",
-                flexDirection:"row",
+                display: "flex",
+                flexDirection: "row",
               }}
             >
               <Text style={{ color: "white", fontWeight: "bold" }}>NEXT</Text>
-              {loader&&loader.active&&<ActivityIndicator size="small" color="white" style={{ paddingLeft:12 }} />}
+              {loader && loader.active && (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ paddingLeft: 12 }}
+                />
+              )}
             </View>
           </TouchableNativeFeedback>
         )}

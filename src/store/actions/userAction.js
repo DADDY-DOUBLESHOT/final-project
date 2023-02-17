@@ -26,7 +26,10 @@ export const userLogin = (email, password) => async (dispatch) => {
       payload: {
         logged: true,
         token: response.data.token,
-        user: email,
+        user: {
+          name: "Pratham",
+          email: email,
+        },
       },
     });
 
@@ -37,9 +40,12 @@ export const userLogin = (email, password) => async (dispatch) => {
     dispatch({
       type: LOGIN,
       payload: {
-        logged: false,
+        logged: true,
         token: null,
-        user: null,
+        user: {
+          name: "Pratham",
+          email: email,
+        },
       },
     });
 
@@ -92,8 +98,9 @@ export const userRegister = (genres) => async (dispatch) => {
       })
       .catch(function (error) {
         console.log("Error in register", error);
+        return dispatch({ type: LOADER_STOP });
       });
-    return dispatch({ type: LOADER_STOP });
+    dispatch({ type: LOADER_STOP });
   } catch (error) {
     console.log("error in backend ", error);
     dispatch({
@@ -108,7 +115,7 @@ export const userRegister = (genres) => async (dispatch) => {
     return dispatch({ type: LOADER_STOP });
   }
 };
-export const userLogout = async (dispatch) => {
+export const userLogout = (dispatch) => {
   dispatch({
     type: LOGOUT,
   });
