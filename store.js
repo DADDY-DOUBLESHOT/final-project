@@ -3,9 +3,11 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { userReducer } from "./src/store/reducers/userReducer";
 import { loaderReducer } from "./src/store/reducers/loaderReducer";
+import { bookReducer } from "./src/store/reducers/bookReducer";
 const reducer = combineReducers({
   USER: userReducer,
   LOADER: loaderReducer,
+  BOOK:bookReducer,
 });
 
 let initialState = {};
