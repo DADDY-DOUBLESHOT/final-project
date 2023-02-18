@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal } from 'react-native';
 // import * as ImagePicker from "react-native-image-picker";
 // import DocumentPicker from 'react-native-document-picker';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
 import uploadimg from '../images/upload.png';
 import backarrow from "../images/backarrow.png";
 import { AntDesign } from '@expo/vector-icons';
-// import *  as ImagePicker from 'expo-image-picker';
 
+import axios from 'axios';
+// import { APP_IP } from "@env";
 import uploadbackgrnd from "../images/uploadbackgrnd2.jpg";
 
 const screenHeight = Dimensions.get('window').height;
@@ -16,12 +19,65 @@ const screenWidth = Dimensions.get('window').width;
     // const dispatch = useDispatch();
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
-    const [image, setImage] = useState(uploadimg);
-    const [file, setFile] = useState(null);
+    // const [image, setImage] = useState(uploadimg);
+    // const [file, setFile] = useState(null);
+    const [image, setImage] = useState(null);
+    // const [selectedFile, setSelectedFile] = useState('');
+    const [isModalVisible, setIsModalVisible] = useState(false);
     
-    // const [hasGalleryPermission, setHasGAlleryPermission]=useState(null);
+    
+    const toggleModal = () => {
+      setIsModalVisible(!isModalVisible);
+    };
+
+    const handleImagePicker = async () => {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        alert('Permission to access media library is required.');
+        return;
+      }
+  
+      const result = await ImagePicker.launchImageLibraryAsync();
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+      }
+      toggleModal();
+    };
+    
+
+    // const handleSubmit = () => {
+    //   // onSubmit(Image);
+    //   onClose();
+    // };
 
 
+    // const handleDocumentPicker = async () => {
+    //   const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
+  
+    //   if (result.type === 'success') {
+    //     setSelectedFile(result);
+    //   }
+    // };
+  
+    // const handleUploadFile = async () => {
+    //   if (!selectedFile || typeof selectedFile !== 'object') {
+    //     return;
+    //   }
+  
+    //   const data = new FormData();
+    //   data.append('file', {
+    //     uri: documentUri,
+    //     type: '*/*',
+    //     name: 'document',
+    //   });
+  
+    //   try {
+    //     const response = await axios.post('https://example.com/upload', data);
+    //     console.log(response.data);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
     
 
   // useEffect(()=>{
@@ -83,9 +139,7 @@ const screenWidth = Dimensions.get('window').width;
 //     }
 //   };
 
-  const handleSubmit = () => {
-    // Handle form submission, including the uploaded image and file
-  };
+
 
   return (
     <View style={styles.container}>
@@ -127,28 +181,43 @@ const screenWidth = Dimensions.get('window').width;
           />
         </View>
       <View style={{marginRight:screenWidth-300,paddingVertical: 10,marginHorizontal:8,flexDirection: 'row'}}>
-          <Text style={styles.label}>Upload Book Cover:</Text>
+         <Text style={styles.label}  onPress={toggleModal}>Upload Book Cover:</Text>
           <TouchableOpacity>
-            <Image title="Select Image" source={uploadimg} style={{ width:50, height: 50, paddingVertical:10, marginHorizontal:8, tintColor:'white'}} />
+          {image && (
+          <>
+          <Image source={{uri:image }} style={styles.image} />
+          {/* { width:50, height: 50, paddingVertical:10, marginHorizontal:8, tintColor:'white'} */}
+          <Button title="Save" />
+          </>)}
           </TouchableOpacity>
       </View>
-      {/* <View>
-          <Button title='Pick image' onPress={()=>pickImage()} />
-          {image && <Image source={{uri:image}} style={{flex:1/2}}/>}
+
+      <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent={true}>
+          <View style={styles.modalView}>
+            <View style={styles.modalContent}>
+              <Text>Choose Profile Image:</Text>
+              <Button title="Open Image Picker" onPress={handleImagePicker} />
+              <Button title="Cancel" onPress={toggleModal} />
+            </View>
+          </View>
+        </Modal>
+
+      {/* <View style={styles.titleContainer}>
+        <Text style={styles.label} onPress={handleDocumentPicker}>Upload Book:</Text>
+        {selectedFile && (
+          <>
+         <Text style={styles.uploadfile}> Selected File: {selectedFile.name}</Text>
+          <Button title="Upload File" onPress={handleUploadFile} />
+          </>)}
       </View> */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.label}>Upload Book:</Text>
-        <TouchableOpacity >
-          <Text style={styles.uploadfile}>{file ? file : 'Choose File'}</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.buttonContainer}>
-        <Button title="Submit" onPress={handleSubmit} style={styles.button}/>
+        <Button title="Submit"  style={styles.button}/>
       </View>
       </ImageBackground>
     </View>
   );
 }
+   
   
 const styles = StyleSheet.create({
   container: {
@@ -244,6 +313,24 @@ const styles = StyleSheet.create({
     width:30,
     height:30,
     position:'absolute',
+  },
+  image: {
+    marginTop:10,
+    width:50, 
+    height: 50, 
+    paddingVertical:1,
+    marginHorizontal:8,
+  },
+  modalView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
   },
 });
 export default UploadBook;
