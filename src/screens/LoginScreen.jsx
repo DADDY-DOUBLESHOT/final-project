@@ -29,6 +29,7 @@ import { LoginSchema, SignupSchema } from "../validations/loginValidations";
 
 const { width, height } = Dimensions.get("window");
 
+
 export default function LoginScreen({ navigation }) {
   const dispatch = useDispatch();
   const imagePosition = useSharedValue(1);

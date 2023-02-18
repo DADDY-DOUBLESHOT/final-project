@@ -1,4 +1,4 @@
-import { LOADER_STOP, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
+import { LOADER_STOP, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE,  UPDATE_USER } from "../types";
 import axios from "axios";
 import store from "../../../store";
 import { APP_IP } from "@env";
@@ -113,3 +113,15 @@ export const userLogout = async (dispatch) => {
     type: LOGOUT,
   });
 };
+
+export const updateUser=(name) => (dispatch)=>{
+  dispatch({
+    type: UPDATE_USER,
+    payload: {
+      user: {
+        name: name,
+      },
+    },
+  });
+  dispatch({ type: LOADER_STOP });
+}

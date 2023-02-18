@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useRef, useState } from 'react';
-import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Image, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Pressable, Modal, Button, Dimensions,} from 'react-native';
 import profile from "../images/profile.png";
 import camera from "../images/camera.png"
 import upload from "../images/upload.png"
 // Tab ICons...
 import home from "../images/home.png";
-import search from "../images/search.png";
+import search from "../images/search.png"       ;
 import notifications from "../images/bell.png";
 import settings from "../images/settings.png";
 import logout from "../images/logout.png";
@@ -20,10 +20,24 @@ import close from "../images/close.png";
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
 
+
+
+import { loaderStart } from "../store/actions/loaderAction";
+import { useDispatch, useSelector } from "react-redux";
+
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
+
 export default function HomeNavi({navigation}) {
+  const dispatch = useDispatch();
+  const [name, setName] = useState('Jenna Ezarik');
+  const [isUpdating, setIsUpdating] = useState(false);
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [updatedName, setUpdatedName] = useState('');
 
   // Animated Properties...
 
@@ -31,6 +45,32 @@ export default function HomeNavi({navigation}) {
   // Scale Intially must be One...
   const scaleValue = useRef(new Animated.Value(1)).current;
   const closeButtonOffset = useRef(new Animated.Value(0)).current;
+
+
+  const loader = useSelector((state) => state.LOADER);
+
+  const initialValue={
+    name:'',
+  }
+
+  const toggleModal=()=>{
+    setIsModalVisible(!isModalVisible);
+  }
+
+  const handleNameUpdate = () => {
+    setName(updatedName);
+    toggleModal();
+  };
+
+  // const handleSubmit=(values)=>{
+  //   dispatch(loaderStart());
+  //   if(isUpdating)
+  //   {
+  //     dispatch( updateUser(values.name));
+  //    return;
+  //   }    
+  // }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,14 +101,29 @@ export default function HomeNavi({navigation}) {
           marginTop: 20,
           alignItems: 'center',
           marginStart:40
-        }}>Jenna Ezarik</Text>
+        }}>{name}</Text>
 
+      <Pressable onPress={toggleModal}>
        <Image source={edit} style={{
           width: 20,
           height: 20,
           marginTop: -25,
           marginStart:160
-        }}></Image>
+        }}></Image></Pressable>
+   
+        <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent={true}>
+        <View style={styles.modalView}>
+          <View style={styles.modalContent}>
+            <Text>Update Name:</Text>
+            <TextInput value={updatedName} onChangeText={setUpdatedName} />
+            <View style={{justifyContent:'space-between',display:'flex',marginVertical:10}}>
+            <Button title="Save" onPress={handleNameUpdate} style={{marginVertical:10}} />
+            <Button title="Cancel" onPress={toggleModal} style={styles.button} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+
 
         <View style={{ flexGrow: 1, marginTop: 50 }}>
           {
@@ -152,7 +207,6 @@ export default function HomeNavi({navigation}) {
               height: 20,
               tintColor: 'black',
               marginTop: 40,
-
             }}></Image>
 
           </TouchableOpacity>
@@ -218,4 +272,22 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
+  modalView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width:width-100,
+    height:height-600
+  },
+  button:{
+    marginBottom:10,
+    marginTop:10,
+    justifyContent:'space-between'
+  }
 });

@@ -5,3 +5,5 @@ export const SIGNUP = "SIGNUP";
 
 export const LOADER_START = "LOADER_START";
 export const LOADER_STOP = "LOADER_STOP";
+
+export const  UPDATE_USER="UPDATE_USER";
