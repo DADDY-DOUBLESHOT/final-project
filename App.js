@@ -25,7 +25,7 @@ const App = () => {
   const img=useSelector((state)=>state.IMAGE);
   console.log("About user", user);
   console.log("ABout image",img)
-  useEffect(() => {}, [user && user.logged]);
+  useEffect(() => {}, [user && user.logged]);       
   return (
     <NavigationContainer theme={getTheme(scheme)}>
       <MainNavigator />

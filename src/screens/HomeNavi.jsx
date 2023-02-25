@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal, Pressable} from 'react-native';
 import { useDispatch,useSelector } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
@@ -24,23 +24,29 @@ import HomeScreen2 from './HomeScreen2';
 
 // import { setDefaultImage } from "../store/actions/userAction";
 import { loaderStart } from "../store/actions/loaderAction";
+import { DEFAULT_IMAGE } from '../constants/constants';
 
 
 const profile="require('../images/photo.jpg')";
 
 export default function HomeNavi({navigation}) {
   const dispatch=useDispatch();
-  const defaultImage=useSelector((state)=>state.image)
+  // const defaultImage=useSelector((state)=>state.image)
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
-  const [profileImage, setProfileImage] = useState(defaultImage);
+  const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const user = useSelector((state) => state.USER);
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
+
+  useEffect(()=>{
+    setProfileImage(DEFAULT_IMAGE);
+  },[])
 
   const handleImagePicker = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -82,16 +88,16 @@ export default function HomeNavi({navigation}) {
           marginStart:45,
           zIndex:-1
         }}></Image> */}
-
+        {/* profileImage && {uri:profileImage} */}
       <View style={{ justifyContent: 'flex-start', padding: 15 }}>
-      {profileImage && (<Image source={{uri:profileImage}} style={{
+      { <Image source={{uri:((user && user.user && profileImage && user.user.profileImage)?  user.user.profileImage : profileImage)}} style={{
           width: 100,
           height: 100,
           borderRadius: 50,
           marginTop: 100,
           alignItems: 'center',
           marginStart:45,
-        }}></Image>)
+        }}></Image>
         // :
         // (<Image source={{require('../images/profile.png').}} style={{
         //   width: 100,
