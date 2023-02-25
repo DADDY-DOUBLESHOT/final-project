@@ -21,20 +21,42 @@ const BookDetailPage = () => {
   const book = useSelector((state) => state);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Make an API call or retrieve the book details from a database
-    // and dispatch the action to set the book details in the store
+  const [data,setData]=useState("");
+  const [loading,setLoading]=useState(false);
+  const [error,setError]=useState("");
+  const [search,setSearch]=useState("");
+  const [searchResults, setSearchResults]=useState([]);
+
+  // useEffect(() => {
+  //   // Make an API call or retrieve the book details from a database
+  //   // and dispatch the action to set the book details in the store
     const bookDetails = {
-      title: 'Book Title',
-      author: 'Book Author',
-      rating: 4.5,
-      review: 'This is a great book!',
-      synopsis: 'This is a synopsis of the book.',
-      bookImage: 'https://unsplash.com/photos/xG5VJW-7Bio',
+      "book_id": 1,
+    "goodreads_book_id": 2767052,
+    "best_book_id": 2767052,
+    "work_id": 2792775,
+    "books_count": 272,
+    "isbn": 9780439023480,
+    "authors": "Suzanne Collins",
+    "original_publication_year": 2008,
+    "original_title": "The Hunger Games",
+    "title": "The Hunger Games (The Hunger Games, #1)",
+    "language_code": "eng",
+    "average_rating": 4.34,
+    "ratings_count": 4780653,
+    "work_ratings_count": 4942365,
+    "work_text_reviews_count": 155254,
+    "ratings_1": 66715,
+    "ratings_2": 127936,
+    "ratings_3": 560092,
+    "ratings_4": 1481305,
+    "ratings_5": 2706317,
+    "image_url": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+    "small_image_url": "https://images.gr-assets.com/books/1447303603s/2767052.jpg"
     };
 
-    dispatch({ type: 'SET_BOOK_DETAILS', payload: bookDetails });
-  }, [dispatch]);
+  //   dispatch({ type: 'SET_BOOK_DETAILS', payload: bookDetails });
+  // }, [dispatch]);
 
   // axios.get(`https://www.goodreads.com/book/show/${book.bookId}.xml?key=Bi8vh08utrMY3HAqM9rkWA`)
   //     .then((resp) => {
@@ -45,9 +67,22 @@ const BookDetailPage = () => {
   //       Console.log('Failed to get book details:', error);
   // });
 
-  const handleSubmit=()=>{
-    //
-  }
+
+  // // Author details
+  // axios.get(`https://www.goodreads.com/author/show.xml?key=Bi8vh08utrMY3HAqM9rkWA&id=${book.author.id}`)
+  // .then((resp) => {
+  //   const data = parser.parse(resp.data);
+  //   setAuthor(data?.GoodreadsResponse?.author);
+  //   loaded.value = withTiming(1);
+  // })
+  // .catch((error) => {
+  //   Console.log('Failed to get author details:', error);
+  // });
+  
+
+  // const handleSubmit=()=>{
+  //   //
+  // }
   // useEffect(() => {
   //   if (query.length > 0) {
   //     axios.get(`https://www.goodreads.com/book/auto_complete?format=json&q=${query}`)
@@ -89,6 +124,30 @@ const BookDetailPage = () => {
   //   })),
   // };
 
+  
+
+  useEffect(()=>{
+    fetch("https://openlibrary.org/works/OL45804W.json")
+    .then((response)=>response.json())
+    .then((data)=>setData(data))
+    .then(()=>setLoading)
+    .catch(setError);
+
+  },[]);
+
+      console.log(data);
+    
+    if(loading){
+      return <h1 style={{textAlign:"center"}}>Loading...</h1>;
+    }
+
+    if(error){
+      return <pre>{JSON.stringify(error,null,2)}</pre>;
+    }
+
+    if(!data){
+      return null;
+    }
 
   return (
     <ScrollView>
@@ -112,13 +171,14 @@ const BookDetailPage = () => {
                   ]}
                   resizeMode="cover"
                   blurRadius={15}
-                  source={bookcover}
+                  source={bookDetails.image_url}
                 > 
-        <Image source={bookcover} style={styles.image} /></ImageBackground>
-        <Text style={styles.title}>Book Title{book.title}</Text>
-        <Text style={styles.author}>Book Author{book.author}</Text>
-        <Text style={styles.rating}>Rating: {book.rating}</Text>
-        <Text style={styles.synopsis}>Synopsis: {book.synopsis}</Text>
+        <Image source={bookDetails.image_url} style={styles.covers} /></ImageBackground>
+        <Text style={styles.title}>{bookDetails.original_title}</Text>
+        <Text style={styles.author}>Book Author{bookDetails.authors}</Text>
+        <Text style={styles.rating}>Rating: {bookDetails.average_rating}</Text>
+        <Text>100 views</Text>
+        <Text style={styles.synopsis}>Synopsis:{data.description}</Text>
         <Text style={styles.review}>Review: {book.review}</Text>
         <View style={styles.reviewConatiner}>
         <TextInput 
@@ -133,7 +193,7 @@ const BookDetailPage = () => {
       </View>
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
