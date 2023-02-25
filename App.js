@@ -22,8 +22,10 @@ const AppWrapper = () => {
 const App = () => {
   const scheme = useColorScheme();
   const user = useSelector((state) => state.USER);
+  const img=useSelector((state)=>state.IMAGE);
   console.log("About user", user);
-  useEffect(() => {}, [user && user.logged]);
+  console.log("ABout image",img)
+  useEffect(() => {}, [user && user.logged]);       
   return (
     <NavigationContainer theme={getTheme(scheme)}>
       <MainNavigator />

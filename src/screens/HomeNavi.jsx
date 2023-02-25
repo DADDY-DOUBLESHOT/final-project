@@ -1,7 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef, useState } from 'react';
-import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import profile from "../images/profile.png";
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal, Pressable} from 'react-native';
+import { useDispatch,useSelector } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
+// import profile from "../images/profile.png";
 import camera from "../images/camera.png"
 import upload from "../images/upload.png"
 // Tab ICons...
@@ -20,10 +22,52 @@ import close from "../images/close.png";
 import photo from "../images/photo.jpg";
 import HomeScreen2 from './HomeScreen2';
 
+// import { setDefaultImage } from "../store/actions/userAction";
+import { loaderStart } from "../store/actions/loaderAction";
+import { DEFAULT_IMAGE } from '../constants/constants';
+
+
+const profile="require('../images/photo.jpg')";
+
 export default function HomeNavi({navigation}) {
+  const dispatch=useDispatch();
+  // const defaultImage=useSelector((state)=>state.image)
   const [currentTab, setCurrentTab] = useState("Home");
   // To get the curretn Status of menu ...
   const [showMenu, setShowMenu] = useState(false);
+  const [profileImage, setProfileImage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const user = useSelector((state) => state.USER);
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  useEffect(()=>{
+    setProfileImage(DEFAULT_IMAGE);
+  },[])
+
+  const handleImagePicker = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Permission to access media library is required.');
+      return;
+    }
+     
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+    
+    if (!result.canceled) {
+        setProfileImage(result.assets[0].uri);
+        dispatch({type:'SET_DEFAULT_IMAGE',payload:result.assets[0].uri})
+        toggleModal();
+    }
+    
+  };
 
   // Animated Properties...
 
@@ -34,25 +78,58 @@ export default function HomeNavi({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
-
-      <View style={{ justifyContent: 'flex-start', padding: 15 }}>
-        <Image source={profile} style={{
+ 
+        {/* <Image source={photo} style={{
           width: 100,
           height: 100,
           borderRadius: 50,
-          marginTop: 70,
+          marginTop: 50,
           alignItems: 'center',
-          marginStart:45
+          marginStart:45,
+          zIndex:-1
+        }}></Image> */}
+        {/* profileImage && {uri:profileImage} */}
+      <View style={{ justifyContent: 'flex-start', padding: 15 }}>
+      { <Image source={{uri:((user && user.user && profileImage && user.user.profileImage)?  user.user.profileImage : profileImage)}} style={{
+          width: 100,
+          height: 100,
+          borderRadius: 50,
+          marginTop: 100,
+          alignItems: 'center',
+          marginStart:45,
         }}></Image>
+        // :
+        // (<Image source={{require('../images/profile.png').}} style={{
+        //   width: 100,
+        //   height: 100,
+        //   borderRadius: 50,
+        //   marginTop: 50,
+        //   alignItems: 'center',
+        //   marginStart:45,
+        // }}></Image>)
+         }
 
+
+       <Pressable onPress={toggleModal} >
        <Image source={camera} style={{
           width: 30,
           height: 20,
           borderRadius:5,
-          marginTop: -25,
+          marginTop:-25,
           alignItems: 'center',
           marginStart:120
-        }}></Image>
+        }}></Image></Pressable>
+
+        
+        <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent={true}>
+          <View style={styles.modalView}>
+            <View style={styles.modalContent}>
+              <Text>Choose Profile Image:</Text>
+              <Button title="Open Image Picker" onPress={handleImagePicker} />
+              <Button title="Cancel" onPress={toggleModal} />
+            </View>
+          </View>
+        </Modal>
 
         <Text style={{
           fontSize: 20,
@@ -217,5 +294,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,107,255,255)',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    marginTop:100,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginTop: 200,
+  },
+  modalView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
   },
 });
