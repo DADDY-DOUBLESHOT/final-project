@@ -294,7 +294,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,107,255,255)',
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    marginTop:100,
   },
   image: {
     width: 200,
