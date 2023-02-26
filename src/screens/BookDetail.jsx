@@ -5,6 +5,9 @@ import bookcover from "../../assets/bookcover.jpg";
 import profile from "../images/profile.png";
 import photo from "../images/photo.jpg";
 import backarrow from "../images/backarrow.png";
+import { Ionicons } from "@expo/vector-icons";
+import { Rating, AirbnbRating } from "react-native-ratings";
+import Stars from "react-native-stars";
 
 import bookmark from "../images/bookmark.png";
 import axios from 'axios';
@@ -74,54 +77,11 @@ const BookDetailPage = () => {
  
 
   const goBack = () => {
-    // navigation.goBack();
+    navigation.goBack();
   };
 
   
-  //   dispatch({ type: 'SET_BOOK_DETAILS', payload: bookDetails });
-  // }, [dispatch]);
-
-  // axios.get(`https://www.goodreads.com/book/show/${book.bookId}.xml?key=Bi8vh08utrMY3HAqM9rkWA`)
-  //     .then((resp) => {
-  //       const data = parser.parse(resp.data);
-  //       setFullBook(data?.GoodreadsResponse?.book);
-  //     })
-  //     .catch((error) => {
-  //       Console.log('Failed to get book details:', error);
-  // });
-
-
-  // // Author details
-  // axios.get(`https://www.goodreads.com/author/show.xml?key=Bi8vh08utrMY3HAqM9rkWA&id=${book.author.id}`)
-  // .then((resp) => {
-  //   const data = parser.parse(resp.data);
-  //   setAuthor(data?.GoodreadsResponse?.author);
-  //   loaded.value = withTiming(1);
-  // })
-  // .catch((error) => {
-  //   Console.log('Failed to get author details:', error);
-  // });
   
-
-  // const handleSubmit=()=>{
-  //   //
-  // }
-  // useEffect(() => {
-  //   if (query.length > 0) {
-  //     axios.get(`https://www.goodreads.com/book/auto_complete?format=json&q=${query}`)
-  //       .then((resp) => {
-  //         const bks = resp.data.map((book) => ({
-  //           ...book,
-  //           imageUrl: book.imageUrl.replace(/_..../, '_SY475_'),
-  //         }));
-  //         setBooks(bks);
-  //       })
-  //       .catch((error) => {
-  //         Alert.alert('Failed to get books', error);
-  //       });
-  //   }
-  // }, [query]);
-
 
   // const anims = {
   //   screen: useAnimatedStyle(() => ({
@@ -204,9 +164,18 @@ const BookDetailPage = () => {
         <Image source={bookcover} style={styles.image} /></ImageBackground>
         <Text style={styles.title}>{bookDetails.original_title}</Text>
         <Text style={styles.author}>{bookDetails.authors}</Text>
-        <View style={{display:"flex",flexDirection:"row"}}>
-          <Text style={styles.rating}>{bookDetails.average_rating}</Text>
-          <Text style={{marginHorizontal:screenWidth-250, color:"white"}}>(100 views)</Text>
+        <View style={{display:"flex",flexDirection:"row",marginHorizontal:25}}>
+        <Stars
+          style={stars_style.rating}
+          // default={parseInt(item.rating)}
+          spacing={5}
+          starSize={25}
+          count={5}
+          fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
+          emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
+        />
+          {/* <Text style={styles.rating}>{bookDetails.average_rating}</Text> */}
+          <Text style={{marginHorizontal:screenWidth-280, color:"white",marginBottom:5}}>(100 views)</Text>
         </View>
         <View
           style={{
@@ -254,6 +223,14 @@ const BookDetailPage = () => {
     </ScrollView>
   );
 }
+
+const stars_style = StyleSheet.create({
+  rating: {
+    width: "100%",
+    marginHorizontal:10,
+    marginStart:10,
+  },
+});
 
 const styles = StyleSheet.create({
   container: {
