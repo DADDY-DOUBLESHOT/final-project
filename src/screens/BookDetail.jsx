@@ -2,6 +2,10 @@ import React, { useState,useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TextInput,  ScrollView,  Button, TouchableOpacity,  Dimensions, ImageBackground} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import bookcover from "../../assets/bookcover.jpg";
+import profile from "../images/profile.png";
+import photo from "../images/photo.jpg";
+import backarrow from "../images/backarrow.png";
+
 import bookmark from "../images/bookmark.png";
 import axios from 'axios';
 // import Animated, {
@@ -31,7 +35,7 @@ const BookDetailPage = () => {
   //   // Make an API call or retrieve the book details from a database
   //   // and dispatch the action to set the book details in the store
     const bookDetails = {
-      "book_id": 1,
+    "book_id": 1,
     "goodreads_book_id": 2767052,
     "best_book_id": 2767052,
     "work_id": 2792775,
@@ -55,6 +59,25 @@ const BookDetailPage = () => {
     "small_image_url": "https://images.gr-assets.com/books/1447303603s/2767052.jpg"
     };
 
+
+  const user={
+    "username":"John Doe",
+    "review":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    "image_url":"https://png.pngtree.com/png-vector/20191110/ourmid/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_1978396.jpg"
+  }
+
+  const user2={
+    "username":"Mary Doe",
+    "review":"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    "image_url":"https://png.pngtree.com/png-vector/20191110/ourmid/pngtree-avatar-icon-profile-icon-member-login-vector-isolated-png-image_1978396.jpg"
+  }
+ 
+
+  const goBack = () => {
+    // navigation.goBack();
+  };
+
+  
   //   dispatch({ type: 'SET_BOOK_DETAILS', payload: bookDetails });
   // }, [dispatch]);
 
@@ -135,7 +158,7 @@ const BookDetailPage = () => {
 
   },[]);
 
-      console.log(data);
+      // console.log(data);
     
     if(loading){
       return <h1 style={{textAlign:"center"}}>Loading...</h1>;
@@ -152,9 +175,14 @@ const BookDetailPage = () => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <View  style={styles.closeIcon}>
+      <View onPress={goBack} style={styles.closeIcon}>
+         <TouchableOpacity onPress={goBack}>
+            <Image source={backarrow} style={styles.closeIcon} />
+          </TouchableOpacity>
+      </View>
+        <View  style={styles.bookmarkIcon}>
           <TouchableOpacity>
-              <Image source={bookmark} style={styles.closeIcon} />
+              <Image source={bookmark} style={styles.bookmarkIcon} />
             </TouchableOpacity>
         </View>
         <ImageBackground
@@ -171,15 +199,46 @@ const BookDetailPage = () => {
                   ]}
                   resizeMode="cover"
                   blurRadius={15}
-                  source={bookDetails.image_url}
+                  source={bookcover}
                 > 
-        <Image source={bookDetails.image_url} style={styles.covers} /></ImageBackground>
+        <Image source={bookcover} style={styles.image} /></ImageBackground>
         <Text style={styles.title}>{bookDetails.original_title}</Text>
-        <Text style={styles.author}>Book Author{bookDetails.authors}</Text>
-        <Text style={styles.rating}>Rating: {bookDetails.average_rating}</Text>
-        <Text>100 views</Text>
-        <Text style={styles.synopsis}>Synopsis:{data.description}</Text>
-        <Text style={styles.review}>Review: {book.review}</Text>
+        <Text style={styles.author}>{bookDetails.authors}</Text>
+        <View style={{display:"flex",flexDirection:"row"}}>
+          <Text style={styles.rating}>{bookDetails.average_rating}</Text>
+          <Text style={{marginHorizontal:screenWidth-250, color:"white"}}>(100 views)</Text>
+        </View>
+        <View
+          style={{
+            borderBottomColor: 'black',
+            borderBottomWidth: 2,
+            paddingVertical:5
+          }}
+        />
+        {/* <View > */}
+          <ScrollView style={{height:300,borderColor:"#2196F3"}} horizontal={false}><Text style={styles.synopsis}>Synopsis:{'\n'}{data.description}</Text>
+          </ScrollView>
+        {/* </View> */}
+        <View style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center',}}><Text style={styles.start}>Start Reading</Text></View>
+        <View style={styles.review}>
+          <Text style={{color:"white",padding:15,fontSize:16}}>User Reviews:</Text> 
+           <View style={styles.usercontainer}>
+            <Image source={photo} style={styles.profileImg}/>
+            <View style={{display:'flex', flexDirection:"column",
+             borderColor:'black',width:screenWidth-130}}>
+               <Text style={{marginStart:10,marginTop:10,color:'white'}}>{user.username}</Text>
+               <Text style={{height:40,marginStart:10,paddingVertical:5}}>{user.review}</Text>
+            </View>
+           </View>
+           <View style={styles.usercontainer}>
+            <Image source={photo} style={styles.profileImg}/>
+            <View style={{display:'flex', flexDirection:"column",
+             borderColor:'black',width:screenWidth-130}}>
+               <Text style={{marginStart:10,marginTop:10,color:'white'}}>{user.username}</Text>
+               <Text style={{height:40,marginStart:10,paddingVertical:5}}>{user.review}</Text>
+            </View>
+           </View>
+        </View>
         <View style={styles.reviewConatiner}>
         <TextInput 
               placeholder="Text"
@@ -187,8 +246,9 @@ const BookDetailPage = () => {
               numberOfLines={4}
               textAlignVertical="top"
               color='white'
+              useAnimatedScrollView='true'
               style={styles.TextInput}>Write a Review</TextInput>
-        <Button title="Send" style={styles.button}/>
+        <Button title="Send" width="200" style={styles.button}/>
         </View>
       </View>
     </ScrollView>
@@ -200,74 +260,140 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    backgroundColor:'#0A2647',
+    color:'white',
+    // #FFFBEB,#495579,#263159
   },
   image: {
     width: screenWidth-200,
     height: screenHeight-500,
     marginBottom: 20,
-    marginTop:20,
+    marginTop:90,
     zIndex:1,
     marginHorizontal:20,
     alignSelf:'center',
+    zIndex:1,
+    opacity:1,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
-    marginHorizontal:25
+    marginBottom: 5,
+    marginHorizontal:25,
+    marginTop:20,
+    color:'white'
   },
   author: {
     fontSize: 16,
     marginBottom: 10,
-    marginHorizontal:25,
+    marginHorizontal:28,
+    marginTop:1,
+    color:'white'
   },
   rating: {
     fontSize: 16,
     marginBottom: 10,
-    marginHorizontal:25
+    marginHorizontal:25,
+    marginRight:60,
   },
   review: {
     fontSize: 16,
     marginBottom: 10,
-    borderWidth:1,
-    borderColor:'white',
-    marginHorizontal:25
+    borderWidth:0.2,
+    borderColor:'#2196F3',
+    marginHorizontal:22,
+    height:230,
+    width:screenWidth-40,
+    borderRadius:5,
+    color:'white',
+    backgroundColor:'#144272'
   },
   synopsis: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 10,
-    borderColor:'white',
+    borderColor:'#2196F3',
     borderWidth:1,
     width:screenWidth-40,
     marginHorizontal:20,
-    height:300
+    height:300,
+    borderRadius:5,
+    color:'white',
+    paddingVertical:5,
+    paddingHorizontal:10,
+    backgroundColor:'#144272'
   },
-  closeIcon: {
+  bookmarkIcon: {
     top:5,
     marginTop:25,
     marginRight:8,
     right:10,
     width:30,
-    height:30,
+    height:40,
     position:'absolute',    
   },
   TextInput:{
-    width:screenWidth-125,
+    width:screenWidth-110,
     borderWidth:1,
-    borderColor:'white',
+    borderColor:'#2196F3',
     marginHorizontal:21,
+    color:'white',
+    padding:10,
   },
   reviewConatiner:{
     display:"flex",
     flexDirection:"row",
-    marginHorizontal:5,
+    marginHorizontal:4,
     marginBottom:15,
+    borderRadius:5
   },
   button:{
-   paddingHorizontal:10,
+   paddingHorizontal:8,
    paddingVertical:20,
-   textAlignVertical:'center'
+   textAlignVertical:'center',
+  },
+  start:{
+    marginTop:20,
+    alignItems:'center',
+    justifyContent:'center',
+    width:"90%",
+    height:50,
+    paddingVertical:11,
+    color:'white',
+    marginHorizontal:20,
+    textAlign:'center',
+    marginBottom:20,
+    backgroundColor:"#2196F3",
+    borderRadius:5,
+    fontSize:20,
+  },
+  profileImg:{
+    width:50,
+    height:50,
+    borderRadius:100,
+    alignItems: 'center',
+    marginStart:12,
+    borderColor:'black',
+    marginTop:10,
+  },
+  usercontainer:{
+    display:"flex",
+    flexDirection:"row",
+    // borderColor:'black',
+    // borderWidth:1,0
+    margin:10,
+    backgroundColor:'#205295',
+    borderRadius:10,
+    color:'white',
+  },
+  closeIcon:{
+    top:5,
+    marginTop:28,
+    left:10,
+    width:50,
+    height:25,
+    position:'absolute',
   }
+
 });
 
 export default BookDetailPage;
