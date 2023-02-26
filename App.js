@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import getTheme from "./src/theme";
 import MainNavigator from "./src/MainNavigator";
 import LoginNavigator from "./src/LoginNavigator";
+import { APP_IP } from "@env";
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ const App = () => {
   const scheme = useColorScheme();
   const user = useSelector((state) => state.USER);
   console.log("About user", user);
+  console.log("current ip", APP_IP);
   useEffect(() => {}, [user && user.logged]);
   return (
     <NavigationContainer theme={getTheme(scheme)}>

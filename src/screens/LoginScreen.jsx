@@ -7,7 +7,7 @@ import {
   TextInput,
   Pressable,
   KeyboardAvoidingView,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import Svg, { Image, Ellipse, ClipPath } from "react-native-svg";
 import Animated, {
@@ -40,28 +40,25 @@ export default function LoginScreen({ navigation }) {
 
   const loader = useSelector((state) => state.LOADER);
 
-  const initialValue1={
-    email:'',
-    password:'',
-  }
-  const initialValue2={
-    email:'',
-    name:'',
-    password:'',
-  }
+  const initialValue1 = {
+    email: "",
+    password: "",
+  };
+  const initialValue2 = {
+    email: "",
+    name: "",
+    password: "",
+  };
 
-
-
-  const handleSubmit=(values)=>{
+  const handleSubmit = (values) => {
     dispatch(loaderStart());
-    if(isRegistering)
-    {
-      dispatch(userRegisterPre(values.email,values.password,values.name));
+    if (isRegistering) {
+      dispatch(userRegisterPre(values.email, values.password, values.name));
       navigation.push("Genre");
-     return;
-    }    
-    dispatch(userLogin(values.email,values.password));
-  }
+      return;
+    }
+    dispatch(userLogin(values.email, values.password));
+  };
   const imageAnimatedStyle = useAnimatedStyle(() => {
     const interpolation = interpolate(
       imagePosition.value,
@@ -126,7 +123,6 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    
     <Animated.ScrollView contentContainerStyle={styles.container}>
       <Animated.View style={[StyleSheet.absoluteFill, imageAnimatedStyle]}>
         <Svg height={height + 100} width={width}>
@@ -159,75 +155,98 @@ export default function LoginScreen({ navigation }) {
           </Pressable>
         </Animated.View>
         <Formik
-      initialValues={isRegistering?initialValue2:initialValue1}
-      validationSchema={isRegistering?SignupSchema:LoginSchema}
-      onSubmit={(values)=>handleSubmit(values)}
-    >
-      {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-        <Animated.View style={[styles.formInputContainer, formAnimatedStyle]}>
-        <KeyboardAvoidingView>
-          <View style={styles.row}>
-            <Ionicons name="mail" size={25} color="rgba(1,89,213,255)" />
-            <TextInput
-              placeholder="Email"
-              style={styles.field}
-              placeholderTextColor="black"
-              onChangeText={handleChange('email')}
-              onBlur={handleBlur('email')}
-              value={values.email}
-            />
-          </View>
-          {errors.email && touched.email && (
-            <Text style={styles.error}>{errors.email}</Text>
+          initialValues={isRegistering ? initialValue2 : initialValue1}
+          validationSchema={isRegistering ? SignupSchema : LoginSchema}
+          onSubmit={(values) => handleSubmit(values)}
+        >
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <Animated.View
+              style={[styles.formInputContainer, formAnimatedStyle]}
+            >
+              <KeyboardAvoidingView>
+                <View style={styles.row}>
+                  <Ionicons name="mail" size={25} color="rgba(1,89,213,255)" />
+                  <TextInput
+                    placeholder="Email"
+                    style={styles.field}
+                    placeholderTextColor="black"
+                    onChangeText={handleChange("email")}
+                    onBlur={handleBlur("email")}
+                    value={values.email}
+                  />
+                </View>
+                {errors.email && touched.email && (
+                  <Text style={styles.error}>{errors.email}</Text>
+                )}
+                {isRegistering && (
+                  <View style={styles.row}>
+                    <Ionicons
+                      name="person"
+                      size={25}
+                      color="rgba(1,89,213,255)"
+                    />
+                    <TextInput
+                      placeholder="Full Name"
+                      style={styles.field}
+                      placeholderTextColor="black"
+                      onChangeText={handleChange("name")}
+                      onBlur={handleBlur("name")}
+                      value={values.name}
+                    />
+                  </View>
+                )}
+                {isRegistering && errors.name && touched.name && (
+                  <Text style={styles.error}>{errors.name}</Text>
+                )}
+                <View style={styles.row}>
+                  <Ionicons name="key" size={25} color="rgba(1,89,213,255)" />
+                  <TextInput
+                    placeholder="Password"
+                    style={styles.field}
+                    placeholderTextColor="black"
+                    onChangeText={handleChange("password")}
+                    onBlur={handleBlur("password")}
+                    value={values.password}
+                  />
+                </View>
+                {errors.password && touched.password && (
+                  <Text style={styles.error}>{errors.password}</Text>
+                )}
+              </KeyboardAvoidingView>
+              <Animated.View
+                style={[styles.formButton, formButtonAnimatedStyle]}
+              >
+                <Pressable
+                  onPress={handleSubmit}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Text style={styles.buttonText}>
+                    {isRegistering ? "Sign up" : "Log in"}
+                  </Text>
+                  {loader && loader.active && (
+                    <ActivityIndicator
+                      size="small"
+                      color="white"
+                      style={{ paddingLeft: 12 }}
+                    />
+                  )}
+                </Pressable>
+              </Animated.View>
+            </Animated.View>
           )}
-          {isRegistering && (
-            <View style={styles.row}>
-              <Ionicons name="person" size={25} color="rgba(1,89,213,255)" />
-              <TextInput
-                placeholder="Full Name"
-                style={styles.field}
-                placeholderTextColor="black"
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
-                value={values.name}
-              />
-            </View>
-          )}
-          {
-            (isRegistering &&errors.name && touched.name && (
-              <Text style={styles.error}>{errors.name}</Text>
-            ))
-          }
-          <View style={styles.row}>
-            <Ionicons name="key" size={25} color="rgba(1,89,213,255)" />
-            <TextInput
-              placeholder="Password"
-              style={styles.field}
-              placeholderTextColor="black"
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-            />
-          </View>
-          {errors.password && touched.password && (
-            <Text style={styles.error}>{errors.password}</Text>
-          )}
-        </KeyboardAvoidingView>
-        <Animated.View style={[styles.formButton, formButtonAnimatedStyle]}>
-          <Pressable
-          onPress={handleSubmit}
-          style={{ flexDirection: 'row',alignItems:"center",justifyContent:"center" }}
-          >
-            <Text style={styles.buttonText}>
-              {isRegistering ? "Sign up" : "Log in"}
-            </Text>
-            {loader&&loader.active&&<ActivityIndicator size="small" color="white" style={{ paddingLeft:12 }} />}
-          </Pressable>
-        </Animated.View>
-      </Animated.View>
-      )}
-      </Formik>
-        
+        </Formik>
       </View>
     </Animated.ScrollView>
   );
@@ -238,9 +257,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-  error:{color: 'red' ,
-  paddingHorizontal:30,
-  },
+  error: { color: "red", paddingHorizontal: 30 },
   button: {
     backgroundColor: "rgba(123,104,238,0.8)",
     height: 55,

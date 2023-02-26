@@ -72,29 +72,37 @@ export default function HomeNavi({ navigation }) {
             marginStart: 120,
           }}
         ></Image>
-
-        <Text
+        <View
           style={{
-            fontSize: 20,
-            fontWeight: "bold",
-            color: "white",
-            marginTop: 20,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
             alignItems: "center",
-            marginStart: 40,
+            paddingVertical: 10,
           }}
         >
-          {"Pratham"}
-        </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "white",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+            allowFontScaling={false}
+          >
+            {user && user.user ? user.user.name : "USER"}
+          </Text>
 
-        <Image
-          source={edit}
-          style={{
-            width: 20,
-            height: 20,
-            marginTop: -25,
-            marginStart: 160,
-          }}
-        ></Image>
+          <Image
+            source={edit}
+            style={{
+              width: 20,
+              height: 20,
+              marginLeft: 5,
+            }}
+          ></Image>
+        </View>
 
         <View style={{ flexGrow: 1, marginTop: 50 }}>
           {
@@ -123,7 +131,7 @@ export default function HomeNavi({ navigation }) {
           left: 0,
           right: 0,
           paddingHorizontal: 15,
-          paddingVertical: 20,
+          paddingVertical: 10,
           borderRadius: showMenu ? 15 : 0,
           // Transforming View...
           transform: [{ scale: scaleValue }, { translateX: offsetValue }],
@@ -175,7 +183,7 @@ export default function HomeNavi({ navigation }) {
                 width: 20,
                 height: 20,
                 tintColor: "black",
-                marginTop: 40,
+                marginTop: 10,
               }}
             ></Image>
           </TouchableOpacity>

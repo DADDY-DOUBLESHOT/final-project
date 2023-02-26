@@ -42,21 +42,61 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
         source={{ uri: item.imgUrl }}
         containerStyle={card_styles.imageContainer}
         style={card_styles.image}
-        parallaxFactor={0.2}
+        parallaxFactor={0.15}
         showSpinner
         {...parallaxProps}
       />
       <View style={card_styles.header_container}>
-        <Text style={card_styles.title}>{item.title}</Text>
-        <Text style={card_styles.author}>{item.author}</Text>
+        <Text allowFontScaling={false} style={card_styles.title}>
+          {item.title.length > 20
+            ? item.title.substring(0, 20) + " ..."
+            : item.title}
+        </Text>
+        <Text allowFontScaling={false} style={card_styles.author}>
+          {item.author}
+        </Text>
         <Stars
           style={card_styles.rating}
-          default={item.rating}
+          default={parseInt(item.rating)}
           spacing={5}
           starSize={25}
           count={5}
           fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
           emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
+        />
+      </View>
+    </View>
+  );
+};
+const SavedListCardItem = ({ item, index }, parallaxProps) => {
+  // console.log(item);
+  return (
+    <View style={save_list_style.item}>
+      <ParallaxImage
+        source={{ uri: item.imgUrl }}
+        containerStyle={save_list_style.imageContainer}
+        style={save_list_style.image}
+        parallaxFactor={0.09}
+        showSpinner
+        {...parallaxProps}
+      />
+      <View style={save_list_style.header_container}>
+        <Text allowFontScaling={false} style={save_list_style.title}>
+          {item.title.length > 20
+            ? item.title.substring(0, 20) + " ..."
+            : item.title}
+        </Text>
+        <Text allowFontScaling={false} style={save_list_style.author}>
+          {item.author}
+        </Text>
+        <Stars
+          style={save_list_style.rating}
+          default={parseInt(item.rating)}
+          spacing={5}
+          starSize={10}
+          count={5}
+          fullStar={<Ionicons name="star" size={10} color="rgb(255, 204, 0)" />}
+          emptyStar={<Ionicons name="star" size={10} color="rgba(0,0,0,0.9)" />}
         />
       </View>
     </View>
@@ -68,11 +108,17 @@ const GenreCardItem = ({ item, index }, parallaxProps) => {
     <View style={genre_card_styles.item}>
       <Image style={genre_card_styles.image} source={{ uri: item.imgUrl }} />
       <View style={genre_card_styles.header_container}>
-        <Text style={genre_card_styles.title}>{item.title}</Text>
-        <Text style={genre_card_styles.author}>{item.author}</Text>
+        <Text allowFontScaling={false} style={genre_card_styles.title}>
+          {item.title.length > 20
+            ? item.title.substring(0, 20) + " ..."
+            : item.title}
+        </Text>
+        <Text allowFontScaling={false} style={genre_card_styles.author}>
+          {item.author}
+        </Text>
         <Stars
           style={genre_card_styles.rating}
-          default={item.rating}
+          default={parseInt(item.rating)}
           spacing={5}
           starSize={25}
           count={5}
@@ -104,6 +150,7 @@ const HomeScreen2 = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const isCarousel = React.useRef(null);
   const genreCarousel = React.useRef(null);
+  const savedCarousel = React.useRef(null);
   const handleSearch = () => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
@@ -169,130 +216,8 @@ const HomeScreen2 = ({ navigation }) => {
       imgUrl: "https://images.gr-assets.com/books/1320399351m/1885.jpg",
       author: "Jane Austen",
     },
-    {
-      title: "The Kite Runner",
-      rating: "4.26",
-      imgUrl: "https://images.gr-assets.com/books/1484565687m/77203.jpg",
-      author: "Khaled Hosseini",
-    },
-    {
-      title: "Divergent (Divergent, #1)",
-      rating: "4.24",
-      imgUrl: "https://images.gr-assets.com/books/1328559506m/13335037.jpg",
-      author: "Veronica Roth",
-    },
-    {
-      title: "Animal Farm",
-      rating: "3.87",
-      imgUrl: "https://images.gr-assets.com/books/1424037542m/7613.jpg",
-      author: "George Orwell",
-    },
-    {
-      title: "The Diary of a Young Girl",
-      rating: "4.1",
-      imgUrl: "https://images.gr-assets.com/books/1358276407m/48855.jpg",
-      author: "Anne Frank, Eleanor Roosevelt, B.M. Mooyaart-Doubleday",
-    },
-    {
-      title: "The Girl with the Dragon Tattoo (Millennium, #1)",
-      rating: "4.11",
-      imgUrl: "https://images.gr-assets.com/books/1327868566m/2429135.jpg",
-      author: "Stieg Larsson, Reg Keeland",
-    },
-    {
-      title: "Catching Fire (The Hunger Games, #2)",
-      rating: "4.3",
-      imgUrl: "https://images.gr-assets.com/books/1358273780m/6148028.jpg",
-      author: "Suzanne Collins",
-    },
-    {
-      title: "Harry Potter and the Prisoner of Azkaban (Harry Potter, #3)",
-      rating: "4.53",
-      imgUrl: "https://images.gr-assets.com/books/1499277281m/5.jpg",
-      author: "J.K. Rowling, Mary GrandPré, Rufus Beck",
-    },
-    {
-      title: "The Fellowship of the Ring (The Lord of the Rings, #1)",
-      rating: "4.34",
-      imgUrl: "https://images.gr-assets.com/books/1298411339m/34.jpg",
-      author: "J.R.R. Tolkien",
-    },
-    {
-      title: "Mockingjay (The Hunger Games, #3)",
-      rating: "4.03",
-      imgUrl: "https://images.gr-assets.com/books/1358275419m/7260188.jpg",
-      author: "Suzanne Collins",
-    },
-    {
-      title: "Harry Potter and the Order of the Phoenix (Harry Potter, #5)",
-      rating: "4.46",
-      imgUrl: "https://images.gr-assets.com/books/1387141547m/2.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "The Lovely Bones",
-      rating: "3.77",
-      imgUrl: "https://images.gr-assets.com/books/1457810586m/12232938.jpg",
-      author: "Alice Sebold",
-    },
-    {
-      title: "Harry Potter and the Chamber of Secrets (Harry Potter, #2)",
-      rating: "4.37",
-      imgUrl: "https://images.gr-assets.com/books/1474169725m/15881.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "Harry Potter and the Goblet of Fire (Harry Potter, #4)",
-      rating: "4.53",
-      imgUrl: "https://images.gr-assets.com/books/1361482611m/6.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "Harry Potter and the Deathly Hallows (Harry Potter, #7)",
-      rating: "4.61",
-      imgUrl: "https://images.gr-assets.com/books/1474171184m/136251.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "The Da Vinci Code (Robert Langdon, #2)",
-      rating: "3.79",
-      imgUrl: "https://images.gr-assets.com/books/1303252999m/968.jpg",
-      author: "Dan Brown",
-    },
-    {
-      title: "Harry Potter and the Half-Blood Prince (Harry Potter, #6)",
-      rating: "4.54",
-      imgUrl: "https://images.gr-assets.com/books/1361039191m/1.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "Lord of the Flies",
-      rating: "3.64",
-      imgUrl: "https://images.gr-assets.com/books/1327869409m/7624.jpg",
-      author: "William Golding",
-    },
-    {
-      title: "Romeo and Juliet",
-      rating: "3.73",
-      imgUrl: "https://images.gr-assets.com/books/1327872146m/18135.jpg",
-      author: "William Shakespeare, Robert           Jackson",
-    },
-    {
-      title: "Gone Girl",
-      rating: "4.03",
-      imgUrl: "https://images.gr-assets.com/books/1339602131m/8442457.jpg",
-      author: "Gillian Flynn",
-    },
   ];
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
-
-  const buttonNames = [
-    "Button 1",
-    "Button 2",
-    "Button 3",
-    "Button 4",
-    "Button 5",
-  ];
   const handleButtonPress = (index) => {
     setSelectedButtonIndex(index);
   };
@@ -316,6 +241,7 @@ const HomeScreen2 = ({ navigation }) => {
           ]}
         >
           <Text
+            allowFontScaling={false}
             style={[
               genre_styles.buttonText,
               selectedButtonIndex === index && genre_styles.selectedButtonText,
@@ -326,34 +252,6 @@ const HomeScreen2 = ({ navigation }) => {
         </ImageBackground>
       </TouchableOpacity>
     );
-  };
-
-  const renderContent = () => {
-    switch (selectedButtonIndex) {
-      case 0:
-        return (
-          <Carousel
-            layout={"stack"}
-            ref={genreCarousel}
-            data={data}
-            renderItem={GenreCardItem}
-            sliderWidth={screenWidth - 20}
-            sliderHeight={screenWidth}
-            itemWidth={screenWidth}
-            autoplay={true}
-          />
-        );
-      case 1:
-        return <Text>Content for Button 2</Text>;
-      case 2:
-        return <Text>Content for Button 3</Text>;
-      case 3:
-        return <Text>Content for Button 4</Text>;
-      case 4:
-        return <Text>Content for Button 5</Text>;
-      default:
-        return <Text>Default Content</Text>;
-    }
   };
 
   return (
@@ -382,14 +280,15 @@ const HomeScreen2 = ({ navigation }) => {
           sliderHeight={screenWidth}
           itemWidth={screenWidth / 2}
           hasParallaxImages={true}
+          useScrollView={false}
+          shouldOptimizeUpdates={true}
         />
       </View>
       <View style={genre_styles.container}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {genre_data.map((item, index) => renderButton(item, index))}
         </ScrollView>
-        <Text style={genre_styles.viewAll}>View All</Text>
-        <View style={genre_styles.contentContainer}>{renderContent()}</View>
+        {/* <Text style={genre_styles.viewAll}>View All</Text> */}
       </View>
       <View style={continue_reading_style.container}>
         <ImageBackground
@@ -400,18 +299,23 @@ const HomeScreen2 = ({ navigation }) => {
           <Text style={continue_reading_style.title}>Continue Reading ...</Text>
         </ImageBackground>
       </View>
-      {/* <View style={styles.trendingContainer}>
-        <Text style={styles.trendingText}>Top Trending</Text>
+      <View style={save_list_style.container}>
+        <Text style={save_list_style.view}>Your saved Items</Text>
         <Carousel
-          ref={isCarousel}
+          ref={savedCarousel}
           data={data}
-          renderItem={CarouselCardItem}
+          renderItem={SavedListCardItem}
           sliderWidth={screenWidth}
           sliderHeight={screenWidth}
-          itemWidth={screenWidth / 2}
+          itemWidth={screenWidth / 3.5}
           hasParallaxImages={true}
+          useScrollView={false}
+          shouldOptimizeUpdates={true}
+          enableSnap={true}
+          enableMomentum={true}
+          layoutCardOffset={20}
         />
-      </View> */}
+      </View>
     </ScrollView>
   );
 };
@@ -422,6 +326,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     width: "100%",
+    marginBottom: 50,
+    paddingBottom: 20,
   },
   header: {
     height: 60,
@@ -550,13 +456,13 @@ const genre_card_styles = StyleSheet.create({
     borderRadius: 20,
   },
   header_container: {
-    padding: 5,
+    padding: 3,
     display: "flex",
     flexDirection: "column",
   },
   title: {
-    fontSize: 20,
-    padding: 5,
+    fontSize: 18,
+    padding: 3,
   },
   author: {
     fontSize: 12,
@@ -593,7 +499,7 @@ const card_styles = StyleSheet.create({
     padding: 5,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     color: "white",
   },
   author: {
@@ -625,6 +531,59 @@ const continue_reading_style = StyleSheet.create({
     borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
+  },
+});
+const save_list_style = StyleSheet.create({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+  },
+  view: {
+    fontSize: 12,
+    textDecorationStyle: "solid",
+  },
+  card_container: {
+    marginVertical: 20,
+    width: screenWidth,
+    borderRadius: 18,
+    overflow: "hidden",
+    marginHorizontal: 10,
+  },
+  item: {
+    width: screenWidth / 4,
+    height: screenWidth / 3,
+  },
+  imageContainer: {
+    flex: 1,
+    marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  image: {
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: "cover",
+  },
+  header_container: {
+    position: "absolute",
+    top: "50%",
+    width: "100%",
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    padding: 5,
+  },
+  title: {
+    fontSize: 12,
+    color: "white",
+  },
+  author: {
+    fontSize: 8,
+    color: "white",
+  },
+  rating: {
+    width: "80%",
+    marginTop: 10,
   },
 });
 

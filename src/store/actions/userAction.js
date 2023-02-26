@@ -19,17 +19,12 @@ export const userLogin = (email, password) => async (dispatch) => {
 
   try {
     const response = await axios(config);
-    console.log(JSON.stringify(response.data));
-
     dispatch({
       type: LOGIN,
       payload: {
         logged: true,
         token: response.data.token,
-        user: {
-          name: "Pratham",
-          email: email,
-        },
+        user: response.data.user,
       },
     });
 
@@ -40,12 +35,9 @@ export const userLogin = (email, password) => async (dispatch) => {
     dispatch({
       type: LOGIN,
       payload: {
-        logged: true,
+        logged: false,
         token: null,
-        user: {
-          name: "Pratham",
-          email: email,
-        },
+        user: null,
       },
     });
 
@@ -84,7 +76,6 @@ export const userRegister = (genres) => async (dispatch) => {
   };
 
   try {
-    console.log("Ip ", APP_IP);
     await axios(config)
       .then(function (response) {
         dispatch({
@@ -106,7 +97,7 @@ export const userRegister = (genres) => async (dispatch) => {
     dispatch({
       type: SIGNUP,
       payload: {
-        logged: true,
+        logged: false,
         token: null,
         user: null,
       },
