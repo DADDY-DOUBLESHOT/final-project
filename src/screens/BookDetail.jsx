@@ -15,7 +15,7 @@ import axios from 'axios';
 //   interpolate, withTiming, runOnJS,
 //   useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, useAnimatedScrollHandler,
 // } from 'react-native-reanimated';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
