@@ -3,6 +3,7 @@ import { createSharedElementStackNavigator } from "react-navigation-shared-eleme
 import BookSearchScreen from "./screens/BookSearchScreen";
 import HomeNavi from "./screens/HomeNavi";
 import HomeScreen2 from "./screens/HomeScreen2";
+import UploadBook from "./screens/UploadBook";
 
 
 // Root Stack of App
@@ -41,7 +42,7 @@ function MainNavigator() {
 
   return (
     <BookStack.Navigator
-      initialRouteName="HomeNavi"
+      initialRouteName="UploadBook"
       screenOptions={{
         headerShown: false,
         cardOverlayEnabled: true,
@@ -50,6 +51,7 @@ function MainNavigator() {
       detachInactiveScreens={false}
     >
       <BookStack.Screen name="HomeNavi" component={HomeNavi} />
+      <BookStack.Screen name="UploadBook" component={UploadBook} />
       <BookStack.Screen name="Home" component={HomeScreen2} />
       <BookStack.Screen name="BookSearch" component={BookSearchScreen} />
     </BookStack.Navigator>

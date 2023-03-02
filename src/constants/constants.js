@@ -15,3 +15,5 @@ export const LOGOUT_FAIL = "LOGOUT_FAIL";
 export const LOAD_USER_FAIL = "LOAD_USER_FAIL";
 
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
+
+export const DEFAULT_IMAGE='https://i.pinimg.com/564x/04/54/7c/04547c2b354abb70a85ed8a2d1b33e5f.jpg'
