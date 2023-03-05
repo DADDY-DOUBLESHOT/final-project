@@ -8,6 +8,7 @@ const reducer = combineReducers({
   USER: userReducer,
   LOADER: loaderReducer,
   IMAGE: imageReducer,
+  BOOK:bookReducer,
 });
 
 let initialState = {};
