@@ -1,4 +1,4 @@
-import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
+import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE, UPDATE_USER } from "../types";
 
 const initialState = {
   logged: false,
@@ -31,6 +31,11 @@ export const userReducer = (state = initialState, action) => {
         user: action.payload.user,
       };
     case SIGNUP_PRE:
+      return {
+        ...state,
+        user: action.payload.user,
+      };
+    case  UPDATE_USER:
       return {
         ...state,
         user: action.payload.user,
