@@ -39,6 +39,10 @@ import { DEFAULT_IMAGE } from '../constants/constants';
 
 
 const profile="require('../images/photo.jpg')";
+import HomeScreen2 from './HomeScreen2';
+import UploadBook from './UploadBook';
+
+
 
 export default function HomeNavi({navigation}) {
   const dispatch=useDispatch();
@@ -280,7 +284,16 @@ export default function HomeNavi({navigation}) {
             ></Image>
           </TouchableOpacity>
 
-          {currentTab === "Home" && <HomeScreen2 navigation={navigation} />}
+          {
+            currentTab==='Home'&&
+            <HomeScreen2 navigation={navigation}/>
+          }
+          {
+            currentTab==='Upload Book'&&
+            <UploadBook navigation={navigation}/>
+          }
+
+          
         </Animated.View>
       </Animated.View>
     </SafeAreaView>
