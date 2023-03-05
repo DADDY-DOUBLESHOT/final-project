@@ -1,4 +1,4 @@
-import { LOADER_STOP, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
+import { LOADER_STOP, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE} from "../types";
 import axios from "axios";
 import store from "../../../store";
 import { APP_IP } from "@env";
@@ -111,3 +111,4 @@ export const userLogout = (dispatch) => {
     type: LOGOUT,
   });
 };
+

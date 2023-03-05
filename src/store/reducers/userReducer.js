@@ -1,10 +1,11 @@
-import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
+import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE} from "../types";
 
 const initialState = {
   logged: false,
   token: null,
   user: null,
 };
+
 
 export const userReducer = (state = initialState, action) => {
   console.log(action);
@@ -31,6 +32,11 @@ export const userReducer = (state = initialState, action) => {
         user: action.payload.user,
       };
     case SIGNUP_PRE:
+      return {
+        ...state,
+        user: action.payload.user,
+      };
+    case  UPDATE_USER:
       return {
         ...state,
         user: action.payload.user,
