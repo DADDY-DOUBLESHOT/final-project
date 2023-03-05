@@ -1,10 +1,11 @@
-import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE, UPDATE_USER } from "../types";
+import { LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE} from "../types";
 
 const initialState = {
   logged: false,
   token: null,
   user: null,
 };
+
 
 export const userReducer = (state = initialState, action) => {
   console.log(action);
