@@ -1,7 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal, Pressable} from 'react-native';
-import { useDispatch,useSelector } from 'react-redux';
+import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal,Dimensions, Pressable} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // import profile from "../images/profile.png";
 import camera from "../images/camera.png"
@@ -26,9 +25,6 @@ import { userLogout } from "../store/actions/userAction";
 
 
 
-import { loaderStart } from "../store/actions/loaderAction";
-import { useDispatch, useSelector } from "react-redux";
-
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -39,7 +35,6 @@ import { DEFAULT_IMAGE } from '../constants/constants';
 
 
 const profile="require('../images/photo.jpg')";
-import HomeScreen2 from './HomeScreen2';
 import UploadBook from './UploadBook';
 
 
@@ -52,6 +47,7 @@ export default function HomeNavi({navigation}) {
   const [showMenu, setShowMenu] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [name,setName]=useState("");
 
   const user = useSelector((state) => state.USER);
 

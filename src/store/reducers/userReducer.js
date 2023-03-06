@@ -36,11 +36,11 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         user: action.payload.user,
       };
-    case  UPDATE_USER:
-      return {
-        ...state,
-        user: action.payload.user,
-      };
+    // case  UPDATE_USER:
+    //   return {
+    //     ...state,
+    //     user: action.payload.user,
+    //   };
     default:
       return state;
   }
