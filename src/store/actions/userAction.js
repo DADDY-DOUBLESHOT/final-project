@@ -10,7 +10,7 @@ export const userLogin = (email, password) => async (dispatch) => {
 
   var config = {
     method: "post",
-    url: `http://${APP_IP}:5000/api/v1/login`,
+    url: `https://book-forum-backend.onrender.com/api/v1/login`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -68,7 +68,7 @@ export const userRegister = (genres) => async (dispatch) => {
 
   var config = {
     method: "post",
-    url: `http://${APP_IP}:5000/api/v1/register`,
+    url: `https://book-forum-backend.onrender.com/api/v1/register`,
     headers: {
       "Content-Type": "application/json",
     },
