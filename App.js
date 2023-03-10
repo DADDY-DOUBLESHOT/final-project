@@ -27,12 +27,12 @@ const App = () => {
   console.log("About user", user);
   console.log("current ip", APP_IP);
   useEffect(() => {}, [user && user.logged]);
-  console.log("ABout image",img)
+  // console.log("ABout image",img)
   useEffect(() => {}, [user && user.logged]);       
   return (
     <NavigationContainer theme={getTheme(scheme)}>
-      {user && user.logged ? <MainNavigator /> : <LoginNavigator />}
-      {/* { <MainNavigator />} */}
+      {/* {user && user.logged ? <MainNavigator /> : <LoginNavigator />} */}
+      { <MainNavigator />}
     </NavigationContainer>
   );
 };

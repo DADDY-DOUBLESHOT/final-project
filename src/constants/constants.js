@@ -17,3 +17,5 @@ export const LOAD_USER_FAIL = "LOAD_USER_FAIL";
 export const CLEAR_ERRORS = "CLEAR_ERRORS";
 
 export const DEFAULT_IMAGE='https://i.pinimg.com/564x/04/54/7c/04547c2b354abb70a85ed8a2d1b33e5f.jpg'
+
+export const DEFAULT_PROFILE_IMAGE='https://www.seekpng.com/png/detail/41-410093_circled-user-icon-user-profile-icon-png.png'

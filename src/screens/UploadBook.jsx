@@ -172,6 +172,8 @@ const styles = StyleSheet.create({
     width:screenWidth,
     zIndex:-1,
     flex:1,
+    paddingHorizontal:0,
+    paddingVertical:0,
   },
   heading: {
     fontSize: 24,

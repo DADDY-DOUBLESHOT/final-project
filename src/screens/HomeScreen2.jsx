@@ -10,6 +10,7 @@ import {
   Dimensions,
   ScrollView,
   ImageBackground,
+  Pressable
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Carousel, {
@@ -155,6 +156,12 @@ const HomeScreen2 = ({ navigation }) => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
   };
+
+  const bookDetails = (book) => {
+    Haptics.selectionAsync();
+    navigation.push('BookDetails',{book});
+  };
+
   const data = [
     {
       title: "The Hunger Games (The Hunger Games, #1)",
@@ -217,6 +224,15 @@ const HomeScreen2 = ({ navigation }) => {
       author: "Jane Austen",
     },
   ];
+
+  {data.map((book) => (
+    <Pressable
+      key={book.bookId}
+      onPress={() => bookDetails(book)}
+    >
+    </Pressable>
+  ))}
+
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
   const handleButtonPress = (index) => {
     setSelectedButtonIndex(index);

@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal,Dimensions, Pressable} from 'react-native';
+import { Animated, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View , Button, Modal,Dimensions, Pressable, TextInput} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 // import profile from "../images/profile.png";
 import camera from "../images/camera.png"
@@ -31,7 +31,7 @@ const height = Dimensions.get('window').height;
 
 // import { setDefaultImage } from "../store/actions/userAction";
 import { loaderStart } from "../store/actions/loaderAction";
-import { DEFAULT_IMAGE } from '../constants/constants';
+import { DEFAULT_PROFILE_IMAGE } from '../constants/constants';
 
 
 const profile="require('../images/photo.jpg')";
@@ -47,7 +47,11 @@ export default function HomeNavi({navigation}) {
   const [showMenu, setShowMenu] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [name,setName]=useState("");
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [name, setName] = useState('Jenna Ezarik');
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updatedName, setUpdatedName] = useState('');
+
 
   const user = useSelector((state) => state.USER);
 
@@ -55,8 +59,13 @@ export default function HomeNavi({navigation}) {
     setIsModalVisible(!isModalVisible);
   };
 
+  const toggleImageModal = () => {
+    setIsImageModalVisible(!isImageModalVisible);
+  };
+
+
   useEffect(()=>{
-    setProfileImage(DEFAULT_IMAGE);
+    setProfileImage(DEFAULT_PROFILE_IMAGE);
   },[])
 
   const handleImagePicker = async () => {
@@ -75,7 +84,7 @@ export default function HomeNavi({navigation}) {
     if (!result.canceled) {
         setProfileImage(result.assets[0].uri);
         dispatch({type:'SET_DEFAULT_IMAGE',payload:result.assets[0].uri})
-        toggleModal();
+        toggleImageModal;
     }
     
   };
@@ -144,7 +153,7 @@ export default function HomeNavi({navigation}) {
          }
 
 
-       <Pressable onPress={toggleModal} >
+       <Pressable onPress={toggleImageModal} >
        <Image source={camera} style={{
           width: 30,
           height: 20,
@@ -155,12 +164,12 @@ export default function HomeNavi({navigation}) {
         }}></Image></Pressable>
 
         
-        <Modal visible={isModalVisible} onRequestClose={toggleModal} transparent={true}>
+        <Modal visible={isImageModalVisible} onRequestClose={toggleImageModal} transparent={true}>
           <View style={styles.modalView}>
             <View style={styles.modalContent}>
               <Text>Choose Profile Image:</Text>
               <Button title="Open Image Picker" onPress={handleImagePicker} />
-              <Button title="Cancel" onPress={toggleModal} />
+              <Button title="Cancel" onPress={toggleImageModal} />
             </View>
           </View>
         </Modal>
@@ -222,8 +231,8 @@ export default function HomeNavi({navigation}) {
           bottom: 0,
           left: 0,
           right: 0,
-          paddingHorizontal: 15,
-          paddingVertical: 10,
+          // paddingHorizontal: 15,
+          // paddingVertical: 10,
           borderRadius: showMenu ? 15 : 0,
           // Transforming View...
           transform: [{ scale: scaleValue }, { translateX: offsetValue }],
@@ -272,10 +281,11 @@ export default function HomeNavi({navigation}) {
             <Image
               source={showMenu ? close : menu}
               style={{
-                width: 20,
-                height: 20,
+                width: 30,
+                height: 30,
                 tintColor: "black",
-                marginTop: 10,
+                marginTop: 20,
+                marginHorizontal:10,
               }}
             ></Image>
           </TouchableOpacity>

@@ -51,7 +51,7 @@ function BookSearchScreen({ navigation }) {
   // hide on current screen
   const bookDetails = (book) => {
     Haptics.selectionAsync();
-    navigation.push('BookDetails', { book });
+    navigation.push('BookDetails',{book});
   };
 
   // edit selected book

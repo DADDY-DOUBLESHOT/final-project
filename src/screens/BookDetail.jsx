@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect,useRef} from 'react';
 import { View, Text, Image, StyleSheet, TextInput,  ScrollView,  Button, TouchableOpacity,  Dimensions, ImageBackground} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import bookcover from "../../assets/bookcover.jpg";
@@ -8,59 +8,60 @@ import backarrow from "../images/backarrow.png";
 import { Ionicons } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Stars from "react-native-stars";
+import * as Haptics from 'expo-haptics'; 
+// import PDFView from 'react-native-pdf';
 
 import bookmark from "../images/bookmark.png";
 import axios from 'axios';
-// import Animated, {
-//   interpolate, withTiming, runOnJS,
-//   useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, useAnimatedScrollHandler,
-// } from 'react-native-reanimated';
+import Animated, {
+  interpolate, withTiming, runOnJS,
+  useAnimatedGestureHandler, useAnimatedStyle, useSharedValue, useAnimatedScrollHandler,
+} from 'react-native-reanimated';
 // import { useNavigation } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const BookDetailPage = () => {
-  // const { book } = route.params;
+const BookDetailPage = ({ navigation, route }) => {
+  const {book} = route.params;
+  let scrollOffsetY = useRef(new Animated.Value(0)).current; 
+
 
   const [books, setBooks] = useState([]);
   const[text,setText]=useState('');
-  const book = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const [data,setData]=useState("");
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState("");
-  const [search,setSearch]=useState("");
-  const [searchResults, setSearchResults]=useState([]);
 
   // useEffect(() => {
   //   // Make an API call or retrieve the book details from a database
   //   // and dispatch the action to set the book details in the store
-    const bookDetails = {
-    "book_id": 1,
-    "goodreads_book_id": 2767052,
-    "best_book_id": 2767052,
-    "work_id": 2792775,
-    "books_count": 272,
-    "isbn": 9780439023480,
-    "authors": "Suzanne Collins",
-    "original_publication_year": 2008,
-    "original_title": "The Hunger Games",
-    "title": "The Hunger Games (The Hunger Games, #1)",
-    "language_code": "eng",
-    "average_rating": 4.34,
-    "ratings_count": 4780653,
-    "work_ratings_count": 4942365,
-    "work_text_reviews_count": 155254,
-    "ratings_1": 66715,
-    "ratings_2": 127936,
-    "ratings_3": 560092,
-    "ratings_4": 1481305,
-    "ratings_5": 2706317,
-    "image_url": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
-    "small_image_url": "https://images.gr-assets.com/books/1447303603s/2767052.jpg"
-    };
+    // const bookDetails = {
+    // "book_id": 1,
+    // "goodreads_book_id": 2767052,
+    // "best_book_id": 2767052,
+    // "work_id": 2792775,
+    // "books_count": 272,
+    // "isbn": 9780439023480,
+    // "authors": "Suzanne Collins",
+    // "original_publication_year": 2008,
+    // "original_title": "The Hunger Games",
+    // "title": "The Hunger Games (The Hunger Games, #1)",
+    // "language_code": "eng",
+    // "average_rating": 4.34,
+    // "ratings_count": 4780653,
+    // "work_ratings_count": 4942365,
+    // "work_text_reviews_count": 155254,
+    // "ratings_1": 66715,
+    // "ratings_2": 127936,
+    // "ratings_3": 560092,
+    // "ratings_4": 1481305,
+    // "ratings_5": 2706317,
+    // "image_url": "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+    // "small_image_url": "https://images.gr-assets.com/books/1447303603s/2767052.jpg"
+    // };
 
 
   const user={
@@ -77,10 +78,26 @@ const BookDetailPage = () => {
  
 
   const goBack = () => {
+    Haptics.selectionAsync();
     navigation.goBack();
   };
 
   
+  const LineDivider=()=>{
+     return(
+      <View style={{width:1, paddingVertical:5}}>
+        <View style={{flex:1, borderLeftColor:'#d3d3d3',
+        borderLeftWidth:1}}></View>
+      </View>
+     )
+  }
+
+  // const pdfReader=()=>{
+  //   <PDFView
+  // style={{ flex: 1 }}
+  // source={{ uri: 'https://api.printnode.com/static/test/pdf/multipage.pdf' }}
+  // />  
+  // }
   
 
   // const anims = {
@@ -109,28 +126,28 @@ const BookDetailPage = () => {
 
   
 
-  useEffect(()=>{
-    fetch("https://openlibrary.org/works/OL45804W.json")
-    .then((response)=>response.json())
-    .then((data)=>setData(data))
-    .then(()=>setLoading)
-    .catch(setError);
+  // useEffect(()=>{
+  //   fetch("https://openlibrary.org/works/OL45804W.json")
+  //   .then((response)=>response.json())
+  //   .then((data)=>setData(data))
+  //   .then(()=>setLoading)
+  //   .catch(setError);
 
-  },[]);
+  // },[]);
 
       // console.log(data);
     
-    if(loading){
-      return <h1 style={{textAlign:"center"}}>Loading...</h1>;
-    }
+    // if(loading){
+    //   return <h1 style={{textAlign:"center"}}>Loading...</h1>;
+    // }
 
-    if(error){
-      return <pre>{JSON.stringify(error,null,2)}</pre>;
-    }
+    // if(error){
+    //   return <pre>{JSON.stringify(error,null,2)}</pre>;
+    // }
 
-    if(!data){
-      return null;
-    }
+    // if(!data){
+    //   return null;
+    // }
 
   return (
     <ScrollView>
@@ -149,23 +166,63 @@ const BookDetailPage = () => {
                   style={[
                     {
                       width: screenWidth,
-                      height:screenHeight-300 ,
+                      height:screenHeight-200 ,
                       justifyContent: "center",
-                      alignItems: "flex-end",
+                      alignItems: "center",
                       borderRadius: 10,
                       zIndex:-1,
+                      tintColor:book.backgroundColor,
+                      marginBottom:10
                       // opacity:0.5,
                     },
                   ]}
                   resizeMode="cover"
                   blurRadius={15}
-                  source={bookcover}
+                  source={{ uri: book.imageUrl }}
                 > 
-        <Image source={bookcover} style={styles.image} /></ImageBackground>
-        <Text style={styles.title}>{bookDetails.original_title}</Text>
-        <Text style={styles.author}>{bookDetails.authors}</Text>
+        <Image source={{ uri: book.imageUrl }} style={styles.image} />
+        <Text style={styles.title}>{book.bookTitleBare}</Text>
+        <Text style={styles.author}>{book.author.name}</Text>
+        
+
+
+        
+
+        <View  style={{
+            flexDirection:'row',
+            paddingVertical:20,
+            margin:10,
+            marginTop:20,
+            borderRadius:10,
+            backgroundColor:"rgba(0,0,0,0.3)"
+         }}>
+
+          {/* Rating */}
+          <View style={{flex:1,alignItems:'center',color:'white'}}>
+            <Text style={{color:'white'}}>{book.avgRating}</Text>
+            <Text style={{color:'white'}}>Rating</Text>
+          </View>
+ 
+          <LineDivider/>
+
+          {/* Pages */}
+          <View style={{flex:1,alignItems:'center',color:'white'}}>
+            <Text style={{color:'white'}}>{book.numPages}</Text>
+            <Text style={{color:'white'}}>Pages</Text>
+          </View>
+
+          <LineDivider/>
+
+          {/* ratngs count */}
+          <View style={{flex:1,alignItems:'center',color:'white'}}>
+            <Text style={{color:'white'}}>{book.ratingsCount}</Text>
+            <Text style={{color:'white'}}>Views</Text>
+          </View>
+         </View>
+  
+         </ImageBackground>
         <View style={{display:"flex",flexDirection:"row",marginHorizontal:25}}>
-        <Stars
+        {/* <Stars
           style={stars_style.rating}
           // default={parseInt(item.rating)}
           spacing={5}
@@ -173,9 +230,9 @@ const BookDetailPage = () => {
           count={5}
           fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
           emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
-        />
+        /> */}
           {/* <Text style={styles.rating}>{bookDetails.average_rating}</Text> */}
-          <Text style={{marginHorizontal:screenWidth-280, color:"white",marginBottom:5}}>(100 views)</Text>
+          {/* <Text style={{marginHorizontal:screenWidth-280, color:"white",marginBottom:5}}>(100 views)</Text> */}
         </View>
         <View
           style={{
@@ -185,19 +242,27 @@ const BookDetailPage = () => {
           }}
         />
         {/* <View > */}
-          <ScrollView style={{height:300,borderColor:"#2196F3"}} horizontal={false}><Text style={styles.synopsis}>Synopsis:{'\n'}{data.description}</Text>
+          <ScrollView style={{height:300,borderColor:"#2196F3"}} horizontal={false}><Text style={styles.synopsis}>Synopsis:{'\n'}{book.description.html}</Text>
           </ScrollView>
         {/* </View> */}
-        <View style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center',}}><Text style={styles.start}>Start Reading</Text></View>
+        
+        
+        <View style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center'}}><Text style={styles.start}>Start Reading</Text></View>
+        
+
         <View style={styles.review}>
           <Text style={{color:"white",padding:15,fontSize:16}}>User Reviews:</Text> 
            <View style={styles.usercontainer}>
             <Image source={photo} style={styles.profileImg}/>
+            <ScrollView >
             <View style={{display:'flex', flexDirection:"column",
              borderColor:'black',width:screenWidth-130}}>
+              
                <Text style={{marginStart:10,marginTop:10,color:'white'}}>{user.username}</Text>
                <Text style={{height:40,marginStart:10,paddingVertical:5}}>{user.review}</Text>
+              
             </View>
+            </ScrollView>
            </View>
            <View style={styles.usercontainer}>
             <Image source={photo} style={styles.profileImg}/>
@@ -214,7 +279,7 @@ const BookDetailPage = () => {
               multiline
               numberOfLines={4}
               textAlignVertical="top"
-              color='white'
+              color='black'
               useAnimatedScrollView='true'
               style={styles.TextInput}>Write a Review</TextInput>
         <Button title="Send" width="200" style={styles.button}/>
@@ -229,6 +294,7 @@ const stars_style = StyleSheet.create({
     width: "100%",
     marginHorizontal:10,
     marginStart:10,
+    backgroundColor:'white'
   },
 });
 
@@ -237,17 +303,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    backgroundColor:'#0A2647',
+    backgroundColor:'white',
     color:'white',
     // #FFFBEB,#495579,#263159
   },
   image: {
-    width: screenWidth-200,
-    height: screenHeight-500,
-    marginBottom: 20,
-    marginTop:90,
+    width: screenWidth-250,
+    height: screenHeight-550,
+    marginBottom: 10,
+    marginTop:80,
     zIndex:1,
-    marginHorizontal:20,
+    marginHorizontal:10,
     alignSelf:'center',
     zIndex:1,
     opacity:1,
@@ -256,16 +322,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
-    marginHorizontal:25,
+    // marginHorizontal:25,
     marginTop:20,
-    color:'white'
+    color:'white',
+    alignItems:'center',
+    justifyContent:'center'
   },
   author: {
     fontSize: 16,
     marginBottom: 10,
-    marginHorizontal:28,
+    // marginHorizontal:28,
     marginTop:1,
-    color:'white'
+    color:'white',
+    alignItems:'center',
+    justifyContent:'center'
   },
   rating: {
     fontSize: 16,
@@ -287,7 +357,7 @@ const styles = StyleSheet.create({
   },
   synopsis: {
     fontSize: 14,
-    marginBottom: 10,
+    marginBottom: 20,
     borderColor:'#2196F3',
     borderWidth:1,
     width:screenWidth-40,
@@ -304,8 +374,8 @@ const styles = StyleSheet.create({
     marginTop:25,
     marginRight:8,
     right:10,
-    width:30,
-    height:40,
+    width:20,
+    height:30,
     position:'absolute',    
   },
   TextInput:{
@@ -313,7 +383,7 @@ const styles = StyleSheet.create({
     borderWidth:1,
     borderColor:'#2196F3',
     marginHorizontal:21,
-    color:'white',
+    color:'black',
     padding:10,
   },
   reviewConatiner:{
@@ -329,19 +399,18 @@ const styles = StyleSheet.create({
    textAlignVertical:'center',
   },
   start:{
-    marginTop:20,
+    marginTop:30,
     alignItems:'center',
     justifyContent:'center',
     width:"90%",
     height:50,
     paddingVertical:11,
     color:'white',
-    marginHorizontal:20,
     textAlign:'center',
     marginBottom:20,
     backgroundColor:"#2196F3",
     borderRadius:5,
-    fontSize:20,
+    fontSize:20
   },
   profileImg:{
     width:50,
