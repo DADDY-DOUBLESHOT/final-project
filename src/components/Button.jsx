@@ -1,37 +1,32 @@
-import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import React from "react";
+import { StyleSheet } from "react-native";
+import { Button as PaperButton } from "react-native-paper";
+import { theme } from "../theme";
 
-import Text from './Text';
-
-// Themeable Button
-function ThemedButton({
-  onPress, style, textStyle, children,
-}) {
-  const { colors } = useTheme();
-  const styles = StyleSheet.create({
-    button: {
-      height: 50,
-      borderWidth: 1,
-      borderRadius: 50,
-      borderColor: colors.border,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowRadius: 0,
-      shadowOpacity: 1,
-      shadowColor: colors.primary,
-      shadowOffset: { width: 3, height: 3 },
-      backgroundColor: colors.button,
-    },
-  });
-
+export default function Button({ mode, style, ...props }) {
   return (
-    <Pressable onPress={onPress} style={[styles.button, style]}>
-      <Text bold size={16} style={[textStyle]}>
-        {children}
-      </Text>
-    </Pressable>
+    <PaperButton
+      style={[
+        styles.button,
+        mode === "outlined" && { backgroundColor: theme.colors.surface },
+        style,
+      ]}
+      labelStyle={styles.text}
+      mode={mode}
+      {...props}
+    />
   );
 }
 
-export default React.memo(ThemedButton);
+const styles = StyleSheet.create({
+  button: {
+    width: "100%",
+    marginVertical: 10,
+    paddingVertical: 2,
+  },
+  text: {
+    fontWeight: "bold",
+    fontSize: 15,
+    lineHeight: 26,
+  },
+});

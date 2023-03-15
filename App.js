@@ -1,46 +1,90 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, useColorScheme, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+  ScrollView,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import store from "./store";
-import { useEffect } from "react";
-import getTheme from "./src/theme";
-import MainNavigator from "./src/MainNavigator";
-import LoginNavigator from "./src/LoginNavigator";
-import { APP_IP } from "@env";
+import { useCallback, useEffect, useState } from "react";
+import { theme } from "./src/theme";
+import * as DefaultSplash from "expo-splash-screen";
+import { createStackNavigator } from "@react-navigation/stack";
+import SplashScreen from "./src/screens/splash/SplashScreen";
+import StartScreen from "./src/screens/splash/StartScreen";
+import LoginScreen from "./src/screens/login/LoginScreen";
+import RegisterScreen from "./src/screens/login/RegisterScreen";
+import HomeScreen2 from "./src/screens/main/HomeScreen2";
+import ForgotScreen from "./src/screens/login/ForgotScreen";
+import OTPScreen from "./src/screens/login/OTPScreen";
+import GenresScreen from "./src/screens/login/GenresScreen";
 
-const Stack = createStackNavigator();
+DefaultSplash.preventAutoHideAsync();
 
 const AppWrapper = () => {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const checkLoadScreen = useCallback(async () => {
+    try {
+      DefaultSplash.hideAsync();
+    } catch (error) {
+    } finally {
+      setAppIsReady(true);
+    }
+  });
   return (
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <View style={{ display: "flex", flex: 1 }} onLayout={checkLoadScreen}>
+      <Provider store={store} theme={theme}>
+        <App />
+      </Provider>
+    </View>
   );
 };
 
 const App = () => {
-  const scheme = useColorScheme();
-  const user = useSelector((state) => state.USER);
-  console.log("About user", user);
-  console.log("current ip", APP_IP);
-  useEffect(() => {}, [user && user.logged]);
+  const Stack = createStackNavigator();
+
+  const user = useSelector((state) => state);
+
+  console.log("state", user);
+
   return (
-    <NavigationContainer theme={getTheme(scheme)}>
-      {user && user.logged ? <MainNavigator /> : <LoginNavigator />}
-      {/* { <MainNavigator />} */}
-    </NavigationContainer>
+    <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <StatusBar hidden />
+      {/* <Provider store={store} theme={theme}> */}
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{
+              headerShown: false,
+              animationEnabled: true,
+              animationTypeForReplace: "pop",
+            }}
+            initialRouteName="splash"
+          >
+            <Stack.Screen name="splash" component={SplashScreen} />
+            {
+              <Stack.Group>
+                <Stack.Screen name="start" component={StartScreen} />
+                <Stack.Screen name="login" component={LoginScreen} />
+                <Stack.Screen name="forgot" component={ForgotScreen} />
+                <Stack.Screen name="register" component={RegisterScreen} />
+                <Stack.Screen name="otp" component={OTPScreen} />
+                <Stack.Screen name="genre" component={GenresScreen} />
+              </Stack.Group>
+            }
+            <Stack.Group>
+              <Stack.Screen name="home" component={HomeScreen2} />
+            </Stack.Group>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </KeyboardAvoidingView>
+      {/* </Provider> */}
+    </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
 
 export default AppWrapper;
