@@ -24,9 +24,10 @@ const LoginScreen = ({ navigation }) => {
     password: "",
   };
 
-  const handleLogin = (values) => {
+  const handleLogin = async (values) => {
     dispatch(loaderStart());
-    dispatch(userLogin(values.email, values.password));
+    let res = await dispatch(await userLogin(values.email, values.password));
+    if (res) navigation.replace("homenavi");
   };
   return (
     <View style={style.container}>

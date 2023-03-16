@@ -23,13 +23,15 @@ const SplashScreen = ({ navigation }) => {
   const loader = useSelector((state) => state.LOADER);
 
   const load = async () => {
+    // AsyncStorage.removeItem("@user");
+    // AsyncStorage.removeItem("@token");
     try {
       let user = await AsyncStorage.getItem("@user");
       let token = await AsyncStorage.getItem("@token");
       if (user && token) {
         console.log("Preload user from storage ", user, token);
         dispatch(loadUser(JSON.parse(user), token));
-        navigation.replace("start");
+        navigation.replace("homenavi");
       } else {
         navigation.replace("start");
       }

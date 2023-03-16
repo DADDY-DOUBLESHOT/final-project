@@ -11,7 +11,7 @@ import store from "../../../store";
 import { BASE_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loaderStop } from "./loaderAction";
-export const userLogin = (email, password) => async (dispatch) => {
+export const userLogin = async (email, password) => async (dispatch) => {
   var data = JSON.stringify({
     email: email,
     password: password,
@@ -28,18 +28,23 @@ export const userLogin = (email, password) => async (dispatch) => {
 
   try {
     const response = await axios(config);
-    dispatch({
-      type: LOGIN,
-      payload: {
-        logged: true,
-        token: response.data.token,
-        user: response.data.user,
-      },
-    });
-    AsyncStorage.setItem("@user", JSON.stringify(response.data.user));
-    AsyncStorage.setItem("@token", JSON.stringfy(response.data.token));
-
-    dispatch({ type: LOADER_STOP });
+    if (response.status === 200) {
+      dispatch({
+        type: LOGIN,
+        payload: {
+          logged: true,
+          token: response.data.token,
+          user: response.data.user,
+        },
+      });
+      AsyncStorage.setItem("@user", JSON.stringify(response.data.user));
+      AsyncStorage.setItem("@token", response.data.token);
+      dispatch({ type: LOADER_STOP });
+      return true;
+    } else {
+      dispatch({ type: LOADER_STOP });
+      return false;
+    }
   } catch (error) {
     console.log("error in backend ", error);
 

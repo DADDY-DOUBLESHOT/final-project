@@ -11,7 +11,7 @@ import {
   TouchableNativeFeedback,
   View,
 } from "react-native";
-import astro from "../../../assets/cartoon.jpg";
+import { useSelector } from "react-redux";
 import Carousel from "react-native-snap-carousel-expo-46-compatible/src/carousel/Carousel";
 import read_book from "../../../assets/read_book.png";
 import audio_book from "../../../assets/audio.png";
@@ -34,6 +34,7 @@ const CarouselCardItem = ({ item, index }) => {
 };
 
 export default function StartScreen({ navigation }) {
+  const user = useSelector((state) => state.USER);
   const start = [
     {
       title: "Read Books",
@@ -60,7 +61,9 @@ export default function StartScreen({ navigation }) {
   const [animatedBackgroundColor] = useState(new Animated.Value(0));
   useEffect(() => {
     dispatch(loaderStop());
-  }, []);
+    console.log("user from start", user);
+    if (user && user.logged) navigation.replace("homenavi");
+  }, [user.logged]);
 
   const startAnimation = (index) => {
     setActiveIndex(index);

@@ -22,6 +22,7 @@ import HomeScreen2 from "./src/screens/main/HomeScreen2";
 import ForgotScreen from "./src/screens/login/ForgotScreen";
 import OTPScreen from "./src/screens/login/OTPScreen";
 import GenresScreen from "./src/screens/login/GenresScreen";
+import HomeNavigator from "./src/screens/main/HomeNavigator";
 
 DefaultSplash.preventAutoHideAsync();
 
@@ -77,7 +78,7 @@ const App = () => {
               </Stack.Group>
             }
             <Stack.Group>
-              <Stack.Screen name="home" component={HomeScreen2} />
+              <Stack.Screen name="homenavi" component={HomeNavigator} />
             </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>

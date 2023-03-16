@@ -133,7 +133,7 @@ const GenresScreen = ({ navigation }) => {
     dispatch(loaderStart());
     let res = await dispatch(await userRegister(selected));
     console.log("result from dispatch", res);
-    if (res) navigation.replace("home");
+    if (res) navigation.replace("homenavi");
   };
   return (
     <View style={styles.container}>

@@ -39,7 +39,7 @@ const RegisterScreen = ({ navigation }) => {
       contentContainerStyle={style.container}
     >
       {/* <View style={style.container}> */}
-      <View style={{ flex: 0.1 }}></View>
+      <View style={{ flex: 0.2 }}></View>
       <View style={style.header}>
         <Image
           resizeMode="cover"
