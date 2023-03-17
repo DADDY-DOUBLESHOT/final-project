@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen2 from "./HomeScreen2";
 import ProfileView from "./ProfileView";
+import UploadBook from "./UploadBook";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -24,6 +25,15 @@ const HomeNavigator = () => {
           headerTitleAlign: "center",
         }}
         component={HomeScreen2}
+      />
+      <HomeDrawer.Screen
+        name="Upload"
+        options={{
+          title: "Upload Book",
+          headerTitle: "Upload Book",
+          headerTitleAlign: "center",
+        }}
+        component={UploadBook}
       />
     </HomeDrawer.Navigator>
   );
