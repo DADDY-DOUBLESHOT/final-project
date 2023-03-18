@@ -19,6 +19,7 @@ import { IconButton, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { BASE_URL } from "@env";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
+import axios from "axios";
 
 const ProfileView = (props) => {
   const [edit, setEdit] = useState(false);
@@ -26,6 +27,7 @@ const ProfileView = (props) => {
   const [userChange, setUserChange] = useState({
     name: "",
     profile: null,
+    nameLoader: null,
   });
   const user = useSelector((state) => state.USER.user);
   const loader = useSelector((state) => state.LOADER);
@@ -33,10 +35,12 @@ const ProfileView = (props) => {
   const editRef = useRef(new Animated.Value(0)).current;
   const profileeditRef = useRef(new Animated.Value(0)).current;
   useEffect(() => {
+    loadProfile();
     dispatch(loaderStop());
     setUserChange({
-      name: user.name,
+      ...userChange,
       profile: user?.profile ? user.profile : "../../images/profile.png",
+      nameLoader: false,
     });
   }, []);
 
@@ -59,15 +63,41 @@ const ProfileView = (props) => {
     });
   };
 
+  const loadProfile = async () => {
+    var config = {
+      method: "get",
+      url: `${BASE_URL}/me`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      await axios(config)
+        .then(function (response) {
+          setUserChange({
+            name: response.data.user.name,
+            profile: response.data?.profile,
+          });
+        })
+        .catch(function (error) {
+          ToastAndroid.show("Unable to fetch profile", ToastAndroid.SHORT);
+        });
+    } catch (error) {
+      ToastAndroid.show("Unable to fetch profile", ToastAndroid.SHORT);
+    }
+  };
+
   const updateUsername = async () => {
     // dispatch(loaderStart());
+    setUserChange({ ...userChange, nameLoader: true });
     var data = JSON.stringify({
       name: userChange.name,
     });
 
     var config = {
       method: "put",
-      url: `${BASE_URL}/admin/me/update`,
+      url: `${BASE_URL}/me/update`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -77,16 +107,20 @@ const ProfileView = (props) => {
     try {
       await axios(config)
         .then(function (response) {
-          // console.log(JSON.stringify(response.data));
+          console.log("Success", response.data);
           ToastAndroid.show("Username updated", ToastAndroid.SHORT);
+          setUserChange({ ...userChange, nameLoader: false });
         })
         .catch(function (error) {
           // console.log(error);
           setUserChange({ ...userChange, name: user.name });
-          ToastAndroid.show("Error updating username", ToastAndroid.SHORT);
+          ToastAndroid.show("Error  username", ToastAndroid.SHORT);
+          setUserChange({ ...userChange, nameLoader: false });
         });
     } catch (error) {
       setUserChange({ ...userChange, name: user.name });
+      console.log("Error", error);
+      setUserChange({ ...userChange, nameLoader: false });
       ToastAndroid.show("Error updating username", ToastAndroid.SHORT);
     }
     animateEdit();
@@ -98,7 +132,7 @@ const ProfileView = (props) => {
 
     var config = {
       method: "put",
-      url: `${BASE_URL}/admin/me/update`,
+      url: `${BASE_URL}/me/update`,
       headers: {
         "Content-Type": "application/json",
       },
@@ -229,11 +263,13 @@ const ProfileView = (props) => {
               }
             />
             <Button
+              contentStyle={{ flexDirection: "row-reverse" }}
               onPress={() => {
                 updateUsername();
               }}
               mode="contained"
               buttonColor="green"
+              loading={userChange.nameLoader}
             >
               Save
             </Button>
@@ -255,7 +291,7 @@ const ProfileView = (props) => {
               },
             ]}
           >
-            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.name}>{userChange.name}</Text>
             <IconButton
               size={20}
               style={{ padding: 0, margin: 0 }}
