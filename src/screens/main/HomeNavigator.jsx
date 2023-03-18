@@ -4,6 +4,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen2 from "./HomeScreen2";
 import ProfileView from "./ProfileView";
 import AudioBookScreen from "./AudioBookScreen";
+import UploadBook from "./UploadBook";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -36,6 +37,15 @@ const HomeNavigator = () => {
           },
         }}
         component={AudioBookScreen}
+        />
+        <HomeDrawer.Screen
+        name="Upload"
+        options={{
+          title: "Upload Book",
+          headerTitle: "Upload Book",
+          headerTitleAlign: "center",
+        }}
+        component={UploadBook}
       />
     </HomeDrawer.Navigator>
   );
