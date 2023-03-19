@@ -9,7 +9,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Stars from "react-native-stars";
 import * as Haptics from 'expo-haptics'; 
-import Pdf from 'react-native-pdf';
+import WebView from 'react-native-webview';
+import PDFReader from 'rn-pdf-reader-js';
+// import Pdf from 'react-native-pdf';
 
 import bookmark from "../images/bookmark.png";
 import axios from 'axios';
@@ -21,6 +23,8 @@ import Animated, {
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+// const PdfReader=({url:uri})=><WebView javaScriptEnabled={true} style={{ flex: 1 }} source={{ uri }} />
 
 const BookDetailPage = ({ navigation, route }) => {
   const {book} = route.params;
@@ -92,12 +96,12 @@ const BookDetailPage = ({ navigation, route }) => {
      )
   }
 
-  const pdfReader=()=>{
-    <PDFView
-  style={{ flex: 1 }}
-  source={{ uri: 'https://api.printnode.com/static/test/pdf/multipage.pdf' }}
-  />  
-  }
+  // const pdfReader=()=>{
+  //   <PDFView
+  // style={{ flex: 1 }}
+  // source={{ uri: 'https://api.printnode.com/static/test/pdf/multipage.pdf' }}
+  // />  
+  // }
   
 
   // const anims = {
@@ -247,7 +251,7 @@ const BookDetailPage = ({ navigation, route }) => {
         {/* </View> */}
         
         
-        <View style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center'}}><Text style={styles.start}>Start Reading</Text></View>
+        <View  style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center'}}><Text style={styles.start}>Start Reading</Text></View>
         
 
         <View style={styles.review}>
@@ -286,7 +290,7 @@ const BookDetailPage = ({ navigation, route }) => {
         </View>
  
         <View style={{flex:1, justifyContent:'flex-start', alignItems:'center'}}>
-          <Pdf  trustAllCerts={false}
+          {/* <Pdf  trustAllCerts={false}
           source={{
             uri: 'https://api.printnode.com/static/test/pdf/multipage.pdf',
           }}
@@ -308,6 +312,15 @@ const BookDetailPage = ({ navigation, route }) => {
         spacing={10}
         // horizontal
         style={{flex: 1, width: Dimensions.get('window').width}}
+        /> */}
+        </View>
+
+        <View style={styles.pdfstyle}>
+          {/* <PdfReader url="http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf"/> */}
+          <PDFReader
+          source={{ uri:"https://api.printnode.com/static/test/pdf/multipage.pdf"
+         }}
+         style={{flex: 1, width: Dimensions.get('window').width}}
         />
         </View>
       </View>
@@ -464,6 +477,13 @@ const styles = StyleSheet.create({
     width:50,
     height:25,
     position:'absolute',
+  },
+  pdfstyle:{
+    flex: 1,
+    height:screenHeight-350,
+    backgroundColor:'white',
+    margin:10,
+    width:screenWidth-100,
   }
 
 });
