@@ -19,7 +19,9 @@ import { IconButton, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { BASE_URL } from "@env";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
+import { loadUser, userLogout } from "../../store/actions/userAction";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProfileView = (props) => {
   const [edit, setEdit] = useState(false);
@@ -38,7 +40,7 @@ const ProfileView = (props) => {
     loadProfile();
     dispatch(loaderStop());
     setUserChange({
-      ...userChange,
+      name: user?.name,
       profile: user?.profile ? user.profile : "../../images/profile.png",
       nameLoader: false,
     });
@@ -63,6 +65,12 @@ const ProfileView = (props) => {
     });
   };
 
+  const logout = async () => {
+    let res = await AsyncStorage.removeItem("@user");
+    res = await AsyncStorage.removeItem("@token");
+    dispatch(userLogout());
+  };
+
   const loadProfile = async () => {
     var config = {
       method: "get",
@@ -79,6 +87,7 @@ const ProfileView = (props) => {
             name: response.data.user.name,
             profile: response.data?.profile,
           });
+          dispatch(loadUser(response.data.user));
         })
         .catch(function (error) {
           ToastAndroid.show("Unable to fetch profile", ToastAndroid.SHORT);
@@ -113,9 +122,8 @@ const ProfileView = (props) => {
         })
         .catch(function (error) {
           // console.log(error);
-          setUserChange({ ...userChange, name: user.name });
-          ToastAndroid.show("Error  username", ToastAndroid.SHORT);
-          setUserChange({ ...userChange, nameLoader: false });
+          setUserChange({ ...userChange, name: user.name, nameLoader: false });
+          ToastAndroid.show("Error updating username", ToastAndroid.SHORT);
         });
     } catch (error) {
       setUserChange({ ...userChange, name: user.name });
@@ -172,7 +180,7 @@ const ProfileView = (props) => {
   };
 
   return (
-    <DrawerContentScrollView style={styles.container}>
+    <DrawerContentScrollView contentContainerStyle={styles.container}>
       <View style={styles.profile_container}>
         <Animated.View style={styles.profileContainer}>
           {loader && loader.active ? (
@@ -185,7 +193,7 @@ const ProfileView = (props) => {
             <Image
               resizeMode="contain"
               source={
-                user.profile
+                user && user.profile
                   ? { uri: userChange.profile }
                   : require("../../images/profile.png")
               }
@@ -304,6 +312,9 @@ const ProfileView = (props) => {
         )}
       </View>
       <DrawerItemList {...props} />
+      <Button onPress={() => logout()} style={styles.logout} mode="contained">
+        Logout
+      </Button>
     </DrawerContentScrollView>
   );
 };
@@ -348,6 +359,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginRight: 5,
+  },
+  logout: {
+    bottom: 0,
+    margin: 50,
   },
 });
 export default ProfileView;

@@ -48,7 +48,7 @@ const AppWrapper = () => {
 const App = () => {
   const Stack = createStackNavigator();
 
-  const user = useSelector((state) => state);
+  const user = useSelector((state) => state.USER);
 
   console.log("state", user);
 
@@ -77,9 +77,12 @@ const App = () => {
                 <Stack.Screen name="genre" component={GenresScreen} />
               </Stack.Group>
             }
-            <Stack.Group>
-              <Stack.Screen name="homenavi" component={HomeNavigator} />
-            </Stack.Group>
+
+            {user && user.user && (
+              <Stack.Group>
+                <Stack.Screen name="homenavi" component={HomeNavigator} />
+              </Stack.Group>
+            )}
           </Stack.Navigator>
         </NavigationContainer>
       </KeyboardAvoidingView>

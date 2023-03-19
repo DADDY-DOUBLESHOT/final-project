@@ -15,7 +15,6 @@ import { Ionicons } from "@expo/vector-icons";
 import Carousel, {
   ParallaxImage,
 } from "react-native-snap-carousel-expo-46-compatible";
-import { Rating, AirbnbRating } from "react-native-ratings";
 import Stars from "react-native-stars";
 import romance from "../../../assets/romance.png";
 import adult from "../../../assets/adult.png";
@@ -494,6 +493,7 @@ const card_styles = StyleSheet.create({
   item: {
     width: screenWidth / 2,
     height: screenWidth - 100,
+    borderRadius: 8,
   },
   imageContainer: {
     flex: 1,

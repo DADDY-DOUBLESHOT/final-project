@@ -1,6 +1,7 @@
 import {
   LOADER_STOP,
   LOADUSER,
+  LOADUSERTOKEN,
   LOGIN,
   LOGOUT,
   SIGNUP,
@@ -127,17 +128,25 @@ export const userRegister = async (genres) => async (dispatch) => {
     return false;
   }
 };
-export const userLogout = async (dispatch) => {
+export const userLogout = () => async (dispatch) => {
   dispatch({
     type: LOGOUT,
   });
 };
 
-export const loadUser = (user, token) => async (dispatch) => {
+export const loadUserToken = (user, token) => async (dispatch) => {
+  dispatch({
+    type: LOADUSERTOKEN,
+    payload: {
+      token: token,
+      user: user,
+    },
+  });
+};
+export const loadUser = (user) => async (dispatch) => {
   dispatch({
     type: LOADUSER,
     payload: {
-      token: token,
       user: user,
     },
   });

@@ -7,13 +7,14 @@ import {
   StyleSheet,
   Text,
   View,
+  ToastAndroid,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import splash from "../../../assets/book_icon.png";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { quotes } from "../../utils/quotes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loadUser } from "../../store/actions/userAction";
+import { loadUserToken } from "../../store/actions/userAction";
 
 const SplashScreen = ({ navigation }) => {
   const [quote, setQuote] = useState(null);
@@ -29,14 +30,14 @@ const SplashScreen = ({ navigation }) => {
       let user = await AsyncStorage.getItem("@user");
       let token = await AsyncStorage.getItem("@token");
       if (user && token) {
-        console.log("Preload user from storage ", user, token);
-        dispatch(loadUser(JSON.parse(user), token));
+        // console.log("Preload user from storage ", user, token);
+        dispatch(loadUserToken(JSON.parse(user), token));
         navigation.replace("homenavi");
       } else {
         navigation.replace("start");
       }
     } catch (error) {
-      console.log("error in preload", error);
+      ToastAndroid.show("Error in connecting server", ToastAndroid.SHORT);
       dispatch(loaderStop());
     } finally {
     }
