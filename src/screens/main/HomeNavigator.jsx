@@ -5,6 +5,7 @@ import HomeScreen2 from "./HomeScreen2";
 import ProfileView from "./ProfileView";
 import AudioBookScreen from "./AudioBookScreen";
 import UploadBook from "./UploadBook";
+import WelcomeStatus from "./WelcomeStatus";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -22,8 +23,7 @@ const HomeNavigator = () => {
         name="home"
         options={{
           title: "Home",
-          headerTitle: "Book Forum",
-          headerTitleAlign: "center",
+          headerShown: false,
         }}
         component={HomeScreen2}
       />
@@ -37,8 +37,8 @@ const HomeNavigator = () => {
           },
         }}
         component={AudioBookScreen}
-        />
-        <HomeDrawer.Screen
+      />
+      <HomeDrawer.Screen
         name="Upload"
         options={{
           title: "Upload Book",

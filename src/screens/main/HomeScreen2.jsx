@@ -30,40 +30,55 @@ import study from "../../../assets/study.png";
 import young from "../../../assets/young.png";
 import cont1 from "../../../assets/continue_read_1.jpg";
 import cont2 from "../../../assets/continue_read_2.jpg";
+import WelcomeStatus from "./WelcomeStatus";
+import { IconButton } from "react-native-paper";
+import { useSelector } from "react-redux";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 const CarouselCardItem = ({ item, index }, parallaxProps) => {
-  // console.log(item);
+  const isCenter = parallaxProps.index === index;
+  const zIndex = isCenter ? 0 : 1;
+  const scale = isCenter ? 1 : 0.8;
+  const translateY = isCenter ? 0 : -100;
   return (
-    <View style={card_styles.item}>
-      <ParallaxImage
-        source={{ uri: item.imgUrl }}
-        containerStyle={card_styles.imageContainer}
-        style={card_styles.image}
-        parallaxFactor={0.15}
-        showSpinner
-        {...parallaxProps}
+    <View
+      style={[
+        {
+          width: screenWidth - 200,
+          zIndex,
+          alignItems: "center",
+          margin: 0,
+        },
+      ]}
+    >
+      <Image
+        style={{
+          width: 200,
+          height: 250,
+          resizeMode: "contain",
+        }}
+        source={{ uri: item.coverImg }}
       />
-      <View style={card_styles.header_container}>
-        <Text allowFontScaling={false} style={card_styles.title}>
-          {item.title.length > 20
-            ? item.title.substring(0, 20) + " ..."
-            : item.title}
-        </Text>
-        <Text allowFontScaling={false} style={card_styles.author}>
-          {item.author}
-        </Text>
-        <Stars
-          style={card_styles.rating}
-          default={parseInt(item.rating)}
-          spacing={5}
-          starSize={25}
-          count={5}
-          fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
-          emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
-        />
-      </View>
+      <Text
+        style={[
+          { textAlign: "center", fontSize: 16 },
+          {
+            color:
+              parallaxProps.index === index ? "#810CA8" : "rgba(0,0,0,0.7)",
+          },
+        ]}
+      >
+        {item.title}
+      </Text>
+      <Text
+        style={[
+          { textAlign: "center", fontSize: 14 },
+          { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
+        ]}
+      >
+        {item.author}
+      </Text>
     </View>
   );
 };
@@ -105,16 +120,18 @@ const GenreCardItem = ({ item, index }, parallaxProps) => {
   // console.log(item);
   return (
     <View style={genre_card_styles.item}>
-      <Image style={genre_card_styles.image} source={{ uri: item.imgUrl }} />
+      <Image style={genre_card_styles.image} source={{ uri: item.coverImg }} />
       <View style={genre_card_styles.header_container}>
-        <Text allowFontScaling={false} style={genre_card_styles.title}>
-          {item.title.length > 20
-            ? item.title.substring(0, 20) + " ..."
-            : item.title}
-        </Text>
-        <Text allowFontScaling={false} style={genre_card_styles.author}>
-          {item.author}
-        </Text>
+        <View>
+          <Text allowFontScaling={false} style={genre_card_styles.title}>
+            {item.title.length > 20
+              ? item.title.substring(0, 20) + " ..."
+              : item.title}
+          </Text>
+          <Text allowFontScaling={false} style={genre_card_styles.author}>
+            {item.author}
+          </Text>
+        </View>
         <Stars
           style={genre_card_styles.rating}
           default={parseInt(item.rating)}
@@ -123,7 +140,7 @@ const GenreCardItem = ({ item, index }, parallaxProps) => {
           count={5}
           fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
           emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
-          isDisabled={true}
+          disabled={true}
         />
       </View>
     </View>
@@ -147,75 +164,14 @@ const genre_data = [
 
 const HomeScreen2 = ({ navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const isCarousel = React.useRef(null);
+  const trendingCarosal = React.useRef(null);
   const genreCarousel = React.useRef(null);
   const savedCarousel = React.useRef(null);
   const handleSearch = () => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
   };
-  const data = [
-    {
-      title: "The Hunger Games (The Hunger Games, #1)",
-      rating: "4.34",
-      imgUrl: "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
-      author: "Suzanne Collins",
-    },
-    {
-      title: "Harry Potter and the Sorcerer's Stone (Harry Potter, #1)",
-      rating: "4.44",
-      imgUrl: "https://images.gr-assets.com/books/1474154022m/3.jpg",
-      author: "J.K. Rowling, Mary GrandPré",
-    },
-    {
-      title: "Twilight (Twilight, #1)",
-      rating: "3.57",
-      imgUrl: "https://images.gr-assets.com/books/1361039443m/41865.jpg",
-      author: "Stephenie Meyer",
-    },
-    {
-      title: "To Kill a Mockingbird",
-      rating: "4.25",
-      imgUrl: "https://images.gr-assets.com/books/1361975680m/2657.jpg",
-      author: "Harper Lee",
-    },
-    {
-      title: "The Great Gatsby",
-      rating: "3.89",
-      imgUrl: "https://images.gr-assets.com/books/1490528560m/4671.jpg",
-      author: "F. Scott Fitzgerald",
-    },
-    {
-      title: "The Fault in Our Stars",
-      rating: "4.26",
-      imgUrl: "https://images.gr-assets.com/books/1360206420m/11870085.jpg",
-      author: "John Green",
-    },
-    {
-      title: "The Hobbit",
-      rating: "4.25",
-      imgUrl: "https://images.gr-assets.com/books/1372847500m/5907.jpg",
-      author: "J.R.R. Tolkien",
-    },
-    {
-      title: "The Catcher in the Rye",
-      rating: "3.79",
-      imgUrl: "https://images.gr-assets.com/books/1398034300m/5107.jpg",
-      author: "J.D. Salinger",
-    },
-    {
-      title: "Angels & Demons  (Robert Langdon, #1)",
-      rating: "3.85",
-      imgUrl: "https://images.gr-assets.com/books/1303390735m/960.jpg",
-      author: "Dan Brown",
-    },
-    {
-      title: "Pride and Prejudice",
-      rating: "4.24",
-      imgUrl: "https://images.gr-assets.com/books/1320399351m/1885.jpg",
-      author: "Jane Austen",
-    },
-  ];
+  const books = useSelector((state) => state.BOOKS);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
   const handleButtonPress = (index) => {
     setSelectedButtonIndex(index);
@@ -228,17 +184,10 @@ const HomeScreen2 = ({ navigation }) => {
         onPress={() => handleButtonPress(index)}
         style={[
           genre_styles.button,
-          selectedButtonIndex === index && genre_styles.selectedButton,
+          index === selectedButtonIndex && genre_styles.selectedButton,
         ]}
       >
-        <ImageBackground
-          blurRadius={2}
-          source={item.img}
-          style={[
-            genre_styles.backgroundImage,
-            selectedButtonIndex === index && genre_styles.selectedCard,
-          ]}
-        >
+        <View style={[genre_styles.backgroundImage]}>
           <Text
             allowFontScaling={false}
             style={[
@@ -248,13 +197,16 @@ const HomeScreen2 = ({ navigation }) => {
           >
             {item.title}
           </Text>
-        </ImageBackground>
+        </View>
       </TouchableOpacity>
     );
   };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      <View style={{ flex: 1 }}>
+        <WelcomeStatus navigation={navigation} />
+      </View>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.searchBar}
@@ -269,34 +221,64 @@ const HomeScreen2 = ({ navigation }) => {
           <Text style={styles.searchText}>Search any book</Text>
         </TouchableOpacity>
       </View>
+      <Text style={styles.trendingText}>Top Trending</Text>
       <View style={styles.trendingContainer}>
-        <Text style={styles.trendingText}>Top Trending</Text>
-        <Carousel
-          ref={isCarousel}
-          data={data}
-          renderItem={CarouselCardItem}
-          sliderWidth={screenWidth}
-          sliderHeight={screenWidth}
-          itemWidth={screenWidth / 2}
-          hasParallaxImages={true}
-          useScrollView={false}
-          shouldOptimizeUpdates={true}
+        <IconButton
+          onPress={() => {
+            trendingCarosal.current.snapToPrev();
+          }}
+          style={{
+            height: "100%",
+            width: 50,
+            padding: 0,
+            margin: 0,
+          }}
+          icon={"chevron-left"}
+        />
+        {books && books.trendingBooks && (
+          <Carousel
+            ref={trendingCarosal}
+            data={books.trendingBooks}
+            renderItem={CarouselCardItem}
+            sliderWidth={screenWidth - 100}
+            itemWidth={screenWidth - 200}
+            loop={true}
+            activeSlideAlignment={"center"}
+            hasParallaxImages={true}
+            inactiveSlideScale={0.8}
+            enableMomentum={false}
+            slideStyle={{
+              margin: 0,
+              padding: 0,
+            }}
+          />
+        )}
+        <IconButton
+          onPress={() => {
+            trendingCarosal.current.snapToNext();
+          }}
+          style={{
+            height: "100%",
+            width: 50,
+            padding: 0,
+            margin: 0,
+          }}
+          icon={"chevron-right"}
         />
       </View>
       <View style={genre_styles.container}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {genre_data.map((item, index) => renderButton(item, index))}
         </ScrollView>
-        {/* <Text style={genre_styles.viewAll}>View All</Text> */}
         <View style={genre_styles.contentContainer}>
           {
             <Carousel
-              layout={"stack"}
+              layout={"default"}
               ref={genreCarousel}
-              data={data}
+              data={books.trendingBooks}
               renderItem={GenreCardItem}
-              sliderWidth={screenWidth - 20}
-              sliderHeight={screenWidth}
+              sliderWidth={screenWidth - 100}
+              sliderHeight={screenWidth - 200}
               itemWidth={screenWidth}
               autoplay={true}
               useScrollView={false}
@@ -315,9 +297,9 @@ const HomeScreen2 = ({ navigation }) => {
       </View>
       <View style={save_list_style.container}>
         <Text style={save_list_style.view}>Your saved Items</Text>
-        <Carousel
+        {/* <Carousel
           ref={savedCarousel}
-          data={data}
+          data={books.trendingBooks}
           renderItem={SavedListCardItem}
           sliderWidth={screenWidth}
           sliderHeight={screenWidth}
@@ -327,7 +309,7 @@ const HomeScreen2 = ({ navigation }) => {
           shouldOptimizeUpdates={true}
           enableSnap={true}
           enableMomentum={true}
-        />
+        /> */}
       </View>
     </ScrollView>
   );
@@ -341,12 +323,11 @@ const styles = StyleSheet.create({
     width: "100%",
     marginBottom: 50,
     paddingBottom: 20,
+    backgroundColor: "white",
   },
   header: {
     height: 60,
     backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
@@ -355,12 +336,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: "#fff",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "row",
     backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
     paddingBottom: 20,
     width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   trendingText: {
     fontSize: 16,
@@ -405,28 +386,22 @@ const genre_styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
     paddingBottom: 20,
   },
   button: {
-    borderRadius: 12,
-    backgroundColor: "#eee",
-    overflow: "hidden",
     marginHorizontal: 5,
+    borderRadius: 20,
   },
   selectedButton: {
-    backgroundColor: "rgba(0,107,255,255)",
-    zIndex: -1,
+    backgroundColor: "#554994",
   },
   buttonText: {
-    fontSize: 14,
-    color: "white",
+    fontSize: 15,
+    color: "rgba(0,0,0,0.6)",
   },
   selectedButtonText: {
     color: "white",
-    fontWeight: "600",
-    zIndex: 1,
+    fontWeight: "bold",
   },
   contentContainer: {
     justifyContent: "center",
@@ -434,11 +409,10 @@ const genre_styles = StyleSheet.create({
     marginTop: 20,
   },
   backgroundImage: {
-    resizeMode: "cover",
     justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 23,
     paddingVertical: 13,
-    borderRadius: 12,
   },
   selectedCard: {
     opacity: 0.2,
@@ -455,35 +429,34 @@ const genre_styles = StyleSheet.create({
 });
 const genre_card_styles = StyleSheet.create({
   item: {
-    width: screenWidth - 30,
+    width: screenWidth - 100,
     height: screenWidth / 2.5,
     display: "flex",
     flexDirection: "row",
     borderRadius: 12,
     overflow: "hidden",
-    padding: 10,
-    margin: 5,
     backgroundColor: "#f2f2f2",
   },
   image: {
-    width: "50%",
-    resizeMode: "cover",
-    borderRadius: 20,
+    width: "30%",
+    borderRadius: 12,
+    resizeMode: "contain",
   },
   header_container: {
-    padding: 3,
-    display: "flex",
+    flex: 1,
     flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 15,
     padding: 3,
   },
   author: {
-    fontSize: 12,
-    paddingHorizontal: 10,
+    fontSize: 13,
+    paddingHorizontal: 5,
     color: "gray",
-    marginBottom: 10,
   },
   rating: {
     width: "100%",
@@ -493,17 +466,14 @@ const card_styles = StyleSheet.create({
   item: {
     width: screenWidth / 2,
     height: screenWidth - 100,
-    borderRadius: 8,
   },
   imageContainer: {
     flex: 1,
-    marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
-    backgroundColor: "white",
-    borderRadius: 10,
   },
   image: {
-    ...StyleSheet.absoluteFillObject,
     resizeMode: "contain",
+    width: screenWidth / 2,
+    height: screenWidth - 120,
   },
   header_container: {
     position: "absolute",

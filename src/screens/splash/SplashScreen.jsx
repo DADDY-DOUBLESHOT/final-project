@@ -15,6 +15,7 @@ import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { quotes } from "../../utils/quotes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loadUserToken } from "../../store/actions/userAction";
+import { getTrendingBooks } from "../../store/actions/booksAction";
 
 const SplashScreen = ({ navigation }) => {
   const [quote, setQuote] = useState(null);
@@ -32,12 +33,17 @@ const SplashScreen = ({ navigation }) => {
       if (user && token) {
         // console.log("Preload user from storage ", user, token);
         dispatch(loadUserToken(JSON.parse(user), token));
+        await dispatch(await getTrendingBooks());
         navigation.replace("homenavi");
       } else {
         navigation.replace("start");
       }
     } catch (error) {
-      ToastAndroid.show("Error in connecting server", ToastAndroid.SHORT);
+      console.log("error caught in splash", error.message);
+      ToastAndroid.show(
+        `Error in connecting server ${error.message}`,
+        ToastAndroid.SHORT
+      );
       dispatch(loaderStop());
     } finally {
     }
