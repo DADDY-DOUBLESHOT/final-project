@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Image,
@@ -31,8 +31,10 @@ import young from "../../../assets/young.png";
 import cont1 from "../../../assets/continue_read_1.jpg";
 import cont2 from "../../../assets/continue_read_2.jpg";
 import WelcomeStatus from "./WelcomeStatus";
-import { IconButton } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { Avatar, IconButton } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { getGenreBooks } from "../../store/actions/booksAction";
+import { LinearGradient } from "expo-linear-gradient";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -77,42 +79,71 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
           { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
         ]}
       >
-        {item.author}
+        {item.author.length > 20
+          ? item.author.substring(0, 20) + "..."
+          : item.author}
       </Text>
     </View>
   );
 };
-const SavedListCardItem = ({ item, index }, parallaxProps) => {
+const PopularCardItem = ({ item, index }) => {
+  return (
+    <View
+      style={[
+        {
+          width: screenWidth / 3,
+          height: 250,
+          alignItems: "center",
+          margin: 0,
+        },
+      ]}
+    >
+      <Image
+        style={{
+          width: screenWidth / 3,
+          height: 180,
+          resizeMode: "cover",
+          borderRadius: 12,
+        }}
+        source={{ uri: item.coverImg }}
+      />
+      <Text style={[{ textAlign: "center", fontSize: 14 }]}>{item.title}</Text>
+      {/* <Text style={[{ textAlign: "center", fontSize: 12 }]}>
+        {item.author.length > 20
+          ? item.author.substring(0, 20) + "..."
+          : item.author}
+      </Text> */}
+    </View>
+  );
+};
+const SavedListCardItem = ({ item, index }) => {
+  const book = item.book;
   // console.log(item);
   return (
-    <View style={save_list_style.item}>
-      <ParallaxImage
-        source={{ uri: item.imgUrl }}
-        containerStyle={save_list_style.imageContainer}
-        style={save_list_style.image}
-        parallaxFactor={0.09}
-        showSpinner
-        {...parallaxProps}
+    <View
+      style={[
+        {
+          width: screenWidth / 3,
+          height: 250,
+          alignItems: "center",
+          margin: 0,
+        },
+      ]}
+    >
+      <Image
+        style={{
+          width: screenWidth / 3,
+          height: 180,
+          resizeMode: "contain",
+        }}
+        source={{ uri: book.coverImg }}
       />
-      <View style={save_list_style.header_container}>
-        <Text allowFontScaling={false} style={save_list_style.title}>
-          {item.title.length > 20
-            ? item.title.substring(0, 20) + " ..."
-            : item.title}
-        </Text>
-        <Text allowFontScaling={false} style={save_list_style.author}>
-          {item.author}
-        </Text>
-        <Stars
-          style={save_list_style.rating}
-          default={parseInt(item.rating)}
-          spacing={5}
-          starSize={10}
-          count={5}
-          fullStar={<Ionicons name="star" size={10} color="rgb(255, 204, 0)" />}
-          emptyStar={<Ionicons name="star" size={10} color="rgba(0,0,0,0.9)" />}
-        />
-      </View>
+      <Text style={[{ textAlign: "left", fontSize: 14 }]}>{book.title}</Text>
+      <Text style={[{ textAlign: "center", fontSize: 12 }]}>
+        {book.author.length > 20
+          ? book.author.substring(0, 20) + "..."
+          : book.author}
+      </Text>
     </View>
   );
 };
@@ -124,12 +155,12 @@ const GenreCardItem = ({ item, index }, parallaxProps) => {
       <View style={genre_card_styles.header_container}>
         <View>
           <Text allowFontScaling={false} style={genre_card_styles.title}>
-            {item.title.length > 20
-              ? item.title.substring(0, 20) + " ..."
-              : item.title}
+            {item.title}
           </Text>
           <Text allowFontScaling={false} style={genre_card_styles.author}>
-            {item.author}
+            {item.author.length > 20
+              ? item.author.substring(0, 20) + "..."
+              : item.author}
           </Text>
         </View>
         <Stars
@@ -167,14 +198,20 @@ const HomeScreen2 = ({ navigation }) => {
   const trendingCarosal = React.useRef(null);
   const genreCarousel = React.useRef(null);
   const savedCarousel = React.useRef(null);
+  const popularCarousel = React.useRef(null);
+  const dispatch = useDispatch();
   const handleSearch = () => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
   };
-  const books = useSelector((state) => state.BOOKS);
+  const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
+  const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
+  const genreBooks = useSelector((state) => state.BOOKS.genreBooks);
+  const wishlist = useSelector((state) => state.BOOKS.wishlist);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
-  const handleButtonPress = (index) => {
+  const handleButtonPress = async (index) => {
     setSelectedButtonIndex(index);
+    dispatch(await getGenreBooks(genre_data[index].title));
   };
 
   const renderButton = (item, index) => {
@@ -201,6 +238,8 @@ const HomeScreen2 = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  console.log("Whish list", wishlist);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -235,10 +274,10 @@ const HomeScreen2 = ({ navigation }) => {
           }}
           icon={"chevron-left"}
         />
-        {books && books.trendingBooks && (
+        {trendingBooks && (
           <Carousel
             ref={trendingCarosal}
-            data={books.trendingBooks}
+            data={trendingBooks}
             renderItem={CarouselCardItem}
             sliderWidth={screenWidth - 100}
             itemWidth={screenWidth - 200}
@@ -246,6 +285,7 @@ const HomeScreen2 = ({ navigation }) => {
             activeSlideAlignment={"center"}
             hasParallaxImages={true}
             inactiveSlideScale={0.8}
+            useScrollView={false}
             enableMomentum={false}
             slideStyle={{
               margin: 0,
@@ -266,50 +306,229 @@ const HomeScreen2 = ({ navigation }) => {
           icon={"chevron-right"}
         />
       </View>
+      <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            Popular Books
+          </Text>
+          <IconButton
+            style={{ margin: 0, padding: 0 }}
+            icon="arrow-right"
+            size={20}
+          />
+        </View>
+        <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 10 }}>
+          All time popular books you wanna read
+        </Text>
+        {popularBooks && (
+          <Carousel
+            layout="default"
+            ref={popularCarousel}
+            data={popularBooks.slice(0, 10)}
+            renderItem={PopularCardItem}
+            sliderWidth={screenWidth - 20}
+            itemWidth={screenWidth / 2.5}
+            activeSlideAlignment={"start"}
+            useScrollView={false}
+            shouldOptimizeUpdates={true}
+            enableSnap={true}
+            enableMomentum={true}
+            inactiveSlideScale={1}
+            inactiveSlideOpacity={1}
+          />
+        )}
+      </View>
       <View style={genre_styles.container}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {genre_data.map((item, index) => renderButton(item, index))}
         </ScrollView>
         <View style={genre_styles.contentContainer}>
-          {
+          {genreBooks && (
             <Carousel
               layout={"default"}
               ref={genreCarousel}
-              data={books.trendingBooks}
+              data={genreBooks}
               renderItem={GenreCardItem}
-              sliderWidth={screenWidth - 100}
+              sliderWidth={screenWidth - 30}
               sliderHeight={screenWidth - 200}
-              itemWidth={screenWidth}
-              autoplay={true}
+              itemWidth={screenWidth - 100}
               useScrollView={false}
+              enableMomentum={false}
+              activeSlideAlignment={"start"}
+              slideStyle={{
+                margin: 0,
+                padding: 0,
+              }}
+              loop={true}
+              enableSnap={true}
+              autoplay={true}
+              autoplayDelay={1500}
+              autoplayInterval={3000}
             />
-          }
+          )}
         </View>
       </View>
-      <View style={continue_reading_style.container}>
-        <ImageBackground
-          source={cont1}
-          style={continue_reading_style.image}
-          blurRadius={9}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          margin: 10,
+        }}
+      >
+        <LinearGradient
+          style={{ flex: 1, padding: 10, borderRadius: 20 }}
+          colors={["#6867AC", "#A267AC"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          angle={60}
         >
-          <Text style={continue_reading_style.title}>Continue Reading ...</Text>
-        </ImageBackground>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "white",
+              paddingHorizontal: 20,
+            }}
+          >
+            Continue Reading
+          </Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: "white",
+              marginHorizontal: 10,
+              marginVertical: 10,
+              borderRadius: 30,
+              padding: 10,
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Avatar.Image source={{ uri: wishlist[0]?.book?.coverImg }} />
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  padding: 7,
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}
+              >
+                {wishlist && (
+                  <Text style={{ flex: 1, fontSize: 14, paddingHorizontal: 5 }}>
+                    {wishlist[0]?.book?.title}
+                  </Text>
+                )}
+                {wishlist && (
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontSize: 12,
+                      color: "rgba(0,0,0,0.5)",
+                      paddingBottom: 10,
+                      paddingHorizontal: 5,
+                    }}
+                  >
+                    {wishlist[0]?.book?.author}
+                  </Text>
+                )}
+                {wishlist && (
+                  <Stars
+                    default={parseInt(wishlist[0]?.book?.rating)}
+                    spacing={5}
+                    starSize={25}
+                    count={5}
+                    fullStar={
+                      <Ionicons
+                        name="star"
+                        size={20}
+                        color="rgb(255, 204, 0)"
+                      />
+                    }
+                    emptyStar={
+                      <Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />
+                    }
+                    disabled={true}
+                  />
+                )}
+              </View>
+            </View>
+            <IconButton icon="chevron-right" size={35} />
+          </View>
+        </LinearGradient>
       </View>
-      <View style={save_list_style.container}>
-        <Text style={save_list_style.view}>Your saved Items</Text>
-        {/* <Carousel
-          ref={savedCarousel}
-          data={books.trendingBooks}
-          renderItem={SavedListCardItem}
-          sliderWidth={screenWidth}
-          sliderHeight={screenWidth}
-          itemWidth={screenWidth / 3.5}
-          hasParallaxImages={true}
-          useScrollView={false}
-          shouldOptimizeUpdates={true}
-          enableSnap={true}
-          enableMomentum={true}
-        /> */}
+      <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            Wishlist
+          </Text>
+          <IconButton
+            style={{ margin: 0, padding: 0 }}
+            icon="arrow-right"
+            size={20}
+          />
+        </View>
+        <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 10 }}>
+          Save you favourites for later
+        </Text>
+        {popularBooks && (
+          <Carousel
+            layout="default"
+            ref={popularCarousel}
+            data={wishlist.slice(0, 10)}
+            renderItem={SavedListCardItem}
+            sliderWidth={screenWidth - 20}
+            itemWidth={screenWidth / 2.5}
+            activeSlideAlignment={"start"}
+            useScrollView={false}
+            shouldOptimizeUpdates={true}
+            enableSnap={true}
+            enableMomentum={true}
+            inactiveSlideScale={1}
+            inactiveSlideOpacity={1}
+          />
+        )}
       </View>
     </ScrollView>
   );
@@ -327,7 +546,6 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 60,
-    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
@@ -338,7 +556,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     backgroundColor: "#fff",
-    paddingBottom: 20,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
@@ -360,8 +577,8 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#eee",
-    borderRadius: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.06)",
+    borderRadius: 15,
     width: "90%",
     height: 40,
     paddingLeft: 10,
@@ -383,7 +600,6 @@ const styles = StyleSheet.create({
 
 const genre_styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
     paddingHorizontal: 10,
     width: "100%",
     paddingBottom: 20,
@@ -438,6 +654,7 @@ const genre_card_styles = StyleSheet.create({
     backgroundColor: "#f2f2f2",
   },
   image: {
+    margin: 10,
     width: "30%",
     borderRadius: 12,
     resizeMode: "contain",
@@ -447,10 +664,10 @@ const genre_card_styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingHorizontal: 10,
+    margin: 10,
   },
   title: {
-    fontSize: 15,
+    fontSize: 14,
     padding: 3,
   },
   author: {

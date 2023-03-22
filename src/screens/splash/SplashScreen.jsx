@@ -15,7 +15,12 @@ import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { quotes } from "../../utils/quotes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { loadUserToken } from "../../store/actions/userAction";
-import { getTrendingBooks } from "../../store/actions/booksAction";
+import {
+  getGenreBooks,
+  getPopularBooks,
+  getTrendingBooks,
+  wishlistBooks,
+} from "../../store/actions/booksAction";
 
 const SplashScreen = ({ navigation }) => {
   const [quote, setQuote] = useState(null);
@@ -34,6 +39,9 @@ const SplashScreen = ({ navigation }) => {
         // console.log("Preload user from storage ", user, token);
         dispatch(loadUserToken(JSON.parse(user), token));
         await dispatch(await getTrendingBooks());
+        await dispatch(await getPopularBooks());
+        await dispatch(await getGenreBooks("Romance"));
+        await dispatch(await wishlistBooks());
         navigation.replace("homenavi");
       } else {
         navigation.replace("start");

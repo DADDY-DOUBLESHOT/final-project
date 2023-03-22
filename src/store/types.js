@@ -9,3 +9,6 @@ export const LOADER_START = "LOADER_START";
 export const LOADER_STOP = "LOADER_STOP";
 
 export const TRENDING_BOOKS = "TRENDING_BOOKS";
+export const POPULAR_BOOKS = "POPULAR_BOOKS";
+export const GENRE_BOOKS = "GENRE_BOOKS";
+export const WISHLIST = "WISHLIST";
