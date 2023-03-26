@@ -113,7 +113,7 @@ const SearchScreen = () => {
       });
   };
   const handleSearch = async (key) => {
-    console.log("key in search", key);
+    // console.log("key in search", key);
     if (key) {
       setSearch({
         show: true,
@@ -128,7 +128,7 @@ const SearchScreen = () => {
   };
   const getMatches = (key) => {
     setSearch({ show: true, key: key, loader: true });
-    console.log("data key", key);
+    // console.log("data key", key);
     let data = JSON.stringify({
       query: key ? key : searchBook.key,
     });
@@ -270,11 +270,12 @@ const SearchScreen = () => {
                         style={{
                           paddingHorizontal: 10,
                           paddingVertical: 10,
-                          width: 105,
                           textAlign: "center",
                         }}
                       >
-                        {item.text}
+                        {item.text.length > 20
+                          ? item.text.substring(0, 20) + "..."
+                          : item.text}
                       </Text>
                       <IconButton
                         style={{

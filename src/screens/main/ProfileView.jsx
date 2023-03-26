@@ -39,11 +39,11 @@ const ProfileView = (props) => {
   useEffect(() => {
     loadProfile();
     dispatch(loaderStop());
-    setUserChange({
-      name: user?.name,
-      profile: user?.profile ? user.profile : "../../images/profile.png",
-      nameLoader: false,
-    });
+    // setUserChange({
+    //   name: user?.name,
+    //   profile: user?.profile ? user.profile : "../../images/profile.png",
+    //   nameLoader: false,
+    // });
   }, []);
 
   const animateEdit = () => {
@@ -85,7 +85,7 @@ const ProfileView = (props) => {
         .then(function (response) {
           setUserChange({
             name: response.data.user.name,
-            profile: response.data?.profile,
+            profile: response.data?.user.avatar.url,
           });
           dispatch(loadUser(response.data.user));
         })

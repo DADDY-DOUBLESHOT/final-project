@@ -35,9 +35,9 @@ const WelcomeStatus = ({ navigation }) => {
     >
       <View style={styles.con}>
         <Avatar.Image
-          size={35}
-          style={{ marginLeft: 15, marginVertical: 15, marginRight: 15 }}
-          source={{ uri: user?.profile }}
+          size={50}
+          style={{ marginLeft: 15, marginVertical: 5, marginRight: 15 }}
+          source={{ uri: user?.avatar.url }}
         />
         <View
           style={{
