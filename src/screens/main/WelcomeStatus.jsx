@@ -53,7 +53,7 @@ const WelcomeStatus = ({ navigation }) => {
       <IconButton
         style={{ margin: 0, padding: 0 }}
         icon={"menu"}
-        size={35}
+        size={30}
         onPress={() => navigation.toggleDrawer()}
       />
     </View>

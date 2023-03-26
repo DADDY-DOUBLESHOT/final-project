@@ -1,11 +1,14 @@
 import React from "react";
-import { Text, View } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeScreen2 from "./HomeScreen2";
 import ProfileView from "./ProfileView";
 import AudioBookScreen from "./AudioBookScreen";
 import UploadBook from "./UploadBook";
-import WelcomeStatus from "./WelcomeStatus";
+import PopularBooks from "./PopularBooks";
+import RecommendedBooks from "./RecommendedBooks";
+import Wishlist from "./Wishlist";
+import SearchScreen from "./SearchScreen";
+import { IconButton } from "react-native-paper";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -15,6 +18,7 @@ const HomeNavigator = () => {
       initialRouteName="home"
       detachInactiveScreens
       screenOptions={{
+        drawerStatusBarAnimation: "fade",
         drawerActiveTintColor: "#A267AC",
       }}
       drawerContent={(props) => <ProfileView {...props} />}
@@ -24,6 +28,14 @@ const HomeNavigator = () => {
         options={{
           title: "Home",
           headerShown: false,
+          drawerIcon: ({ color, focused, size }) => (
+            <IconButton
+              size={size}
+              style={{ margin: 0, padding: 0 }}
+              iconColor={color}
+              icon={"home"}
+            />
+          ),
         }}
         component={HomeScreen2}
       />
@@ -39,11 +51,70 @@ const HomeNavigator = () => {
         component={AudioBookScreen}
       />
       <HomeDrawer.Screen
+        name="popular"
+        options={{
+          title: "",
+          headerTitle: "",
+          drawerItemStyle: {
+            display: "none",
+          },
+          headerShown: false,
+        }}
+        component={PopularBooks}
+      />
+      <HomeDrawer.Screen
+        name="recommend"
+        options={{
+          title: "",
+          headerTitle: "",
+          drawerItemStyle: {
+            display: "none",
+          },
+          headerShown: false,
+        }}
+        component={RecommendedBooks}
+      />
+      <HomeDrawer.Screen
+        name="wishlist"
+        options={{
+          title: "Wishlist",
+          drawerIcon: ({ color, focused, size }) => (
+            <IconButton
+              size={size}
+              style={{ margin: 0, padding: 0 }}
+              iconColor={color}
+              icon={"bookmark"}
+            />
+          ),
+          headerShown: false,
+        }}
+        component={Wishlist}
+      />
+      <HomeDrawer.Screen
+        name="search"
+        options={{
+          title: "",
+          headerTitle: "",
+          drawerItemStyle: {
+            display: "none",
+          },
+          headerShown: false,
+        }}
+        component={SearchScreen}
+      />
+      <HomeDrawer.Screen
         name="Upload"
         options={{
           title: "Upload Book",
-          headerTitle: "Upload Book",
-          headerTitleAlign: "center",
+          drawerIcon: ({ color, focused, size }) => (
+            <IconButton
+              size={size}
+              style={{ margin: 0, padding: 0 }}
+              iconColor={color}
+              icon={"cloud-upload-outline"}
+            />
+          ),
+          headerShown: false,
         }}
         component={UploadBook}
       />

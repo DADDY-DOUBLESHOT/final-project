@@ -1,9 +1,16 @@
-import { GENRE_BOOKS, POPULAR_BOOKS, TRENDING_BOOKS, WISHLIST } from "../types";
+import {
+  GENRE_BOOKS,
+  POPULAR_BOOKS,
+  RECOM_BOOKS,
+  TRENDING_BOOKS,
+  WISHLIST,
+} from "../types";
 const initialState = {
   trendingBooks: [],
   popularBooks: [],
   genreBooks: [],
   wishlist: [],
+  recomBooks: [],
 };
 
 export const booksReducer = (state = initialState, action) => {
@@ -28,6 +35,11 @@ export const booksReducer = (state = initialState, action) => {
       return {
         ...state,
         wishlist: action.payload.wishlist,
+      };
+    case RECOM_BOOKS:
+      return {
+        ...state,
+        recomBooks: action.payload.recomBooks,
       };
     default:
       return state;

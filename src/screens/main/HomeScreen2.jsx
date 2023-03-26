@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  FlatList,
   Image,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Dimensions,
   ScrollView,
-  ImageBackground,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Carousel, {
@@ -60,7 +57,7 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
           height: 250,
           resizeMode: "contain",
         }}
-        source={{ uri: item.coverImg }}
+        source={{ uri: item?.coverImg }}
       />
       <Text
         style={[
@@ -71,7 +68,7 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
           },
         ]}
       >
-        {item.title}
+        {item?.title}
       </Text>
       <Text
         style={[
@@ -79,9 +76,9 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
           { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
         ]}
       >
-        {item.author.length > 20
-          ? item.author.substring(0, 20) + "..."
-          : item.author}
+        {item?.author.length > 20
+          ? item?.author.substring(0, 20) + "..."
+          : item?.author}
       </Text>
     </View>
   );
@@ -92,8 +89,8 @@ const PopularCardItem = ({ item, index }) => {
       style={[
         {
           width: screenWidth / 3,
-          height: 250,
-          alignItems: "center",
+
+          alignItems: "flex-start",
           margin: 0,
         },
       ]}
@@ -104,15 +101,26 @@ const PopularCardItem = ({ item, index }) => {
           height: 180,
           resizeMode: "cover",
           borderRadius: 12,
+          marginBottom: 5,
         }}
         source={{ uri: item.coverImg }}
       />
-      <Text style={[{ textAlign: "center", fontSize: 14 }]}>{item.title}</Text>
+      <Text style={[{ textAlign: "left", fontSize: 14 }]}>{item.title}</Text>
       {/* <Text style={[{ textAlign: "center", fontSize: 12 }]}>
         {item.author.length > 20
           ? item.author.substring(0, 20) + "..."
           : item.author}
       </Text> */}
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Text>{Number.parseFloat(item.rating).toFixed(1)}</Text>
+        <IconButton size={18} style={{ padding: 0, margin: 0 }} icon={"star"} />
+      </View>
     </View>
   );
 };
@@ -206,6 +214,7 @@ const HomeScreen2 = ({ navigation }) => {
   };
   const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
   const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
+  const recommendedBooks = useSelector((state) => state.BOOKS.genreBooks);
   const genreBooks = useSelector((state) => state.BOOKS.genreBooks);
   const wishlist = useSelector((state) => state.BOOKS.wishlist);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
@@ -239,7 +248,7 @@ const HomeScreen2 = ({ navigation }) => {
     );
   };
 
-  console.log("Whish list", wishlist);
+  // console.log("Whish list", wishlist);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -249,7 +258,7 @@ const HomeScreen2 = ({ navigation }) => {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.searchBar}
-          onPress={() => navigation.navigate("BookSearch")}
+          onPress={() => navigation.navigate("search")}
         >
           <Ionicons
             name="search"
@@ -306,7 +315,7 @@ const HomeScreen2 = ({ navigation }) => {
           icon={"chevron-right"}
         />
       </View>
-      <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
+      <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 10 }}>
         <View
           style={{
             flex: 1,
@@ -328,12 +337,14 @@ const HomeScreen2 = ({ navigation }) => {
             Popular Books
           </Text>
           <IconButton
-            style={{ margin: 0, padding: 0 }}
+            onPress={() => {
+              navigation.navigate("popular");
+            }}
             icon="arrow-right"
             size={20}
           />
         </View>
-        <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 10 }}>
+        <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 15 }}>
           All time popular books you wanna read
         </Text>
         {popularBooks && (
@@ -341,6 +352,57 @@ const HomeScreen2 = ({ navigation }) => {
             layout="default"
             ref={popularCarousel}
             data={popularBooks.slice(0, 10)}
+            renderItem={PopularCardItem}
+            sliderWidth={screenWidth - 20}
+            itemWidth={screenWidth / 2.5}
+            activeSlideAlignment={"start"}
+            useScrollView={false}
+            shouldOptimizeUpdates={true}
+            enableSnap={true}
+            enableMomentum={true}
+            inactiveSlideScale={1}
+            inactiveSlideOpacity={1}
+          />
+        )}
+      </View>
+      <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 10 }}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            Recommended for you
+          </Text>
+          <IconButton
+            style={{ margin: 0, padding: 0 }}
+            icon="arrow-right"
+            size={20}
+            onPress={() => {
+              navigation.navigate("recommend");
+            }}
+          />
+        </View>
+        <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 15 }}>
+          Based on your intrests
+        </Text>
+        {recommendedBooks && (
+          <Carousel
+            layout="default"
+            ref={popularCarousel}
+            data={recommendedBooks.slice(0, 10)}
             renderItem={PopularCardItem}
             sliderWidth={screenWidth - 20}
             itemWidth={screenWidth / 2.5}
@@ -507,6 +569,9 @@ const HomeScreen2 = ({ navigation }) => {
             style={{ margin: 0, padding: 0 }}
             icon="arrow-right"
             size={20}
+            onPress={() => {
+              navigation.navigate("wishlist");
+            }}
           />
         </View>
         <Text style={{ color: "rgba(0,0,0,0.5)", marginBottom: 10 }}>

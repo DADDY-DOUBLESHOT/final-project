@@ -40,7 +40,7 @@ const SplashScreen = ({ navigation }) => {
         dispatch(loadUserToken(JSON.parse(user), token));
         await dispatch(await getTrendingBooks());
         await dispatch(await getPopularBooks());
-        await dispatch(await getGenreBooks("Romance"));
+        await dispatch(await getGenreBooks("Comedy"));
         await dispatch(await wishlistBooks());
         navigation.replace("homenavi");
       } else {

@@ -1,7 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import Background from "../../components/Background";
-import Header from "../../components/Header";
-import Paragraph from "../../components/Paragraph";
 import {
   Animated,
   Dimensions,

@@ -139,6 +139,9 @@ const GenresScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Choose your interests</Text>
+        <Text style={{ fontSize: 12, margin: 5, color: "white" }}>
+          Minimum 3 interests required*
+        </Text>
       </View>
       <ScrollView
         horizontal
@@ -194,7 +197,7 @@ const GenresScreen = ({ navigation }) => {
           keyExtractor={(item) => item.id.toString()}
         />
       </ScrollView>
-      {selected.length > 0 && (
+      {selected.length > 2 && (
         <TouchableNativeFeedback
           onPress={() => {
             handleNext();
