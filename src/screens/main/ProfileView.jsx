@@ -85,7 +85,7 @@ const ProfileView = (props) => {
         .then(function (response) {
           setUserChange({
             name: response.data.user.name,
-            profile: response.data?.user.avatar.url,
+            profile: user?.avatar?.url,
           });
           dispatch(loadUser(response.data.user));
         })
