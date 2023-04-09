@@ -23,6 +23,12 @@ import ForgotScreen from "./src/screens/login/ForgotScreen";
 import OTPScreen from "./src/screens/login/OTPScreen";
 import GenresScreen from "./src/screens/login/GenresScreen";
 import HomeNavigator from "./src/screens/main/HomeNavigator";
+<<<<<<< HEAD
+=======
+import BookDetail from "./src/screens/BookDetail/BookDetail";
+import Reviews from "./src/screens/BookDetail/Reviews";
+import ReadBook from "./src/screens/BookDetail/ReadBook";
+>>>>>>> feature_1
 
 DefaultSplash.preventAutoHideAsync();
 
@@ -48,7 +54,11 @@ const AppWrapper = () => {
 const App = () => {
   const Stack = createStackNavigator();
 
+<<<<<<< HEAD
   const user = useSelector((state) => state.USER);
+=======
+  const user = useSelector((state) => state);
+>>>>>>> feature_1
 
   console.log("state", user);
 
@@ -77,12 +87,20 @@ const App = () => {
                 <Stack.Screen name="genre" component={GenresScreen} />
               </Stack.Group>
             }
+<<<<<<< HEAD
 
             {user && user.user && (
               <Stack.Group>
                 <Stack.Screen name="homenavi" component={HomeNavigator} />
               </Stack.Group>
             )}
+=======
+            <Stack.Group>
+              <Stack.Screen name="homenavi" component={HomeNavigator} />
+              <Stack.Screen name="ReviewList" component={Reviews} />
+              <Stack.Screen name="ReadBook" component={ReadBook} />
+            </Stack.Group>
+>>>>>>> feature_1
           </Stack.Navigator>
         </NavigationContainer>
       </KeyboardAvoidingView>
