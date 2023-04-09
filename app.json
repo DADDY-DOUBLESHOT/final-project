@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -32,6 +32,14 @@
     },
     "androidNavigationBar": {
       "visible": "immersive"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ]
+    ]
   }
 }
