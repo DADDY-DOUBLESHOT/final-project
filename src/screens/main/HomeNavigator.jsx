@@ -10,9 +10,6 @@ import Wishlist from "./Wishlist";
 import SearchScreen from "./SearchScreen";
 import { IconButton } from "react-native-paper";
 import { Text, View } from "react-native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import HomeScreen2 from "./HomeScreen2";
-import ProfileView from "./ProfileView";
 // import UploadBook from "./UploadBook";
 import UploadNavigator from "./UploadNavigator";
 import BookDetail from "../BookDetail/BookDetail";
@@ -109,15 +106,15 @@ const HomeNavigator = () => {
         }}
         component={SearchScreen}
         />
-        <HomeDrawer.Screen
-        name="home1"
+        {/* <HomeDrawer.Screen
+        name="bookdetail"
         options={{
-          title: "Home1",
+          title: "Bookdetail",
           headerTitle: "Book Forum",
           headerTitleAlign: "center",
         }}
         component={BookDetail}
-      />
+      /> */}
       <HomeDrawer.Screen
         name="Upload"
         options={{
@@ -132,7 +129,7 @@ const HomeNavigator = () => {
               icon={"cloud-upload-outline"}
             />
           ),
-          headerShown: false,
+          headerShown: true,
         }}
         component={UploadNavigator}
       />

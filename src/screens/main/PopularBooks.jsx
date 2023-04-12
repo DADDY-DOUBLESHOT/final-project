@@ -15,6 +15,10 @@ const { width: screenWidth } = Dimensions.get("window");
 
 const PopularBooks = ({ navigation }) => {
   const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
+  
+  const handleGridnavigation=(id)=>{
+    navigation.navigate("bookdetail", {id:id})
+  }
 
   return (
     <View style={styles.con}>
@@ -34,12 +38,12 @@ const PopularBooks = ({ navigation }) => {
       </View>
       <ScrollView
         contentContainerStyle={{
-          alignItems: "center",
+          alignItems:"center",
         }}
         horizontal
         style={styles.content}
       >
-        <Grid items={popularBooks} />
+        <Grid items={popularBooks} handleGridnavigation={handleGridnavigation} />
       </ScrollView>
     </View>
   );

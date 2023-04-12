@@ -8,6 +8,8 @@ import * as Haptics from 'expo-haptics';
 import photo from "../../images/photo.jpg";
 import bookmark from "../../images/bookmark.png";
 import ReadMore from 'react-native-read-more-text';
+import { useSelector, useDispatch } from "react-redux";
+import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 
 import Animated, {
   interpolate, withTiming, runOnJS,
@@ -34,9 +36,22 @@ import Animated, {
   const screenHeight = Dimensions.get('window').height;
 
 
-const BookDetails = ({ navigation }) => {
+const BookDetails = ({ navigation , item}) => {
     const opacity = useRef(new Animated.Value(0)).current;
-    const [data,setData]=useState("");
+    const dispatch = useDispatch();
+    const [data,setData]=useState({
+      title:"",
+      author:"",
+      coverImg:null,
+      description:"",
+    });
+
+    useEffect(()=>{
+      fetchBookdetails();
+      // dispatch(loaderStop());
+    },[]);
+    
+    // cont 
     // const [bookDetails, setBookDetails] = useState(null);
 
   
@@ -80,6 +95,49 @@ const BookDetails = ({ navigation }) => {
   //     return false;
   //   }
   // };
+
+  
+const fetchBookdetails=async(id)=>{
+  var config = {
+    method: 'get',
+    url: `https://book-forum-backend-vaa8.onrender.com/api/v1/popular-books/${id}`,
+    headers: { 
+      'Cookie': 'token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MTkzMmMxNzA2OTcwNmE3ODVlZjRkMyIsImlhdCI6MTY4MTEyNTIwMiwiZXhwIjoxNjgxNTU3MjAyfQ.hV1vzjw6NSTsFAiPtAlHiArFCX9-pF_46ySz1sBHj-M',
+      "Content-Type": "application/json",
+    },
+    data : data
+  };
+  
+  try{
+    await axios(config)
+    .then(function (response) {
+      setData({
+        title:response.data.title,
+        author:response.data.author,
+        coverImg:response.data.coverImg,
+        description:response.data.description,
+      });
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log("Unable to show Book",error);
+    });
+  }catch(error){
+     console.log("Unable to show Book",error);
+  }
+
+  // axios(config)
+  // .then(function (response) {
+  //   console.log(JSON.stringify(response.data));
+  // })
+  // .catch(function (error) {
+  //   console.log(error);
+  // });
+
+  // useEffect(()=>{
+    
+  // },[])
+}
 
 
  
@@ -252,9 +310,9 @@ const BookDetails = ({ navigation }) => {
                   blurRadius={15}
                   // source={{ uri: bookDetails.image_url }}
                 > 
-        <Image source={{ uri: bookDetails.image_url }} style={styles.image} />
-        <Text style={styles.title}>{bookDetails.original_title}</Text>
-        <Text style={styles.author}>{bookDetails.authors}</Text>
+        <Image source={{ uri:data.coverImg }} style={styles.image} />
+        <Text style={styles.title}>{data.title}</Text>
+        <Text style={styles.author}>{data.author}</Text>
         
         <View  style={{
             flexDirection:'row',
@@ -317,7 +375,7 @@ const BookDetails = ({ navigation }) => {
               numberOfLines={7}
               renderTruncatedFooter={(handlePress) => { return <Text onPress={handlePress} style={{color: 'grey'}}>show more</Text> }}
               renderRevealedFooter={(handlePress) => { return <Text onPress={handlePress} style={{color: 'grey'}}>show less</Text> }}>
-            <Text style={styles.synopsis}>Synopsis:{'\n'}{bookDetails.description}</Text>
+            <Text style={styles.synopsis}>Synopsis:{'\n'}{data.description}</Text>
             </ReadMore>
           </ScrollView>
         </View>
