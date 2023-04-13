@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Dimensions, FlatList, Image } from "react-native";
+import { Dimensions, FlatList, Image, TouchableOpacity } from "react-native";
 import { Text, View } from "react-native";
 import Stars from "react-native-stars";
 import { IconButton } from "react-native-paper";
@@ -18,8 +18,9 @@ const colorSelector = (rating) => {
   }
 };
 
-const BookView = ({ item }) => {
+const BookView = ({ handleGridnavigation , item }) => {
   return (
+    <TouchableOpacity onPress={() => handleGridnavigation(item._id)} >
     <View style={card_style.item}>
       <Image style={card_style.image} source={{ uri: item.coverImg }} />
       <View
@@ -73,10 +74,11 @@ const BookView = ({ item }) => {
         />
       </View>
     </View>
+    </TouchableOpacity>
   );
 };
 
-const GridForSearch = ({ items }) => {
+const GridForSearch = ({ items, handleGridnavigation }) => {
   return (
     <>
       {items && items.length > 0 ? (
@@ -84,7 +86,7 @@ const GridForSearch = ({ items }) => {
           initialNumToRender={10}
           horizontal={false}
           data={items}
-          renderItem={({ item }) => <BookView item={item} />}
+          renderItem={({ item }) => <BookView item={item} handleGridnavigation={handleGridnavigation}/>}
           keyExtractor={(item) => item._id}
           style={{ flex: 1 }}
           contentContainerStyle={{

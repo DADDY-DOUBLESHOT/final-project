@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, FlatList, Image } from "react-native";
+import { Dimensions, FlatList, Image, TouchableOpacity } from "react-native";
 import { Text, View } from "react-native";
 import { IconButton } from "react-native-paper";
 
@@ -15,8 +15,9 @@ const colorSelector = (rating) => {
   }
 };
 
-const BookView = ({ item }) => {
+const BookView = ({ handleGridnavigation , item }) => {
   return (
+    <TouchableOpacity onPress={() => handleGridnavigation(item._id)} >
     <View
       style={[
         {
@@ -27,6 +28,7 @@ const BookView = ({ item }) => {
           marginHorizontal: 4,
         },
       ]}
+      
     >
       <Image
         style={{
@@ -55,10 +57,11 @@ const BookView = ({ item }) => {
         />
       </View>
     </View>
+    </TouchableOpacity>
   );
 };
 
-const Grid = ({ items }) => {
+const Grid = ({ items , handleGridnavigation}) => {
   return (
     <FlatList
       numColumns={3}
@@ -66,7 +69,7 @@ const Grid = ({ items }) => {
       initialNumToRender={20}
       horizontal={false}
       data={items}
-      renderItem={({ item }) => <BookView item={item} />}
+      renderItem={({ item }) => <BookView item={item} handleGridnavigation={handleGridnavigation}/>}
       keyExtractor={(item) => item._id}
       style={{ flex: 1 }}
       contentContainerStyle={{

@@ -16,6 +16,10 @@ const { width: screenWidth } = Dimensions.get("window");
 const RecommendedBooks = ({ navigation }) => {
   const recommBooks = useSelector((state) => state.BOOKS.popularBooks);
 
+  const handleGridnavigation=(id)=>{
+    navigation.navigate("bookdetail", {id:id})
+  }
+
   return (
     <View style={styles.con}>
       <View style={styles.header}>
@@ -41,7 +45,7 @@ const RecommendedBooks = ({ navigation }) => {
         horizontal
         style={styles.content}
       >
-        <Grid items={recommBooks} />
+        <Grid items={recommBooks} handleGridnavigation={handleGridnavigation}/>
       </ScrollView>
     </View>
   );

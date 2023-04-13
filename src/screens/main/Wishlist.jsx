@@ -9,6 +9,11 @@ const { width: screenWidth } = Dimensions.get("window");
 const Wishlist = ({ navigation }) => {
   const wishlistBooks = useSelector((state) => state.BOOKS.wishlist);
 
+  const handleGridnavigation=(id)=>{
+    navigation.navigate("bookdetail", {id:id})
+  }
+
+
   return (
     <View style={styles.con}>
       <View style={styles.header}>
@@ -26,7 +31,7 @@ const Wishlist = ({ navigation }) => {
         />
       </View>
       <ScrollView horizontal style={styles.content}>
-        <GridForWishList items={wishlistBooks} />
+        <GridForWishList items={wishlistBooks} handleGridnavigation={handleGridnavigation}/>
       </ScrollView>
     </View>
   );

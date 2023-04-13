@@ -25,6 +25,9 @@ import GridForSearch from "../../components/GridForSearch";
 const { width: screenWidth } = Dimensions.get("window");
 
 const SearchView = ({ item, handlePills }) => {
+
+ 
+
   return (
     <TouchableNativeFeedback onPress={() => handlePills(item.title)}>
       <View
@@ -66,7 +69,7 @@ const SearchView = ({ item, handlePills }) => {
   );
 };
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
   const [searchHistory, setSearchHistory] = useState(null);
   const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
   const [searchBook, setSearch] = useState({
@@ -75,6 +78,11 @@ const SearchScreen = () => {
     loader: false,
     result: [],
   });
+
+  const handleGridnavigation=(id)=>{
+    navigation.navigate("bookdetail", {id:id})
+  }
+
   const handleDelete = (id) => {
     let config = {
       method: "delete",
@@ -342,7 +350,7 @@ const SearchScreen = () => {
           {searchBook.loader ? (
             <ActivityIndicator size={"small"} color="#554994" />
           ) : (
-            searchBook.result && <GridForSearch items={searchBook.result} />
+            searchBook.result && <GridForSearch items={searchBook.result} handleGridnavigation={handleGridnavigation} />
           )}
         </ScrollView>
       )}

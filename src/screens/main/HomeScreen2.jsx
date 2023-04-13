@@ -35,6 +35,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width: screenWidth } = Dimensions.get("window");
 
+
 const CarouselCardItem = ({ item, index }, parallaxProps) => {
   const isCenter = parallaxProps.index === index;
   const zIndex = isCenter ? 0 : 1;
@@ -50,6 +51,7 @@ const CarouselCardItem = ({ item, index }, parallaxProps) => {
           margin: 0,
         },
       ]}
+      // onPress={() => navigation.navigate("bookdetail")}
     >
       <Image
         style={{
@@ -212,6 +214,20 @@ const HomeScreen2 = ({ navigation }) => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
   };
+  const handlebookdetail=(id)=>{
+    navigation.navigate("bookdetail",{id});
+  }
+  const handlenavigation=(ref)=>{
+    if(ref && ref===trendingCarosal){
+      navigation.navigate("bookdetail", {id:trendingBooks(ref.current.currentIndex)})
+    }
+  }
+  const handlePopularCarousel=(ref)=>{
+    if(ref && ref===popularCarousel){
+      navigation.navigate("bookdetail", {id:popularBooks(ref.current.currentIndex)})
+    }
+  }
+
   const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
   const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
   const recommendedBooks = useSelector((state) => state.BOOKS.genreBooks);
@@ -470,6 +486,7 @@ const HomeScreen2 = ({ navigation }) => {
           >
             Continue Reading
           </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("ReadBook")}>
           <View
             style={{
               flex: 1,
@@ -542,6 +559,7 @@ const HomeScreen2 = ({ navigation }) => {
             </View>
             <IconButton icon="chevron-right" size={35} />
           </View>
+          </TouchableOpacity>
         </LinearGradient>
       </View>
       <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
@@ -581,6 +599,7 @@ const HomeScreen2 = ({ navigation }) => {
           <Carousel
             layout="default"
             ref={popularCarousel}
+            onPress={()=>{handlePopularCarousel}}
             data={wishlist.slice(0, 10)}
             renderItem={SavedListCardItem}
             sliderWidth={screenWidth - 20}

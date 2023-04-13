@@ -9,6 +9,10 @@ import RecommendedBooks from "./RecommendedBooks";
 import Wishlist from "./Wishlist";
 import SearchScreen from "./SearchScreen";
 import { IconButton } from "react-native-paper";
+import { Text, View } from "react-native";
+// import UploadBook from "./UploadBook";
+import UploadNavigator from "./UploadNavigator";
+import BookDetail from "../BookDetail/BookDetail";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -101,11 +105,22 @@ const HomeNavigator = () => {
           headerShown: false,
         }}
         component={SearchScreen}
-      />
+        />
+        {/* <HomeDrawer.Screen
+        name="bookdetail"
+        options={{
+          title: "Bookdetail",
+          headerTitle: "Book Forum",
+          headerTitleAlign: "center",
+        }}
+        component={BookDetail}
+      /> */}
       <HomeDrawer.Screen
         name="Upload"
         options={{
           title: "Upload Book",
+          headerTitle: "Upload Book",
+          headerTitleAlign: "center",
           drawerIcon: ({ color, focused, size }) => (
             <IconButton
               size={size}
@@ -114,9 +129,9 @@ const HomeNavigator = () => {
               icon={"cloud-upload-outline"}
             />
           ),
-          headerShown: false,
+          headerShown: true,
         }}
-        component={UploadBook}
+        component={UploadNavigator}
       />
     </HomeDrawer.Navigator>
   );
