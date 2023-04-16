@@ -49,7 +49,7 @@ const HomeNavigator = () => {
           title: "",
           headerTitle: "",
           drawerItemStyle: {
-            // display: "none",
+            display: "none",
           },
         }}
         component={AudioBookScreen}
@@ -105,8 +105,8 @@ const HomeNavigator = () => {
           headerShown: false,
         }}
         component={SearchScreen}
-        />
-        {/* <HomeDrawer.Screen
+      />
+      {/* <HomeDrawer.Screen
         name="bookdetail"
         options={{
           title: "Bookdetail",

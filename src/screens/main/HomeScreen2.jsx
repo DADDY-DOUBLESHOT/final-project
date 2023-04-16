@@ -7,6 +7,7 @@ import {
   View,
   Dimensions,
   ScrollView,
+  TouchableNativeFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Carousel, {
@@ -35,159 +36,6 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const { width: screenWidth } = Dimensions.get("window");
 
-
-const CarouselCardItem = ({ item, index }, parallaxProps) => {
-  const isCenter = parallaxProps.index === index;
-  const zIndex = isCenter ? 0 : 1;
-  const scale = isCenter ? 1 : 0.8;
-  const translateY = isCenter ? 0 : -100;
-  return (
-    <View
-      style={[
-        {
-          width: screenWidth - 200,
-          zIndex,
-          alignItems: "center",
-          margin: 0,
-        },
-      ]}
-      // onPress={() => navigation.navigate("bookdetail")}
-    >
-      <Image
-        style={{
-          width: 200,
-          height: 250,
-          resizeMode: "contain",
-        }}
-        source={{ uri: item?.coverImg }}
-      />
-      <Text
-        style={[
-          { textAlign: "center", fontSize: 16 },
-          {
-            color:
-              parallaxProps.index === index ? "#810CA8" : "rgba(0,0,0,0.7)",
-          },
-        ]}
-      >
-        {item?.title}
-      </Text>
-      <Text
-        style={[
-          { textAlign: "center", fontSize: 14 },
-          { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
-        ]}
-      >
-        {item?.author.length > 20
-          ? item?.author.substring(0, 20) + "..."
-          : item?.author}
-      </Text>
-    </View>
-  );
-};
-const PopularCardItem = ({ item, index }) => {
-  return (
-    <View
-      style={[
-        {
-          width: screenWidth / 3,
-
-          alignItems: "flex-start",
-          margin: 0,
-        },
-      ]}
-    >
-      <Image
-        style={{
-          width: screenWidth / 3,
-          height: 180,
-          resizeMode: "cover",
-          borderRadius: 12,
-          marginBottom: 5,
-        }}
-        source={{ uri: item.coverImg }}
-      />
-      <Text style={[{ textAlign: "left", fontSize: 14 }]}>{item.title}</Text>
-      {/* <Text style={[{ textAlign: "center", fontSize: 12 }]}>
-        {item.author.length > 20
-          ? item.author.substring(0, 20) + "..."
-          : item.author}
-      </Text> */}
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Text>{Number.parseFloat(item.rating).toFixed(1)}</Text>
-        <IconButton size={18} style={{ padding: 0, margin: 0 }} icon={"star"} />
-      </View>
-    </View>
-  );
-};
-const SavedListCardItem = ({ item, index }) => {
-  const book = item.book;
-  // console.log(item);
-  return (
-    <View
-      style={[
-        {
-          width: screenWidth / 3,
-          height: 250,
-          alignItems: "center",
-          margin: 0,
-        },
-      ]}
-    >
-      <Image
-        style={{
-          width: screenWidth / 3,
-          height: 180,
-          resizeMode: "contain",
-        }}
-        source={{ uri: book.coverImg }}
-      />
-      <Text style={[{ textAlign: "left", fontSize: 14 }]}>{book.title}</Text>
-      <Text style={[{ textAlign: "center", fontSize: 12 }]}>
-        {book.author.length > 20
-          ? book.author.substring(0, 20) + "..."
-          : book.author}
-      </Text>
-    </View>
-  );
-};
-const GenreCardItem = ({ item, index }, parallaxProps) => {
-  // console.log(item);
-  return (
-    <View style={genre_card_styles.item}>
-      <Image style={genre_card_styles.image} source={{ uri: item.coverImg }} />
-      <View style={genre_card_styles.header_container}>
-        <View>
-          <Text allowFontScaling={false} style={genre_card_styles.title}>
-            {item.title}
-          </Text>
-          <Text allowFontScaling={false} style={genre_card_styles.author}>
-            {item.author.length > 20
-              ? item.author.substring(0, 20) + "..."
-              : item.author}
-          </Text>
-        </View>
-        <Stars
-          style={genre_card_styles.rating}
-          default={parseInt(item.rating)}
-          spacing={5}
-          starSize={25}
-          count={5}
-          fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
-          emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
-          disabled={true}
-        />
-      </View>
-    </View>
-  );
-};
-
 const genre_data = [
   { id: 1, title: "Romance", img: romance },
   { id: 2, title: "Science Fiction", img: science },
@@ -214,19 +62,23 @@ const HomeScreen2 = ({ navigation }) => {
     navigation.navigate("BookSearch", { searchTerm });
     setSearchTerm("");
   };
-  const handlebookdetail=(id)=>{
-    navigation.navigate("bookdetail",{id});
-  }
-  const handlenavigation=(ref)=>{
-    if(ref && ref===trendingCarosal){
-      navigation.navigate("bookdetail", {id:trendingBooks(ref.current.currentIndex)})
+  const handlebookdetail = (id) => {
+    navigation.navigate("bookdetail", { id });
+  };
+  const handlenavigation = (ref) => {
+    if (ref && ref === trendingCarosal) {
+      navigation.navigate("bookdetail", {
+        id: trendingBooks(ref.current.currentIndex),
+      });
     }
-  }
-  const handlePopularCarousel=(ref)=>{
-    if(ref && ref===popularCarousel){
-      navigation.navigate("bookdetail", {id:popularBooks(ref.current.currentIndex)})
+  };
+  const handlePopularCarousel = (ref) => {
+    if (ref && ref === popularCarousel) {
+      navigation.navigate("bookdetail", {
+        id: popularBooks(ref.current.currentIndex),
+      });
     }
-  }
+  };
 
   const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
   const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
@@ -264,7 +116,200 @@ const HomeScreen2 = ({ navigation }) => {
     );
   };
 
-  // console.log("Whish list", wishlist);
+  const handleNavigation = (id) => {
+    navigation.navigate("bookdetail", { id });
+  };
+
+  const CarouselCardItem = ({ item, index }, parallaxProps) => {
+    const isCenter = parallaxProps.index === index;
+    const zIndex = isCenter ? 0 : 1;
+    const scale = isCenter ? 1 : 0.8;
+    const translateY = isCenter ? 0 : -100;
+    return (
+      <TouchableNativeFeedback
+        onPress={() => {
+          handleNavigation(item._id);
+        }}
+      >
+        <View
+          style={[
+            {
+              width: screenWidth - 200,
+              zIndex,
+              alignItems: "center",
+              margin: 0,
+            },
+          ]}
+          // onPress={() => navigation.navigate("bookdetail")}
+        >
+          <Image
+            style={{
+              width: 200,
+              height: 250,
+              resizeMode: "contain",
+            }}
+            source={{ uri: item?.coverImg }}
+          />
+          <Text
+            style={[
+              { textAlign: "center", fontSize: 16 },
+              {
+                color:
+                  parallaxProps.index === index ? "#810CA8" : "rgba(0,0,0,0.7)",
+              },
+            ]}
+          >
+            {item?.title}
+          </Text>
+          <Text
+            style={[
+              { textAlign: "center", fontSize: 14 },
+              { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
+            ]}
+          >
+            {item?.author.length > 20
+              ? item?.author.substring(0, 20) + "..."
+              : item?.author}
+          </Text>
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
+  const PopularCardItem = ({ item, index }) => {
+    return (
+      <TouchableNativeFeedback
+        onPress={() => {
+          handleNavigation(item._id);
+        }}
+      >
+        <View
+          style={[
+            {
+              width: screenWidth / 3,
+
+              alignItems: "flex-start",
+              margin: 0,
+            },
+          ]}
+        >
+          <Image
+            style={{
+              width: screenWidth / 3,
+              height: 180,
+              resizeMode: "cover",
+              borderRadius: 12,
+              marginBottom: 5,
+            }}
+            source={{ uri: item.coverImg }}
+          />
+          <Text style={[{ textAlign: "left", fontSize: 14 }]}>
+            {item.title}
+          </Text>
+          {/* <Text style={[{ textAlign: "center", fontSize: 12 }]}>
+          {item.author.length > 20
+            ? item.author.substring(0, 20) + "..."
+            : item.author}
+        </Text> */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text>{Number.parseFloat(item.rating).toFixed(1)}</Text>
+            <IconButton
+              size={18}
+              style={{ padding: 0, margin: 0 }}
+              icon={"star"}
+            />
+          </View>
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
+  const SavedListCardItem = ({ item, index }) => {
+    const book = item.book;
+    // console.log(item);
+    return (
+      <TouchableNativeFeedback
+        onPress={() => {
+          handleNavigation(item._id);
+        }}
+      >
+        <View
+          style={[
+            {
+              width: screenWidth / 3,
+              height: 250,
+              alignItems: "center",
+              margin: 0,
+            },
+          ]}
+        >
+          <Image
+            style={{
+              width: screenWidth / 3,
+              height: 180,
+              resizeMode: "contain",
+            }}
+            source={{ uri: book.coverImg }}
+          />
+          <Text style={[{ textAlign: "left", fontSize: 14 }]}>
+            {book.title}
+          </Text>
+          <Text style={[{ textAlign: "center", fontSize: 12 }]}>
+            {book.author.length > 20
+              ? book.author.substring(0, 20) + "..."
+              : book.author}
+          </Text>
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
+  const GenreCardItem = ({ item, index }, parallaxProps) => {
+    // console.log(item);
+    return (
+      <TouchableNativeFeedback
+        onPress={() => {
+          handleNavigation(item._id);
+        }}
+      >
+        <View style={genre_card_styles.item}>
+          <Image
+            style={genre_card_styles.image}
+            source={{ uri: item.coverImg }}
+          />
+          <View style={genre_card_styles.header_container}>
+            <View>
+              <Text allowFontScaling={false} style={genre_card_styles.title}>
+                {item.title}
+              </Text>
+              <Text allowFontScaling={false} style={genre_card_styles.author}>
+                {item.author.length > 20
+                  ? item.author.substring(0, 20) + "..."
+                  : item.author}
+              </Text>
+            </View>
+            <Stars
+              style={genre_card_styles.rating}
+              default={parseInt(item.rating)}
+              spacing={5}
+              starSize={25}
+              count={5}
+              fullStar={
+                <Ionicons name="star" size={20} color="rgb(255, 204, 0)" />
+              }
+              emptyStar={
+                <Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />
+              }
+              disabled={true}
+            />
+          </View>
+        </View>
+      </TouchableNativeFeedback>
+    );
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -487,78 +532,84 @@ const HomeScreen2 = ({ navigation }) => {
             Continue Reading
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate("ReadBook")}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "white",
-              marginHorizontal: 10,
-              marginVertical: 10,
-              borderRadius: 30,
-              padding: 10,
-            }}
-          >
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
-                justifyContent: "center",
+                justifyContent: "space-between",
                 alignItems: "center",
+                backgroundColor: "white",
+                marginHorizontal: 10,
+                marginVertical: 10,
+                borderRadius: 30,
+                padding: 10,
               }}
             >
-              <Avatar.Image source={{ uri: wishlist[0]?.book?.coverImg }} />
               <View
                 style={{
                   flex: 1,
-                  flexDirection: "column",
-                  padding: 7,
+                  flexDirection: "row",
                   justifyContent: "center",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                 }}
               >
-                {wishlist && (
-                  <Text style={{ flex: 1, fontSize: 14, paddingHorizontal: 5 }}>
-                    {wishlist[0]?.book?.title}
-                  </Text>
-                )}
-                {wishlist && (
-                  <Text
-                    style={{
-                      flex: 1,
-                      fontSize: 12,
-                      color: "rgba(0,0,0,0.5)",
-                      paddingBottom: 10,
-                      paddingHorizontal: 5,
-                    }}
-                  >
-                    {wishlist[0]?.book?.author}
-                  </Text>
-                )}
-                {wishlist && (
-                  <Stars
-                    default={parseInt(wishlist[0]?.book?.rating)}
-                    spacing={5}
-                    starSize={25}
-                    count={5}
-                    fullStar={
-                      <Ionicons
-                        name="star"
-                        size={20}
-                        color="rgb(255, 204, 0)"
-                      />
-                    }
-                    emptyStar={
-                      <Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />
-                    }
-                    disabled={true}
-                  />
-                )}
+                <Avatar.Image source={{ uri: wishlist[0]?.book?.coverImg }} />
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    padding: 7,
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  {wishlist && (
+                    <Text
+                      style={{ flex: 1, fontSize: 14, paddingHorizontal: 5 }}
+                    >
+                      {wishlist[0]?.book?.title}
+                    </Text>
+                  )}
+                  {wishlist && (
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: 12,
+                        color: "rgba(0,0,0,0.5)",
+                        paddingBottom: 10,
+                        paddingHorizontal: 5,
+                      }}
+                    >
+                      {wishlist[0]?.book?.author}
+                    </Text>
+                  )}
+                  {wishlist && (
+                    <Stars
+                      default={parseInt(wishlist[0]?.book?.rating)}
+                      spacing={5}
+                      starSize={25}
+                      count={5}
+                      fullStar={
+                        <Ionicons
+                          name="star"
+                          size={20}
+                          color="rgb(255, 204, 0)"
+                        />
+                      }
+                      emptyStar={
+                        <Ionicons
+                          name="star"
+                          size={20}
+                          color="rgba(0,0,0,0.9)"
+                        />
+                      }
+                      disabled={true}
+                    />
+                  )}
+                </View>
               </View>
+              <IconButton icon="chevron-right" size={35} />
             </View>
-            <IconButton icon="chevron-right" size={35} />
-          </View>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -599,7 +650,9 @@ const HomeScreen2 = ({ navigation }) => {
           <Carousel
             layout="default"
             ref={popularCarousel}
-            onPress={()=>{handlePopularCarousel}}
+            onPress={() => {
+              handlePopularCarousel;
+            }}
             data={wishlist.slice(0, 10)}
             renderItem={SavedListCardItem}
             sliderWidth={screenWidth - 20}
