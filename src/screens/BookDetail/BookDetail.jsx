@@ -10,18 +10,21 @@ import {
   TouchableOpacity,
   Dimensions,
   ImageBackground,
+  ToastAndroid,
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
+import Icon from 'react-native-vector-icons/Ionicons';
 import Stars from "react-native-stars";
 import * as Haptics from "expo-haptics";
 import photo from "../../images/photo.jpg";
 import bookmark from "../../images/bookmark.png";
-import ReadMore from "react-native-read-more-text";
+// import ReadMore from "react-native-read-more-text";
 import { useSelector, useDispatch } from "react-redux";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { BASE_URL } from "@env";
+import backarrow from "../../images/backarrow.png"
 
 import Animated, {
   interpolate,
@@ -36,6 +39,38 @@ import Animated, {
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
+const BookmarkOutlineIcon = () => {
+  return <Icon name="bookmark-outline" size={24} color="black" />;
+};
+
+const BookmarkFilledIcon = () => {
+  return <Icon name="bookmark" size={24} color="black" />;
+};
+
+
+const MAX_LINES = 3; // Maximum number of lines to show before "read more"
+
+const ReadMore = ({ text }) => {
+  const [showFullText, setShowFullText] = useState(false);
+
+  const toggleShowFullText = () => {
+    setShowFullText(!showFullText);
+  };
+
+  return (
+    <View style={styles.synopsis}>
+      <Text numberOfLines={showFullText ? undefined : MAX_LINES}>
+        {text}
+      </Text>
+      {text.length > MAX_LINES && (
+        <TouchableOpacity onPress={toggleShowFullText}>
+          <Text style={{color:"grey",alignSelf:"flex-end"}}>{showFullText ? 'Read less' : 'Read more'}</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
+
 const BookDetails = ({ route, navigation }) => {
   // const id = navigation;
 
@@ -47,13 +82,32 @@ const BookDetails = ({ route, navigation }) => {
     coverImg: null,
     description: "",
     pdf_url: null,
+    rating:0,
+    pages:0,
+    readCount:0,
   });
+  const [reviewData,setreviewData]=useState({
+    bookId:route.params.id,
+    comment:"",
+    rating:null
+  })
+  const [reviews,getReviews]=useState({
+    name:"",
+    comments:"",
+    rating:null,
+  })
+
+  const [isBookmarked,setIsBookmarked]=useState(false);
 
   useEffect(() => {
     fetchBookdetails(route.params.id);
+    bookReviews(route.params.id);
   }, []);
 
   const fetchBookdetails = async (id) => {
+
+    dispatch(loaderStart());
+
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -71,15 +125,127 @@ const BookDetails = ({ route, navigation }) => {
             coverImg: response.data.book.coverImg,
             description: response.data.book.description,
             pdf_url: response.data.book.pdfUrl,
+            reviews:response.data.reviews,
+            rating:response.data.rating,
+            pages:response.data.pages,
+            readCount:response.data.readCount,
           });
         })
         .catch(function (error) {
-          console.log("Unable to show Book", error);
+          ToastAndroid.show(
+            `Unable to fecth book ${error.message}`,
+            ToastAndroid.SHORT
+            );
+            dispatch(loaderStop());
+            console.log("Unable to show Book", error);
+            navigation.replace("homenavi");
         });
     } catch (error) {
+      ToastAndroid.show(
+      `Unable to fecth book ${error.message}`,
+      ToastAndroid.SHORT
+      );
+      dispatch(loaderStop());
       console.log("Unable to show Book", error);
+      navigation.replace("homenavi")
     }
   };
+
+  
+  const handleReviewDataChange = (name, value) => {
+    try{
+      setreviewData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }catch(error){
+    console.log("unsuccessful",error);
+  }
+    
+  }
+  
+  const submitReview = async () => {
+    let config = {
+      method: 'put',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/review/`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data:data,
+    };
+
+    try {
+        const response=axios.put(config.url, reviewData);
+        console.log(response.data);
+        console.log("review sent");
+    } catch (error) {
+      console.error("unsuccesful",error);
+    }
+  }
+
+
+  const bookReviews=async(id)=>{
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}reviews/?id=${id}`,
+      headers: {},
+    };
+
+    try {
+      await axios(config)
+        .then(function (response) {
+          console.log(response.data);
+          getReviews({
+            name:response.data.name,
+            comment:response.data.comment,
+            rating:response.data.rating,
+          })
+          })
+          .catch(function (error) {
+            console.log("Unable to fetch reviews", error);
+          });
+      } catch (error) {
+        console.log("Unsuccessful fetching", error);
+      }
+  }
+
+  const goBack = () => {
+    navigation.goBack();
+  };
+
+ 
+  const handleBookmarkToggle = async () => {
+
+     console.log("bookmark pressed")
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/whishlist/add`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    try {
+      if (!isBookmarked) {
+        const response=await axios.post(config.url,item);
+        console.log(response.data);''
+        console.log("Book bookmarked")
+      }
+      // } else {
+      //   await axios.delete(`${BASE_URL}/wishlist/${item.id}`);
+      //   console.log("Bookmarked remove")
+      // }
+      setIsBookmarked(isBookmarked);
+    } catch (error) {
+      console.error("unsuccesul bookmark");
+    }
+  };
+
+
 
   const bookDetails = {
     _id: "63f504f55012860157ab8c99",
@@ -175,9 +341,14 @@ const BookDetails = ({ route, navigation }) => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          onPress={() => console.log("Bookmark", { pdf_url })}
+          onPress={()=>{handleBookmarkToggle}}
         >
-          <Image
+          {isBookmarked ? (
+              <BookmarkFilledIcon />
+            ) : (
+              <BookmarkOutlineIcon />
+            )}
+          {/* <Image
             source={bookmark}
             resizeMode="contain"
             style={{
@@ -185,7 +356,7 @@ const BookDetails = ({ route, navigation }) => {
               height: 25,
               tintColor: "white",
             }}
-          />
+          /> */}
         </TouchableOpacity>
 
         {/* Start Reading */}
@@ -222,11 +393,11 @@ const BookDetails = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={{ zIndex: -1 }}>
-        {/* <View onPress={goBack} style={styles.closeIcon}>
+        <View onPress={goBack}>
           <TouchableOpacity onPress={goBack}>
               <Image source={backarrow} style={styles.closeIcon} />
             </TouchableOpacity>
-        </View> */}
+        </View>
         {/* <View  style={styles.bookmarkIcon}>
             <TouchableOpacity>
                 <Image source={bookmark} style={styles.bookmarkIcon} />
@@ -236,7 +407,7 @@ const BookDetails = ({ route, navigation }) => {
           style={[
             {
               width: screenWidth,
-              height: screenHeight - 180,
+              height: screenHeight - 150,
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 0,
@@ -262,7 +433,7 @@ const BookDetails = ({ route, navigation }) => {
               flexDirection: "row",
               paddingVertical: 20,
               margin: 10,
-              marginTop: 20,
+              marginTop: 15,
               borderRadius: 10,
               backgroundColor: "rgba(0,0,0,0.3)",
             }}
@@ -270,7 +441,7 @@ const BookDetails = ({ route, navigation }) => {
             {/* Rating */}
             <View style={{ flex: 1, alignItems: "center", color: "white" }}>
               <Text style={{ color: "white" }}>
-                {bookDetails.average_rating}
+                {data.rating}
               </Text>
               <Text style={{ color: "white" }}>Rating</Text>
             </View>
@@ -279,7 +450,7 @@ const BookDetails = ({ route, navigation }) => {
 
             {/* Pages */}
             <View style={{ flex: 1, alignItems: "center", color: "white" }}>
-              <Text style={{ color: "white" }}>{bookDetails.books_count}</Text>
+              <Text style={{ color: "white" }}>{data.pages}</Text>
               <Text style={{ color: "white" }}>Pages</Text>
             </View>
 
@@ -288,7 +459,7 @@ const BookDetails = ({ route, navigation }) => {
             {/* ratngs count */}
             <View style={{ flex: 1, alignItems: "center", color: "white" }}>
               <Text style={{ color: "white" }}>
-                {bookDetails.ratings_count}
+                {data.readCount}
               </Text>
               <Text style={{ color: "white" }}>Views</Text>
             </View>
@@ -321,18 +492,17 @@ const BookDetails = ({ route, navigation }) => {
           }}
         /> */}
 
-        <View>
+        {/* <View>
           <ScrollView
             style={{
               borderColor: "#554994",
               marginHorizontal: 20,
-              marginVertical: 20,
+              marginVertical: 10,
             }}
             horizontal={false}
           >
-            <ReadMore
-              ReadMore
-              numberOfLines={7}
+            <ReadMore ReadMore
+              numberOfLines={3}
               renderTruncatedFooter={(handlePress) => {
                 return (
                   <Text
@@ -341,8 +511,7 @@ const BookDetails = ({ route, navigation }) => {
                       color: "grey",
                       marginHorizontal: "12",
                       backgroundColor: "black",
-                    }}
-                  >
+                    }}>
                     show more
                   </Text>
                 );
@@ -357,14 +526,20 @@ const BookDetails = ({ route, navigation }) => {
             >
               <Text style={styles.synopsis}>
                 Synopsis:{"\n"}
-                {data.description}
+                {bookDetails.description}
               </Text>
             </ReadMore>
           </ScrollView>
-        </View>
+        </View> */}
+
+        <ReadMore text={data.description} />
+
+        
 
         {/* <View  style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center'}}><Text style={styles.start}>Start Reading</Text></View> */}
 
+
+      
         <View style={styles.review}>
           <Text style={{ color: "black", padding: 15, fontSize: 16 }}>
             User Reviews:
@@ -373,6 +548,7 @@ const BookDetails = ({ route, navigation }) => {
             <View>
               <View style={styles.usercontainer}>
                 <Image source={photo} style={styles.profileImg} />
+             
                 <View
                   style={{
                     display: "flex",
@@ -380,10 +556,9 @@ const BookDetails = ({ route, navigation }) => {
                     borderColor: "white",
                     width: screenWidth - 130,
                   }}
-                >
+                >  
                   <Text
-                    style={{ marginStart: 10, marginTop: 10, color: "white" }}
-                  >
+                    style={{ marginStart: 10, marginTop: 10, color: "white" }}>
                     {bookDetails.reviews[0].name}
                   </Text>
                   <Text
@@ -395,7 +570,7 @@ const BookDetails = ({ route, navigation }) => {
                     }}
                   >
                     {bookDetails.reviews[0].comment}
-                  </Text>
+                  </Text>  
                 </View>
               </View>
               <View style={styles.usercontainer}>
@@ -500,21 +675,24 @@ const BookDetails = ({ route, navigation }) => {
         {/* Write a review */}
         <View style={styles.reviewConatiner}>
           <TextInput
-            placeholder="Text"
+            placeholder="Write a Review"
             multiline
             numberOfLines={4}
             textAlignVertical="top"
             color="black"
             useAnimatedScrollView="true"
             style={styles.TextInput}
+            value={reviewData.comment}
+            onChangeText={(value)=>handleReviewDataChange('comment',value)}
           >
-            Write a Review
+            {/* Write a Review */}
           </TextInput>
           <Button
             title="Send"
             width="200"
             style={styles.button}
             color="#554994"
+            onPress={submitReview}
           />
         </View>
 
@@ -603,16 +781,18 @@ const styles = StyleSheet.create({
     // #FFFBEB,#495579,#263159
   },
   image: {
-    width: screenWidth - 100,
+    width: screenWidth - 150,
     height: screenHeight - 450,
     marginBottom: 10,
-    marginTop: 30,
+    marginTop: 50,
     zIndex: 1,
     marginHorizontal: 10,
     alignSelf: "center",
     zIndex: 1,
     opacity: 1,
+    flex:0.9,
     resizeMode: "cover",
+    borderRadius:5
   },
   title: {
     fontSize: 24,
@@ -642,7 +822,7 @@ const styles = StyleSheet.create({
   review: {
     fontSize: 16,
     marginBottom: 10,
-    marginTop: 25,
+    marginTop: 20,
     borderWidth: 0.2,
     borderColor: "#554994",
     marginHorizontal: 22,
@@ -655,18 +835,16 @@ const styles = StyleSheet.create({
   },
   synopsis: {
     fontSize: 14,
-    // marginBottom: 25,
-    // marginVertical: 25,
+    marginBottom: 20,
+    marginVertical: 20,
     borderColor: "#554994",
-    borderWidth: 1,
-    width: screenWidth - 40,
-    marginHorizontal: 20,
-    height: "100%",
+    width: screenWidth - 25,
+    marginHorizontal: 10,
     borderRadius: 5,
     color: "black",
     paddingVertical: 5,
     paddingHorizontal: 10,
-    overflow: "scroll",
+    textAlign:"center",
   },
   bookmarkIcon: {
     top: 5,
@@ -731,10 +909,10 @@ const styles = StyleSheet.create({
     color: "white",
   },
   closeIcon: {
-    top: 5,
-    marginTop: 28,
+    top: 20,
+    // marginTop: 5,
     left: 10,
-    width: 50,
+    width: 25,
     height: 25,
     position: "absolute",
   },
