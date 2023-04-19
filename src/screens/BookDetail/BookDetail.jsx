@@ -12,12 +12,13 @@ import {
   ImageBackground,
 } from "react-native";
 import axios from "axios";
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Stars from "react-native-stars";
 import * as Haptics from "expo-haptics";
 import photo from "../../images/photo.jpg";
 import bookmark from "../../images/bookmark.png";
+import discussion from "../../images/discussion-forum.png";
 import ReadMore from "react-native-read-more-text";
 import { useSelector, useDispatch } from "react-redux";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
@@ -47,6 +48,7 @@ const BookDetails = ({ route, navigation }) => {
     coverImg: null,
     description: "",
     pdf_url: null,
+    id:route.params.id,
   });
 
   useEffect(() => {
@@ -227,11 +229,12 @@ const BookDetails = ({ route, navigation }) => {
               <Image source={backarrow} style={styles.closeIcon} />
             </TouchableOpacity>
         </View> */}
-        {/* <View  style={styles.bookmarkIcon}>
-            <TouchableOpacity>
-                <Image source={bookmark} style={styles.bookmarkIcon} />
-              </TouchableOpacity>
-          </View> */}
+        <View  style={styles.bookmarkIcon}>
+            <TouchableOpacity onPress={()=>navigation.navigate("discussionforum",{id:route.params.id})}>
+                <Image source={discussion} style={styles.bookmarkIcon} />
+            </TouchableOpacity>
+          </View>
+
         <ImageBackground
           style={[
             {
@@ -320,6 +323,7 @@ const BookDetails = ({ route, navigation }) => {
             paddingVertical:5
           }}
         /> */}
+
 
         <View>
           <ScrollView
@@ -672,8 +676,8 @@ const styles = StyleSheet.create({
     top: 5,
     marginTop: 25,
     marginRight: 8,
-    right: 10,
-    width: 20,
+    right: 5,
+    width: 30,
     height: 30,
     position: "absolute",
   },

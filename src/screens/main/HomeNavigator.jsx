@@ -13,6 +13,7 @@ import { Text, View } from "react-native";
 // import UploadBook from "./UploadBook";
 import UploadNavigator from "./UploadNavigator";
 import BookDetail from "../BookDetail/BookDetail";
+import DiscussionForum from "../BookDetail/DiscussionForum";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -94,6 +95,22 @@ const HomeNavigator = () => {
         }}
         component={Wishlist}
       />
+      {/* <HomeDrawer.Screen
+        name="Discussion Forum"
+        options={{
+          title: "Discussion Forum",
+          drawerIcon: ({ color, focused, size }) => (
+            <IconButton
+              size={size}
+              style={{ margin: 0, padding: 0 }}
+              iconColor={color}
+              icon={"bookmark"}
+            />
+          ),
+          headerShown: false,
+        }}
+        component={DiscussionForum}
+      /> */}
       <HomeDrawer.Screen
         name="search"
         options={{
