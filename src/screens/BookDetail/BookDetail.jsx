@@ -35,17 +35,10 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
+import { FlatList } from "react-native-gesture-handler";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
-
-const BookmarkOutlineIcon = () => {
-  return <Icon name="bookmark-outline" size={24} color="black" />;
-};
-
-const BookmarkFilledIcon = () => {
-  return <Icon name="bookmark" size={24} color="black" />;
-};
 
 
 const MAX_LINES = 3; // Maximum number of lines to show before "read more"
@@ -72,9 +65,7 @@ const ReadMore = ({ text }) => {
 };
 
 const BookDetails = ({ route, navigation }) => {
-  // const id = navigation;
-
-  const opacity = useRef(new Animated.Value(0)).current;
+  // const id=route.params.id;
   const dispatch = useDispatch();
   const [data, setData] = useState({
     title: "",
@@ -83,7 +74,7 @@ const BookDetails = ({ route, navigation }) => {
     description: "",
     pdf_url: null,
     rating:0,
-    pages:0,
+    pages:'',
     readCount:0,
   });
   const [reviewData,setreviewData]=useState({
@@ -91,17 +82,21 @@ const BookDetails = ({ route, navigation }) => {
     comment:"",
     rating:null
   })
-  const [reviews,getReviews]=useState({
-    name:"",
-    comments:"",
-    rating:null,
-  })
-
+  const [reviews,getReviews]=useState([]
+  //   ,{
+  //   name:'',
+  //   comment:'',
+  //   id:route.params.id,
+  // }
+  )
+  const [wishlist,setWishlist]=useState([]);
   const [isBookmarked,setIsBookmarked]=useState(false);
+  
 
   useEffect(() => {
     fetchBookdetails(route.params.id);
     bookReviews(route.params.id);
+    // handleAddToWishlist(route.params.id);
   }, []);
 
   const fetchBookdetails = async (id) => {
@@ -125,11 +120,14 @@ const BookDetails = ({ route, navigation }) => {
             coverImg: response.data.book.coverImg,
             description: response.data.book.description,
             pdf_url: response.data.book.pdfUrl,
-            reviews:response.data.reviews,
-            rating:response.data.rating,
-            pages:response.data.pages,
-            readCount:response.data.readCount,
+            reviews:response.data.book.reviews,
+            rating:response.data.book.rating,
+            pages:response.data.book.pages,
+            readCount:response.data.book.readCount,
           });
+          console.log(data.rating);
+          console.log(data.pages);
+          console.log(data.reviews)
         })
         .catch(function (error) {
           ToastAndroid.show(
@@ -172,36 +170,45 @@ const BookDetails = ({ route, navigation }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      data:data,
+      data:reviewData,
     };
 
     try {
-        const response=axios.put(config.url, reviewData);
+        const response=await axios.put(config.url, reviewData);
         console.log(response.data);
+        ToastAndroid.show(
+          `Review sent`,
+          ToastAndroid.SHORT
+          );
         console.log("review sent");
     } catch (error) {
       console.error("unsuccesful",error);
     }
   }
 
-
   const bookReviews=async(id)=>{
-    let config = {
-      method: "get",
-      maxBodyLength: Infinity,
-      url: `${BASE_URL}reviews/?id=${id}`,
-      headers: {},
-    };
+      let config = {
+        method: "get",
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}reviews/?id=${id}`,
+        headers: {},
+      };
 
     try {
       await axios(config)
-        .then(function (response) {
-          console.log(response.data);
-          getReviews({
-            name:response.data.name,
-            comment:response.data.comment,
-            rating:response.data.rating,
-          })
+        .then(function (response) {  
+          getReviews(
+          //   {
+          //   name:response.data.name,
+          //   comment:response.data.comment,
+          //   rating:response.data.rating,
+          // }
+            response.data.reviews
+          );
+          console.log("review response is:",response.data.reviews);
+          console.log(response.data.reviews[0].name);
+          console.log(response.data.reviews[0].comment);
+          console.log(reviews.length);
           })
           .catch(function (error) {
             console.log("Unable to fetch reviews", error);
@@ -209,113 +216,87 @@ const BookDetails = ({ route, navigation }) => {
       } catch (error) {
         console.log("Unsuccessful fetching", error);
       }
-  }
+  };
+
 
   const goBack = () => {
     navigation.goBack();
   };
 
  
-  const handleBookmarkToggle = async () => {
-
-     console.log("bookmark pressed")
-
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: `${BASE_URL}/whishlist/add`,
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const handleAddToWishlist = async () => {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}whishlist/add`,
+        headers: {},
+        // data:{
+        //   "bookId":id,
+        // }
+      };
+      await axios.post(config.url,{bookId:route.params.id})
+        .then(response => {
+          setWishlist(response.data.wishlist);
+          console.log(config.data)
+          ToastAndroid.show(
+            `Book added to wishlist`,
+            ToastAndroid.SHORT
+            );
+          console.log("added to wishlist:",response.data.wishlist)
+          console.log(wishlist)
+          setIsBookmarked(true);
+        })
+        .catch(error => console.error("cannot add to wishlist",error));
     };
-
-    try {
-      if (!isBookmarked) {
-        const response=await axios.post(config.url,item);
-        console.log(response.data);''
-        console.log("Book bookmarked")
+  
+    const handleRemoveFromWishlist = async() => {
+      let config = {
+        method: "patch",
+        maxBodyLength: Infinity,
+        url: `${BASE_URL}whishlist/remove`,
+        headers: {},
+      };
+      await axios.patch(config.url,{id:route.params.id})
+        .then(response => {
+          setWishlist(response.data.wishlist);
+          console.log("removed from wishlist:",response.data.wishlist)
+          console.log(wishlist)
+          setIsBookmarked(false);
+          ToastAndroid.show(
+            `Book removed from wishlist`,
+            ToastAndroid.SHORT
+            );
+        })
+        .catch(error => console.error("cannot remove from wishlist",error));
+      // console.log("removed from wishlist");
+    };
+  
+  
+    const handleBookmarkPress = () => {
+      if (isBookmarked) {
+        handleRemoveFromWishlist();
+      } else {
+        handleAddToWishlist();
       }
-      // } else {
-      //   await axios.delete(`${BASE_URL}/wishlist/${item.id}`);
-      //   console.log("Bookmarked remove")
-      // }
-      setIsBookmarked(isBookmarked);
-    } catch (error) {
-      console.error("unsuccesul bookmark");
-    }
-  };
-
-
-
-  const bookDetails = {
-    _id: "63f504f55012860157ab8c99",
-    book_id: 1,
-    goodreads_book_id: 2767052,
-    best_book_id: 2767052,
-    work_id: 2792775,
-    books_count: 272,
-    isbn: 9780439023480,
-    authors: "Suzanne Collins",
-    original_publication_year: 2008,
-    original_title: "The Hunger Games",
-    title: "The Hunger Games (The Hunger Games, #1)",
-    language_code: "eng",
-    average_rating: 4.34,
-    description:
-      "WINNING MEANS FAME AND FORTUNE.LOSING MEANS CERTAIN DEATH.THE HUNGER GAMES HAVE BEGUN. . . .In the ruins of a place once known as North America lies the nation of Panem, a shining Capitol surrounded by twelve outlying districts. The Capitol is harsh and cruel and keeps the districts in line by forcing them all to send one boy and once girl between the ages of twelve and eighteen to participate in the annual Hunger Games, a fight to the death on live TV.Sixteen-year-old Katniss Everdeen regards it as a death sentence when she steps forward to take her sister's place in the Games. But Katniss has been close to dead before—and survival, for her, is second nature. Without really meaning to, she becomes a contender. But if she is to win, she will have to start making choices that weight survival against humanity and life against love.",
-    ratings_count: 4780653,
-    work_ratings_count: 4942365,
-    work_text_reviews_count: 155254,
-    ratings_1: 66715,
-    ratings_2: 127936,
-    ratings_3: 560092,
-    ratings_4: 1481305,
-    ratings_5: 2706317,
-    image_url: "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
-    small_image_url:
-      "https://images.gr-assets.com/books/1447303603s/2767052.jpg",
-    ratings: 3.5,
-    numOfReviews: 2,
-    user: "63f4fe97cbf3c8a2d53d6421",
-    reviews: [
-      {
-        user: "640a0b6de1cf3e3898724a84",
-        name: "Pratham",
-        rating: 4,
-        comment: "Great product",
-        _id: "6415ede25980c3120df7108f",
-      },
-      {
-        user: "63ebc185554480c3e6135c4d",
-        name: "Pratham",
-        rating: 3,
-        comment: "Best book ever",
-        _id: "6415ee685980c3120df71099",
-      },
-      {
-        user: "63ebc185554480c3e6135c4d",
-        name: "Pratham",
-        rating: 3,
-        comment: "Best book ever",
-        _id: "6415ee685980c3120df71099",
-      },
-      {
-        user: "63ebc185554480c3e6135c4d",
-        name: "Pratham",
-        rating: 3,
-        comment: "Best book ever",
-        _id: "6415ee685980c3120df71099",
-      },
-      {
-        user: "63ebc185554480c3e6135c4d",
-        name: "Pratham",
-        rating: 3,
-        comment: "Best book ever",
-        _id: "6415ee685980c3120df71099",
-      },
-    ],
-  };
-
+      setIsBookmarked(!isBookmarked);
+    };
+  
+    const renderBookmarkIcon = () => {
+      if (isBookmarked) {
+        return (
+          <TouchableOpacity onPress={handleBookmarkPress}>
+            <Ionicons name="bookmark" size={24} color="#554994" />
+          </TouchableOpacity>
+        );
+      } else {
+        return (
+          <TouchableOpacity onPress={handleBookmarkPress}>
+            <Ionicons name="bookmark-outline" size={24} color="#554994" />
+          </TouchableOpacity>
+        );
+      }
+    };
+    
   const LineDivider = () => {
     return (
       <View style={{ width: 1, paddingVertical: 5 }}>
@@ -341,23 +322,21 @@ const BookDetails = ({ route, navigation }) => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          onPress={()=>{handleBookmarkToggle}}
+          onPress={()=> {console.log("wishlisted")}}
         >
-          {isBookmarked ? (
-              <BookmarkFilledIcon />
-            ) : (
-              <BookmarkOutlineIcon />
-            )}
+          {renderBookmarkIcon()}
+          
           {/* <Image
-            source={bookmark}
-            resizeMode="contain"
-            style={{
-              width: 25,
-              height: 25,
-              tintColor: "white",
-            }}
-          /> */}
+          //   source={bookmark}
+          //   resizeMode="contain"
+          //   style={{
+          //     width: 25,
+          //     height: 25,
+          //     tintColor: "white",
+          //   }}
+          // /> */}
         </TouchableOpacity>
+       
 
         {/* Start Reading */}
         <TouchableOpacity
@@ -371,24 +350,13 @@ const BookDetails = ({ route, navigation }) => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          onPress={() => navigation.navigate("ReadBook")}
+          onPress={(id) => navigation.navigate("ReadBook")}
         >
           <Text style={{ color: "white", fontsize: 10 }}>Start Reading</Text>
         </TouchableOpacity>
       </View>
     );
   }
-
-  // useEffect(() => {
-  //     axios.get('http://localhost:5000/api/v1/book/63f504f55012860157ab8c99')
-  //       .then(response => {
-  //         setBookDetails(response.data);
-  //         console.log(response.data);
-  //       })
-  //       .catch(error => {
-  //         console.error(error.message);
-  //       });
-  // }, []);
 
   return (
     <View style={styles.container}>
@@ -398,11 +366,6 @@ const BookDetails = ({ route, navigation }) => {
               <Image source={backarrow} style={styles.closeIcon} />
             </TouchableOpacity>
         </View>
-        {/* <View  style={styles.bookmarkIcon}>
-            <TouchableOpacity>
-                <Image source={bookmark} style={styles.bookmarkIcon} />
-              </TouchableOpacity>
-          </View> */}
         <ImageBackground
           style={[
             {
@@ -439,6 +402,7 @@ const BookDetails = ({ route, navigation }) => {
             }}
           >
             {/* Rating */}
+            
             <View style={{ flex: 1, alignItems: "center", color: "white" }}>
               <Text style={{ color: "white" }}>
                 {data.rating}
@@ -545,8 +509,9 @@ const BookDetails = ({ route, navigation }) => {
             User Reviews:
           </Text>
           <ScrollView>
-            <View>
-              <View style={styles.usercontainer}>
+            
+         {reviews.map((review,index)=>(
+                <View style={styles.usercontainer} key={index} >
                 <Image source={photo} style={styles.profileImg} />
              
                 <View
@@ -557,11 +522,11 @@ const BookDetails = ({ route, navigation }) => {
                     width: screenWidth - 130,
                   }}
                 >  
-                  <Text
+                  <Text 
                     style={{ marginStart: 10, marginTop: 10, color: "white" }}>
-                    {bookDetails.reviews[0].name}
+                    {review.name}
                   </Text>
-                  <Text
+                  <Text 
                     style={{
                       height: 40,
                       marginStart: 10,
@@ -569,93 +534,14 @@ const BookDetails = ({ route, navigation }) => {
                       color: "white",
                     }}
                   >
-                    {bookDetails.reviews[0].comment}
+                    {review.comment}
                   </Text>  
                 </View>
               </View>
-              <View style={styles.usercontainer}>
-                <Image source={photo} style={styles.profileImg} />
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    borderColor: "black",
-                    width: screenWidth - 130,
-                  }}
-                >
-                  <Text
-                    style={{ marginStart: 10, marginTop: 10, color: "white" }}
-                  >
-                    {bookDetails.reviews[1].name}
-                  </Text>
-                  <Text
-                    style={{
-                      height: 40,
-                      marginStart: 10,
-                      paddingVertical: 5,
-                      color: "white",
-                    }}
-                  >
-                    {bookDetails.reviews[1].comment}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.usercontainer}>
-                <Image source={photo} style={styles.profileImg} />
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    borderColor: "black",
-                    width: screenWidth - 130,
-                  }}
-                >
-                  <Text
-                    style={{ marginStart: 10, marginTop: 10, color: "white" }}
-                  >
-                    {bookDetails.reviews[2].name}
-                  </Text>
-                  <Text
-                    style={{
-                      height: 40,
-                      marginStart: 10,
-                      paddingVertical: 5,
-                      color: "white",
-                    }}
-                  >
-                    {bookDetails.reviews[1].comment}
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.usercontainer}>
-                <Image source={photo} style={styles.profileImg} />
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    borderColor: "black",
-                    width: screenWidth - 130,
-                  }}
-                >
-                  <Text
-                    style={{ marginStart: 10, marginTop: 10, color: "white" }}
-                  >
-                    {bookDetails.reviews[3].name}
-                  </Text>
-                  <Text
-                    style={{
-                      height: 40,
-                      marginStart: 10,
-                      paddingVertical: 5,
-                      color: "white",
-                    }}
-                  >
-                    {bookDetails.reviews[1].comment}
-                  </Text>
-                </View>
-              </View>
-              <Text
-                onPress={() => navigation.navigate("ReviewList")}
+         ))
+            }
+                    <Text
+                onPress={() => navigation.navigate("ReviewList",{id:route.params.id})}
                 style={{
                   marginRight: 10,
                   alignSelf: "flex-end",
@@ -668,7 +554,6 @@ const BookDetails = ({ route, navigation }) => {
               >
                 View More
               </Text>
-            </View>
           </ScrollView>
         </View>
 
@@ -694,6 +579,7 @@ const BookDetails = ({ route, navigation }) => {
             color="#554994"
             onPress={submitReview}
           />
+          
         </View>
 
         {/* </View> */}
@@ -714,53 +600,6 @@ const BookDetails = ({ route, navigation }) => {
   );
 };
 
-{
-  /* <View style={{flex:1, justifyContent:'flex-start', alignItems:'center'}}> */
-}
-{
-  /* <Pdf  trustAllCerts={false}
-          source={{
-            uri: 'https://api.printnode.com/static/test/pdf/multipage.pdf',
-          }}
-          page={1}
-          minScale={0.5}
-          maxScale={3.0}
-          renderActivityIndicator={() => (
-            <ActivityIndicator color="black" size="large" />
-          )}
-          enablePaging={true}
-        onLoadProgress={(percentage) => console.log(`Loading :${percentage}`)}
-        onLoadComplete={() => console.log('Loading Complete')}
-        onPageChanged={(page, totalPages) => console.log(`${page}/${totalPages}`)}
-        onError={(error) => console.log(error)}
-        onPageSingleTap={(page) => alert(page)}
-        onPressLink={(link) => Linking.openURL(link)}
-        onScaleChanged={(scale) => console.log(scale)}
-        // singlePage={true}
-        spacing={10}
-        // horizontal
-        style={{flex: 1, width: Dimensions.get('window').width}}
-        /> */
-}
-{
-  /* </View> */
-}
-
-{
-  /* <View style={styles.pdfstyle}> */
-}
-{
-  /* <PdfReader url="http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf"/> */
-}
-{
-  /* <PDFReader
-          source={{ uri:"https://api.printnode.com/static/test/pdf/multipage.pdf"
-         }}
-         style={{flex: 1, width: Dimensions.get('window').width}}
-        />
-        </View> */
-}
-//  </View>
 
 const stars_style = StyleSheet.create({
   rating: {
@@ -912,9 +751,15 @@ const styles = StyleSheet.create({
     top: 20,
     // marginTop: 5,
     left: 10,
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     position: "absolute",
+    backgroundColor:'#E6E6FA',
+    borderRadius:50,
+    zIndex:-1,
+    borderWidth:1,
+    borderColor:'#E6E6FA',
+    tintColor:'#554994'
   },
   pdfstyle: {
     flex: 1,

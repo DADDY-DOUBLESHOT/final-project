@@ -21,6 +21,7 @@ import science from "../../../assets/science.png";
 import short from "../../../assets/short.png";
 import study from "../../../assets/study.png";
 import young from "../../../assets/young.png";
+import { BASE_URL } from "@env";
 
 import axios from 'axios';
 
@@ -45,7 +46,8 @@ const genre_data = [
 
    const UploadBook=({ navigation })=>{
     const [title, setTitle] = useState('');
-    const [text, setText] = useState('');
+    const [bookDescription, setBookDescription] = useState('');
+    // const [text, setText] = useState('');
     const [image, setImage] = useState(null);
     const [selectedFile, setSelectedFile] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -79,6 +81,31 @@ const genre_data = [
       }
       
     };
+
+    const handleUpload = async () => {
+ 
+      const config={
+        method:'post',
+        url: `${BASE_URL}/book/new`
+      }
+
+      const formData = new FormData();
+      // formData.append('image', {
+      //   uri: image.uri,
+      //   type: image.type,
+      //   name: image.fileName,
+      // });
+      formData.append('title',title);
+      formData.append('description', bookDescription);
+      
+      try {
+        const response = await axios.post(config.url, formData);
+        console.log(response.data);
+        console.log(data);
+      } catch (error) {
+        console.log("Error in upload",error);
+      }
+    };
     
 
     const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
@@ -98,7 +125,7 @@ const genre_data = [
         >
           <ImageBackground
             blurRadius={2}
-            source={item.img}
+            // source={item.img}
             style={[
               genre_styles.backgroundImage,
               selectedButtonIndex === index && genre_styles.selectedCard,
@@ -167,14 +194,14 @@ const genre_data = [
       </View> */}
       <View style={styles.titleContainer}>
         <Text style={styles.label}>Book Title:</Text>
-        <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" />
+        <TextInput style={styles.input} value={title} onChangeText={(text)=>setTitle(text)} placeholder="Title" />
       </View>
       <View>
       <Text style={styles.label}>Book Summary:</Text>
        <ScrollView>
           <TextInput
-            value={text}
-            onChangeText={setText}
+            value={bookDescription}
+            onChangeText={(text)=>setBookDescription(text)}
             placeholder="Text"
             multiline
             numberOfLines={4}
@@ -223,7 +250,7 @@ const genre_data = [
           </View>
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Submit" color="#554994"/>
+        <Button title="Submit" color="#554994" onPress={handleUpload}/>
       </View>
     </View>
     </ScrollView>
@@ -413,6 +440,7 @@ const genre_styles = StyleSheet.create({
   backgroundImage: {
     resizeMode: "cover",
     justifyContent: "center",
+    backgroundColor: '#554994',
     paddingHorizontal: 13,
     paddingVertical: 6,
     borderRadius: 12,
