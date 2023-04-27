@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     Dimensions,
     ImageBackground,
+    FlatList
   } from "react-native";
   import axios from "axios";
   import { BASE_URL } from "@env";
@@ -70,17 +71,12 @@ const DiscussionForum=({route,navigation})=>{
       maxBodyLength: Infinity,
       url: `${BASE_URL}/add-comment`,
       headers: {},
-      // body: JSON.stringify({
-      //   data:{
-      //     content: commentText,
-      //   }
-        
-      // }),
     };
 
     try {
       const response=await axios.post(config.url,commentText)
-          console.log("response", response.data);
+      setCommentText('')
+      console.log("response", response.data);
                   
     } catch (error) {
       console.log(commentText);
@@ -90,37 +86,91 @@ const DiscussionForum=({route,navigation})=>{
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get('https://example.com/api/comments');
-      setComments(response.data);
+      const response = await axios.get('https://dummyjson.com/comments');
+      setComments(response.data.comments);
+      console.log(response.data);
+      console.log(comments.length);
+      console.log(response.data.comments[0].id);
+      console.log(response.data.comments[0].body);
     } catch (error) {
       console.error('Error fetching comments:', error);
     }
   };
 
   const renderComment = ({ item }) => (
-    <View>
-      <Text>Book ID: {item.bookId}</Text>
-      <Text>Comment: {item.content}</Text>
+    <View style={styles.usercontainer}>
+    <View style={{
+      display: "flex",
+      flexDirection: "column",
+      borderColor: "black",
+      width: screenWidth - 130,
+    }}>
+      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>Book ID: {item.id}</Text>
+      <Text style={{
+                   height: 40,
+                   marginStart: 10,
+                   paddingVertical: 5,
+                   color: "black",
+                  }}>Comment: {item.body}</Text>
+    </View>
     </View>
   );
 
 
   return (
-    <View style={{flex:1,justifyContent:'space-between',flexDirection:"column"}}>
+    <View style={{flex:1,flexDirection:"column"}}>
         <View style={styles.container}>
             <Text style={{marginLeft:15,fontSize:24,fontWeight:'600'}}>Discussion Forum</Text>
             <Text style={{marginLeft:15,fontSize:18,fontWeight:'600',color:'grey'}}>{data.title}</Text>
+            
         </View>
-        {/* <View>
+        <View style={{height:screenHeight,margin:10,width:screenWidth,position:"absolute",display:"flex",flex:1}}>
+        {/* {comments.map((comment,index)=>{
+                <View key={index}>
+                  <Text style={styles.comment}>Book ID:{comment.id}</Text>
+                  <Text style={styles.comment}>Comment:{comment.body}</Text>
+                  <View style={styles.usercontainer}>
+                      <View
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          borderColor: "white",
+                          width: screenWidth - 130,
+                        }}
+                      >  
+                        <Text
+                          style={{ marginStart: 10, marginTop: 10, color: "white" }}>
+                          {comment.id}
+                        </Text>
+                        <Text
+                          style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "white",
+                          }}
+                        >
+                        {comment.body}
+                        </Text>  
+                      </View>
+                   </View>
+                </View>
+                console.log(comment.id);
+                console.log(comment.body);
+             })
+            } */}
+        </View>
+
+        <View>
           <FlatList
           data={comments}
           renderItem={renderComment}
           keyExtractor={(item) => item.id.toString()}
           />
-        </View> */}
+        </View>
         <View style={styles.commentSection}>
-        <TextInput placeholder="type comment here ..." onChangeText={(text)=>setCommentText({...commentText,content:text})} value={commentText.content} style={{width:'80%',marginLeft:20}}/>
-        <Text style={{marginRight:10,fontWeight:'600'}} onPress={handleSubmit}>Send</Text>
+        <TextInput placeholder="type comment here ..." onChangeText={(text)=>{setCommentText({...commentText,content:text})}} value={commentText.content}  style={{width:'80%',marginLeft:20}}/>
+        <Text style={{marginRight:30,fontWeight:'600'}} onPress={handleSubmit}>Send</Text>
         </View>
     </View>
   );
@@ -145,7 +195,26 @@ const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     backgroundColor:'#fff',
-  }
+  },
+  comment:{
+    fontSize:14,
+    backgroundColor:'grey',
+    color:'black',
+    borderWidth:2,
+    borderRadius:5,
+    height:50,
+    // width:"50%",
+  },
+  usercontainer: {
+    display: "flex",
+    flexDirection: "row",
+    // borderColor:'black',
+    // borderWidth:1,0
+    margin: 10,
+    backgroundColor: "#E6E6FA",
+    borderRadius: 10,
+    color: "black",
+  },
   
 });
 
