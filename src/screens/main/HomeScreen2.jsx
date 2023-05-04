@@ -167,9 +167,9 @@ const HomeScreen2 = ({ navigation }) => {
               { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
             ]}
           >
-            {item?.author.length > 20
+            {/* {item?.author.length > 20
               ? item?.author.substring(0, 20) + "..."
-              : item?.author}
+              : item?.author} */}
           </Text>
         </View>
       </TouchableNativeFeedback>

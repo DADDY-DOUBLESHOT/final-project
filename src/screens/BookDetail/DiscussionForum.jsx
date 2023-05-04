@@ -14,6 +14,8 @@ import {
   } from "react-native";
   import axios from "axios";
   import { BASE_URL } from "@env";
+  import { Entypo } from '@expo/vector-icons'; 
+
 
 
 
@@ -161,18 +163,230 @@ const DiscussionForum=({route,navigation})=>{
             } */}
         </View>
 
-        <View>
+        {/* <View>
           <FlatList
           data={comments}
           renderItem={renderComment}
           keyExtractor={(item) => item.id.toString()}
           />
+        </View> */}
+       
+        <View>
+        <ScrollView style={{height:screenHeight-120}}>
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width:"100%"
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 1</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>This is some awesome thinking!</Text>
+                    <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                    </View>  
+            </View>
+           </View>
+           {/* reply */}
+                  <View style={styles.reply}>
+                      <View style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderColor: "black",
+                        width: screenWidth - 130,
+                      }}>
+                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
+                      <Text style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "black",
+                            }}>You’ve shown so much growth!</Text>
+                    </View>
+                  </View>
+                  <View style={styles.reply}>
+                      <View style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderColor: "black",
+                        width: screenWidth - 130,
+                      }}>
+                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 8</Text>
+                      <Text style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "black",
+                            }}>What a powerful argument!!</Text>
+                    </View>
+                  </View>
+                  <View style={styles.reply}>
+                      <View style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderColor: "black",
+                        width: screenWidth - 130,
+                      }}>
+                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
+                      <Text style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "black",
+                            }}>This is very perceptive!</Text>
+                    </View>
+                  </View>
+                  
+
+
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width:"100%",
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 2</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>Keep up the incredible work!</Text>
+               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                </View>  
+            </View>
+           </View>
+
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width: "100%",
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>This is fascinating information!</Text>
+                     <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                    </View>  
+            </View>
+           </View>
+           {/* reply */}
+                  <View style={styles.reply}>
+                      <View style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderColor: "black",
+                        width: screenWidth - 130,
+                      }}>
+                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 9</Text>
+                      <Text style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "black",
+                            }}>This is very well thought out!</Text>
+                    </View>
+                  </View>
+                  <View style={styles.reply}>
+                      <View style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        borderColor: "black",
+                        width: screenWidth - 130,
+                      }}>
+                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
+                      <Text style={{
+                            height: 40,
+                            marginStart: 10,
+                            paddingVertical: 5,
+                            color: "black",
+                            }}>This is very perceptive!</Text>
+                    </View>
+                  </View>
+
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width: "100%",
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 3</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>What an astounding observation!</Text>
+               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+              </View>  
+            </View>
+           </View>
+           
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width:"100%",
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 4</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>This is very well thought out!</Text>
+               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                </View>  
+            </View>
+           </View>
+
+           <View style={styles.usercontainer}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width: "100%",
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>This is very well thought out!</Text>
+               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+               </View>  
+            </View>
+           </View>
+           </ScrollView>
         </View>
+      
+        
+
         <View style={styles.commentSection}>
         <TextInput placeholder="type comment here ..." onChangeText={(text)=>{setCommentText({...commentText,content:text})}} value={commentText.content}  style={{width:'80%',marginLeft:20}}/>
         <Text style={{marginRight:30,fontWeight:'600'}} onPress={handleSubmit}>Send</Text>
         </View>
     </View>
+    
   );
 };
 
@@ -211,10 +425,33 @@ const styles = StyleSheet.create({
     // borderColor:'black',
     // borderWidth:1,0
     margin: 10,
+    backgroundColor: "#CCCCFF",
+    borderRadius: 10,
+    color: "black",
+    borderTopLeftRadius:0,
+    borderTopColor:"#554994",
+    borderLeftColor:"#554994",
+    borderBottomColor:"#E6E6FA",
+    borderRightColor:"#E6E6FA",
+    borderWidth:0.5
+  },
+  reply:{
+    marginLeft:50,
+    display: "flex",
+    width:screenWidth-65,
+    flexDirection: "row",
     backgroundColor: "#E6E6FA",
     borderRadius: 10,
     color: "black",
-  },
+    marginRight:10,
+    marginTop:10,
+    borderTopLeftRadius:0,
+    borderBottomColor:"#E6E6FA",
+    borderTopColor:"#554994",
+    borderLeftColor:"#554994",
+    borderRightColor:"#E6E6FA",
+    borderWidth:0.5
+  }
   
 });
 
