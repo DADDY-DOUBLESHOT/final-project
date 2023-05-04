@@ -132,26 +132,53 @@ const genre_data = [
       }
     };
   
-    const handleUploadFile = async () => {
-      if (!selectedFile || typeof selectedFile !== 'object') {
-        return;
-      }
+    // const handleUploadFile = async () => {
+    //   if (!selectedFile || typeof selectedFile !== 'object') {
+    //     return;
+    //   }
   
-      const data = new FormData();
-      data.append('file', {
-        uri: documentUri,
-        type: '*/*',
-        name: 'document',
-      });
+    //   const data = new FormData();
+    //   data.append('file', {
+    //     uri: documentUri,
+    //     type: '*/*',
+    //     name: 'document',
+    //   });
   
-      try {
-        const response = await axios.post('https://example.com/upload', data);
-        console.log(response.data);
+    //   try {
+    //     const response = await axios.post('https://example.com/upload', data);
+    //     console.log(response.data);
+    //   } catch (error) {
+    //     console.log(error in upload);
+    //   }
+    // }
+
+    const handleUpload = async () => {
+      
+        const formData = new FormData();
+        formData.append('title',title);
+        formData.append('description',text);
+        // formData.append('selectedFile', {
+        //   uri: selectedFile.uri,
+        //   type: '*/*',
+        //   name: selectedFile.name
+        // });
+        // formData.append('image',{
+        //   uri:image.uri,
+        //   type:image.type,
+        //   name:image.fileName,
+        // })
+        
+  
+      try{
+        const response = await axios.postForm('http://localhost:5000/admin/book/new',formData);
+  
+        const data = await response.json();
+  
+        console.log(data);
       } catch (error) {
-        console.log(error in upload);
+        console.error("file upload fail",error);
       }
-    }
-    
+    };
 
   const goBack = () => {
     navigation.goBack();
@@ -218,12 +245,12 @@ const genre_data = [
         {selectedFile && (
           <>
          <Text style={styles.uploadfile}> Selected File: {selectedFile.name}</Text>
-          <Button  style={styles.button} title="Upload File" color="#554994"/>
+          <Button  style={styles.button} title="Upload File" color="#554994" />
           </>)}
           </View>
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Submit" color="#554994"/>
+        <Button title="Submit" onPress={handleUpload} color="#554994"/>
       </View>
     </View>
     </ScrollView>

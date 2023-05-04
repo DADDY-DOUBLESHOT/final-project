@@ -167,9 +167,9 @@ const HomeScreen2 = ({ navigation }) => {
               { color: isCenter ? "#2D033B" : "rgba(0,0,0,0.7)" },
             ]}
           >
-            {item?.author.length > 20
+            {/* {item?.author.length > 20
               ? item?.author.substring(0, 20) + "..."
-              : item?.author}
+              : item?.author} */}
           </Text>
         </View>
       </TouchableNativeFeedback>
@@ -285,10 +285,10 @@ const HomeScreen2 = ({ navigation }) => {
               <Text allowFontScaling={false} style={genre_card_styles.title}>
                 {item.title}
               </Text>
-              <Text allowFontScaling={false} style={genre_card_styles.author}>
-                {item.author.length > 20
-                  ? item.author.substring(0, 20) + "..."
-                  : item.author}
+             <Text allowFontScaling={false} style={genre_card_styles.author}>
+             {item?.author.length > 20
+              ? item?.author.substring(0, 20) + "..."
+              : item?.author}.
               </Text>
             </View>
             <Stars
