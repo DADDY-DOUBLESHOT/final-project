@@ -200,7 +200,7 @@ const BookDetails = ({ route, navigation }) => {
             alignItems: "center",
             justifyContent: "center",
           }}
-          onPress={() => navigation.navigate("ReadBook")}
+          onPress={() => navigation.navigate("ReadBook",{id:route.params.id})}
         >
           <Text style={{ color: "white", fontsize: 10 }}>Start Reading</Text>
         </TouchableOpacity>
