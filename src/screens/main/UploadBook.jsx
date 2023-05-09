@@ -148,6 +148,9 @@ const genre_data = [
               console.log("genres:",selectedGenres);
               console.log("image sent",image.uri,image.name)
               console.log("response sent");
+              console.log(formData)
+              console.log("formData.selectedFile:",formData.selectedFile);
+              console.log("formData.image:",formData.image);
               ToastAndroid.show(
                 `Book Uploaded`,
                 ToastAndroid.SHORT

@@ -6,6 +6,7 @@ import {
   RECOM_BOOKS,
   TRENDING_BOOKS,
   WISHLIST,
+  UPLOADED_BOOKS
 } from "../types";
 import { BASE_URL } from "@env";
 
@@ -160,6 +161,40 @@ export const wishlistBooks = async () => async (dispatch) => {
     }
   } catch (error) {
     console.log("error in fetching wishlist ", error);
+    dispatch({ type: LOADER_STOP });
+  }
+};
+
+
+export const uploadedBooks = async () => async (dispatch) => {
+  var config = {
+    method: "get",
+    url: `${BASE_URL}/uploaded-books`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const response = await axios(config);
+    console.log("response inn uploaded books",response);
+    if (response.status === 200) {
+      console.log("got books");
+      console.log("response inn uploaded books",response);
+      dispatch({
+        type: UPLOADED_BOOKS,
+        payload: {
+        uploadedBooks: response.data,
+        },
+      });
+      console.log(response.data);
+      dispatch({ type: LOADER_STOP });
+      return true;
+    } else {
+      dispatch({ type: LOADER_STOP });
+      return false;
+    }
+  } catch (error) {
+    console.log("error in fetching uploaded books ", error);
     dispatch({ type: LOADER_STOP });
   }
 };

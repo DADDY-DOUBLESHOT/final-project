@@ -1,47 +1,68 @@
 import React from 'react'
 import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal, Pressable, ScrollView } from 'react-native';
+import { useSelector } from "react-redux";
+import GridForUploadedBooks from '../../components/GridForUploadedBooks'
+
+
+
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const UploadedBooks=()=>{  
-    const data = [
-        {
-          title: "The Hunger Games (The Hunger Games, #1)",
-          rating: "4.34",
-          imgUrl: "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
-          author: "Suzanne Collins",
-        },
-        {
-          title: "Harry Potter and the Sorcerer's Stone (Harry Potter, #1)",
-          rating: "4.44",
-          imgUrl: "https://images.gr-assets.com/books/1474154022m/3.jpg",
-          author: "J.K. Rowling, Mary GrandPré",
-        },
-        {
-          title: "Twilight (Twilight, #1)",
-          rating: "3.57",
-          imgUrl: "https://images.gr-assets.com/books/1361039443m/41865.jpg",
-          author: "Stephenie Meyer",
-        },
-        {
-          title: "To Kill a Mockingbird",
-          rating: "4.25",
-          imgUrl: "https://images.gr-assets.com/books/1361975680m/2657.jpg",
-          author: "Harper Lee",
-        },
-        {
-          title: "The Great Gatsby",
-          rating: "3.89",
-          imgUrl: "https://images.gr-assets.com/books/1490528560m/4671.jpg",
-          author: "F. Scott Fitzgerald",
-        },
-    ]
+const UploadedBooks=({navigation})=>{  
+  const uploaded = useSelector((state) =>state.BOOKS.uploadedBooks);
+  console.log("uploaded books are:",uploaded);
+
+  const handleGridnavigation=(id)=>{
+    navigation.navigate("bookdetail", {id:id})
+  }
+
+
+  
+  
+  
+    // const data = [
+    //     {
+    //       title: "The Hunger Games (The Hunger Games, #1)",
+    //       rating: "4.34",
+    //       imgUrl: "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
+    //       author: "Suzanne Collins",
+    //     },
+    //     {
+    //       title: "Harry Potter and the Sorcerer's Stone (Harry Potter, #1)",
+    //       rating: "4.44",
+    //       imgUrl: "https://images.gr-assets.com/books/1474154022m/3.jpg",
+    //       author: "J.K. Rowling, Mary GrandPré",
+    //     },
+    //     {
+    //       title: "Twilight (Twilight, #1)",
+    //       rating: "3.57",
+    //       imgUrl: "https://images.gr-assets.com/books/1361039443m/41865.jpg",
+    //       author: "Stephenie Meyer",
+    //     },
+    //     {
+    //       title: "To Kill a Mockingbird",
+    //       rating: "4.25",
+    //       imgUrl: "https://images.gr-assets.com/books/1361975680m/2657.jpg",
+    //       author: "Harper Lee",
+    //     },
+    //     {
+    //       title: "The Great Gatsby",
+    //       rating: "3.89",
+    //       imgUrl: "https://images.gr-assets.com/books/1490528560m/4671.jpg",
+    //       author: "F. Scott Fitzgerald",
+    //     },
+    // ]
 
   return (
-    <View>
+    <ScrollView horizontal style={styles.content}>
+      <GridForUploadedBooks items={uploaded} handleGridnavigation={handleGridnavigation}/>
+    </ScrollView>
+  )
+
+    {/* <View> */}
         {/* <Text style={{alignSelf:'center'}}>UploadedBooks</Text> */}
-        <View style={styles.usercontainer}>
+        {/* <View style={styles.usercontainer}>
                 <Image source={{uri:data[0].imgUrl}} style={styles.profileImg}/>
                 <View style={{display:'flex', flexDirection:"column",
                 borderColor:'black',width:screenWidth-130}}>
@@ -81,8 +102,8 @@ const UploadedBooks=()=>{
                   <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[4].author}</Text>
                 </View>
         </View>
-    </View>
-  )
+    </View> */}
+  // );
  };
   
   const styles = StyleSheet.create({
@@ -104,6 +125,27 @@ const UploadedBooks=()=>{
         borderColor:'black',
         marginVertical:10,
     },
-    })
+  
+  con: {
+    flex: 1,
+  },
+  header: {
+    flex: 0.1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomColor: "rgba(0,0,0,0.2)",
+    borderBottomWidth: 1,
+    marginBottom: 10,
+  },
+  content: {
+    flex: 1,
+    marginVertical: 20,
+    marginHorizontal: 10,
+    width: screenWidth,
+  },
+
+
+})
 
 export default UploadedBooks;

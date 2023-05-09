@@ -4,6 +4,7 @@ import {
   RECOM_BOOKS,
   TRENDING_BOOKS,
   WISHLIST,
+  UPLOADED_BOOKS
 } from "../types";
 const initialState = {
   trendingBooks: [],
@@ -11,6 +12,7 @@ const initialState = {
   genreBooks: [],
   wishlist: [],
   recomBooks: [],
+  uploadedBooks:[],
 };
 
 export const booksReducer = (state = initialState, action) => {
@@ -41,6 +43,11 @@ export const booksReducer = (state = initialState, action) => {
         ...state,
         recomBooks: action.payload.recomBooks,
       };
+    case UPLOADED_BOOKS:
+      return{
+        ...state,
+        uploadedBooks: action.payload.uploadedBooks,
+      }
     default:
       return state;
   }
