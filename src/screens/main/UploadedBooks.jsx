@@ -4,8 +4,7 @@ import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dim
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const UploadedBooks=()=>{
-  
+const UploadedBooks=()=>{  
     const data = [
         {
           title: "The Hunger Games (The Hunger Games, #1)",

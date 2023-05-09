@@ -129,7 +129,7 @@ const HomeNavigator = () => {
               icon={"cloud-upload-outline"}
             />
           ),
-          headerShown: true,
+          headerShown: false,
         }}
         component={UploadNavigator}
       />
