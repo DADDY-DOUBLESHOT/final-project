@@ -34,15 +34,21 @@ const DiscussionForum=({route,navigation})=>{
     content:'',
   });
   const [comments,setComments]=useState([]);
+  const [reply,setReply]=useState({
+    commentId:'',
+    content:'',
+  });
+  const [showReply, setShowReply] = useState("");
+  const [showRepliesForCommentId, setShowRepliesForCommentId] = useState(null);
 
   useEffect(() => {
     fetchBookdetails(route.params.id);
-    console.log(route.params.id);
-    fetchComments();
+    // console.log(route.params.id);
+    fetchComments(route.params.id);
   }, []);
 
-
-  const fetchBookdetails = async (id) => {
+  
+  const fetchBookdetails = async () => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -73,6 +79,7 @@ const DiscussionForum=({route,navigation})=>{
       maxBodyLength: Infinity,
       url: `${BASE_URL}/add-comment`,
       headers: {},
+      
     };
 
     try {
@@ -86,38 +93,61 @@ const DiscussionForum=({route,navigation})=>{
     }
   };
 
-  const fetchComments = async () => {
+  const fetchComments = async (id) => {
+    // 
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}comments/${id}`,
+      headers: {},
+    };
+
     try {
-      const response = await axios.get('https://dummyjson.com/comments');
-      setComments(response.data.comments);
-      console.log(response.data);
-      console.log(comments.length);
-      console.log(response.data.comments[0].id);
-      console.log(response.data.comments[0].body);
+      await axios(config)
+        .then(function (response) {
+          console.log("comments are:",response.data)
+          setComments(response.data);
+          console.log("comments  after are:",response.data)
+          console.log(response.data[0]._id)
+          console.log(response.data[1]._id)
+          console.log(response.data[2]._id)
+          // console.log(response.data[2].replies[1].content);
+        })
+        .catch(function (error) {
+          console.log("Unable to show comment", error);
+        });
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.log("Unable to show comment here", error);
     }
+    console.log(comments);
   };
 
-  const renderComment = ({ item }) => (
-    <View style={styles.usercontainer}>
-    <View style={{
-      display: "flex",
-      flexDirection: "column",
-      borderColor: "black",
-      width: screenWidth - 130,
-    }}>
-      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>Book ID: {item.id}</Text>
-      <Text style={{
-                   height: 40,
-                   marginStart: 10,
-                   paddingVertical: 5,
-                   color: "black",
-                  }}>Comment: {item.body}</Text>
-    </View>
-    </View>
-  );
 
+  const addReply=async()=>{
+    let config = {
+      method: 'POST',
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}/add-reply`,
+      headers: {},
+      data:{
+        commentId:showReply,
+        content:reply.content
+      }
+    };
+
+    try {
+      const response=await axios.post(config.url,config.data)
+      setReply({commentId:'',content:''});
+      console.log("reply sent",response.data);
+      // console.log("response", response.data.reply);                
+    } catch (error) {
+      console.log(reply);
+      console.log(showReply);
+      console.error('Error in reply:', error);
+    }
+  }  
+
+ 
 
   return (
     <View style={{flex:1,flexDirection:"column"}}>
@@ -126,42 +156,75 @@ const DiscussionForum=({route,navigation})=>{
             <Text style={{marginLeft:15,fontSize:18,fontWeight:'600',color:'grey'}}>{data.title}</Text>
             
         </View>
-        <View style={{height:screenHeight,margin:10,width:screenWidth,position:"absolute",display:"flex",flex:1}}>
-        {/* {comments.map((comment,index)=>{
-                <View key={index}>
-                  <Text style={styles.comment}>Book ID:{comment.id}</Text>
-                  <Text style={styles.comment}>Comment:{comment.body}</Text>
-                  <View style={styles.usercontainer}>
-                      <View
-                        style={{
+        {/* <View style={{height:screenHeight,margin:10,width:screenWidth,position:"absolute",display:"flex",flex:1}}> */}
+        <ScrollView  style={{height:screenHeight-120}}>
+        {comments.map((comment,index)=>{
+          return(
+            <View style={styles.usercontainer} key={index}>
+              <View style={{
+                display: "flex",
+                flexDirection: "column",
+                borderColor: "black",
+                width:"100%"
+              }}>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>{comment._id}</Text>
+              <Text style={{
+                    height: 40,
+                    marginStart: 10,
+                    paddingVertical: 5,
+                    color: "black",
+                    }}>{comment.content}
+              </Text>
+              <Text>{comments.replies}</Text>
+                  <TouchableOpacity onPress={()=>setShowReply(showReply===comment._id?"":comment._id)}>
+                      <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                        <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/>
+                        <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                      </View>  
+                  </TouchableOpacity>
+                  {showReply === comment._id &&(
+                    <View style={{height:50,width:screenWidth-50,borderWidth:1,marginHorizontal:10,backgroundColor:"purple",flexDirection:"row",marginVertical:10}}>
+                    <TextInput onChangeText={(text)=>{setReply({...reply,content:text})}} value={reply.content} style={{width:'80%',marginLeft:20}}/>
+                    <Text style={{fontWeight:'600',marginTop:10}} onPress={()=>addReply(comment._id)}>Send</Text>
+                    </View>
+                  )
+                  }
+                  <TouchableOpacity onPress={()=>setShowRepliesForCommentId(showRepliesForCommentId === comment._id ? null : comment._id)}>
+                    <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
+                      <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>{comment.replies.length} View</Text>
+                    </View>  
+                  </TouchableOpacity>
+                  {comment._id === showRepliesForCommentId && comment.replies.map((reply)=>(
+                    <View style={{marginLeft: 10}}>
+                      {/* {comment.replies.map((reply, index) => ( */}
+                        <View style={styles.reply}>
+                        <View style={{
                           display: "flex",
                           flexDirection: "column",
-                          borderColor: "white",
-                          width: screenWidth - 130,
-                        }}
-                      >  
-                        <Text
-                          style={{ marginStart: 10, marginTop: 10, color: "white" }}>
-                          {comment.id}
-                        </Text>
-                        <Text
-                          style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "white",
-                          }}
-                        >
-                        {comment.body}
-                        </Text>  
+                          borderColor: "black",
+                          width: screenWidth - 50,
+                        }}>
+                        <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
+                        <Text style={{
+                              height: 40,
+                              marginStart: 10,
+                              paddingVertical: 5,
+                              color: "black",
+                              }}>{reply.content}</Text>
                       </View>
-                   </View>
-                </View>
-                console.log(comment.id);
-                console.log(comment.body);
-             })
-            } */}
-        </View>
+                    </View>
+                      {/* // ))} */}
+                    </View>)
+                  )}
+            </View>
+            
+
+           </View>
+          )
+          })
+        }
+            </ScrollView>
+        {/* </View> */}
 
         {/* <View>
           <FlatList
@@ -171,7 +234,7 @@ const DiscussionForum=({route,navigation})=>{
           />
         </View> */}
        
-        <View>
+        {/* <View>
         <ScrollView style={{height:screenHeight-120}}>
            <View style={styles.usercontainer}>
               <View style={{
@@ -191,9 +254,9 @@ const DiscussionForum=({route,navigation})=>{
                       <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
                     </View>  
             </View>
-           </View>
+           </View> */}
            {/* reply */}
-                  <View style={styles.reply}>
+                  {/* <View style={styles.reply}>
                       <View style={{
                         display: "flex",
                         flexDirection: "column",
@@ -282,9 +345,9 @@ const DiscussionForum=({route,navigation})=>{
                       <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
                     </View>  
             </View>
-           </View>
+           </View> */}
            {/* reply */}
-                  <View style={styles.reply}>
+                  {/* <View style={styles.reply}>
                       <View style={{
                         display: "flex",
                         flexDirection: "column",
@@ -378,7 +441,7 @@ const DiscussionForum=({route,navigation})=>{
            </View>
            </ScrollView>
         </View>
-      
+       */}
         
 
         <View style={styles.commentSection}>
