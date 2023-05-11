@@ -1,88 +1,74 @@
-import React from 'react'
-import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal, Pressable, ScrollView } from 'react-native';
+import React,{useEffect,useState} from 'react'
+import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal, Pressable, ScrollView,FlatList } from 'react-native';
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { BASE_URL } from "@env";
+
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const UploadedBooks=()=>{
-  
-    const data = [
-        {
-          title: "The Hunger Games (The Hunger Games, #1)",
-          rating: "4.34",
-          imgUrl: "https://images.gr-assets.com/books/1447303603m/2767052.jpg",
-          author: "Suzanne Collins",
-        },
-        {
-          title: "Harry Potter and the Sorcerer's Stone (Harry Potter, #1)",
-          rating: "4.44",
-          imgUrl: "https://images.gr-assets.com/books/1474154022m/3.jpg",
-          author: "J.K. Rowling, Mary GrandPré",
-        },
-        {
-          title: "Twilight (Twilight, #1)",
-          rating: "3.57",
-          imgUrl: "https://images.gr-assets.com/books/1361039443m/41865.jpg",
-          author: "Stephenie Meyer",
-        },
-        {
-          title: "To Kill a Mockingbird",
-          rating: "4.25",
-          imgUrl: "https://images.gr-assets.com/books/1361975680m/2657.jpg",
-          author: "Harper Lee",
-        },
-        {
-          title: "The Great Gatsby",
-          rating: "3.89",
-          imgUrl: "https://images.gr-assets.com/books/1490528560m/4671.jpg",
-          author: "F. Scott Fitzgerald",
-        },
-    ]
 
+
+const UploadedBooks=({navigation})=>{
+  const[books,setBooks]=useState([]);
+
+  useEffect(()=>{
+    fetchuploadedBooks();
+  },[]);
+
+  const fetchuploadedBooks=async()=>{
+    let config = {
+      method: "get",
+      maxBodyLength: Infinity,
+      url: `${BASE_URL}uploaded-books`,
+      headers: {},
+    };
+
+    try {
+      await axios(config)
+        .then(function (response) {
+          console.log("response is", response.data.books);
+          // console.log("response id is",response.data.books[0].title);
+          setBooks(response.data.books);
+          // console.log("books are:",response.data.books)
+        })
+        .catch(function (error) {
+          console.log("Unable to show uploaded Book", error);
+        });
+    } catch (error) {
+      console.log("Unable to show uploaded Book1", error);
+    }
+    
+  }
+ 
+  handlePress=((navigation,id)=>{
+    navigation.navigate("bookdetail",{id:id})
+  })
+ 
   return (
-    <View>
-        {/* <Text style={{alignSelf:'center'}}>UploadedBooks</Text> */}
-        <View style={styles.usercontainer}>
-                <Image source={{uri:data[0].imgUrl}} style={styles.profileImg}/>
-                <View style={{display:'flex', flexDirection:"column",
-                borderColor:'black',width:screenWidth-130}}>
-                  <Text style={{marginStart:10,marginTop:10,color:'black'}}>{data[0].title}</Text>
-                  <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[0].author}</Text>
+    <>  
+    <ScrollView>
+          {books.map((item)=>{
+            return(
+              <View >
+              <TouchableOpacity onPress={()=>{navigation.navigate("bookdetail",{id:item._id})}}>
+                <View style={styles.usercontainer}>
+                  <Image source={{uri:item.coverImg}} style={styles.profileImg}/>
+                  <View style={{display:'flex', flexDirection:"column",
+                  borderColor:'black',width:screenWidth-130}}>
+                    <Text style={{marginStart:10,marginTop:10,color:'black'}}>{item.title}</Text>
+                    <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{item.author}</Text>
+                    <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>pages:{item.pages}</Text>
+                  </View>
                 </View>
-        </View>
-        <View style={styles.usercontainer}>
-                <Image source={{uri:data[1].imgUrl}} style={styles.profileImg}/>
-                <View style={{display:'flex', flexDirection:"column",
-                borderColor:'black',width:screenWidth-130}}>
-                  <Text style={{marginStart:10,marginTop:10,color:'black'}}>{data[1].title}</Text>
-                  <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[1].author}</Text>
-                </View>
-        </View>
-        <View style={styles.usercontainer}>
-                <Image source={{uri:data[2].imgUrl}} style={styles.profileImg}/>
-                <View style={{display:'flex', flexDirection:"column",
-                borderColor:'black',width:screenWidth-130}}>
-                  <Text style={{marginStart:10,marginTop:10,color:'black'}}>{data[2].title}</Text>
-                  <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[2].author}</Text>
-                </View>
-        </View>
-        <View style={styles.usercontainer}>
-                <Image source={{uri:data[3].imgUrl}} style={styles.profileImg}/>
-                <View style={{display:'flex', flexDirection:"column",
-                borderColor:'black',width:screenWidth-130}}>
-                  <Text style={{marginStart:10,marginTop:10,color:'black'}}>{data[3].title}</Text>
-                  <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[3].author}</Text>
-                </View>
-        </View>
-        <View style={styles.usercontainer}>
-                <Image source={{uri:data[4].imgUrl}} style={styles.profileImg}/>
-                <View style={{display:'flex', flexDirection:"column",
-                borderColor:'black',width:screenWidth-130}}>
-                  <Text style={{marginStart:10,marginTop:10,color:'black'}}>{data[4].title}</Text>
-                  <Text style={{height:40,marginStart:10,paddingVertical:5,color:'black'}}>{data[4].author}</Text>
-                </View>
-        </View>
-    </View>
+              </TouchableOpacity>
+            </View>
+            )
+          })
+          }
+    </ScrollView>
+    </>
   )
  };
   
@@ -105,6 +91,34 @@ const UploadedBooks=()=>{
         borderColor:'black',
         marginVertical:10,
     },
-    })
+  
+  con: {
+    flex: 1,
+  },
+  header: {
+    flex: 0.1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomColor: "rgba(0,0,0,0.2)",
+    borderBottomWidth: 1,
+    marginBottom: 10,
+  },
+  content: {
+    flex: 1,
+    marginVertical: 20,
+    marginHorizontal: 10,
+    width: screenWidth,
+  },
+  container: {
+    flexDirection: 'row',
+    marginVertical: 10,
+  },
+  image: {
+    width: 100,
+    height: 150,
+    marginRight: 10,
+  }
+})
 
 export default UploadedBooks;
