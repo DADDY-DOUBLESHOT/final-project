@@ -1,21 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Button,
-  Image,
-  RefreshControl,
-  ScrollView,
-  ToastAndroid,
-  TouchableNativeFeedback,
-} from "react-native";
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Button, Image, RefreshControl, ScrollView, ToastAndroid, TouchableNativeFeedback } from "react-native";
+import { Dimensions, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import { Chip, IconButton } from "react-native-paper";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -25,9 +10,6 @@ import GridForSearch from "../../components/GridForSearch";
 const { width: screenWidth } = Dimensions.get("window");
 
 const SearchView = ({ item, handlePills }) => {
-
- 
-
   return (
     <TouchableNativeFeedback onPress={() => handlePills(item.title)}>
       <View
@@ -55,15 +37,42 @@ const SearchView = ({ item, handlePills }) => {
             flex: 1,
           }}
         >
-          <Text style={{ flex: 1, fontSize: 14, textAlign: "left" }}>
-            {item.title}
-          </Text>
+          <Text style={{ flex: 1, fontSize: 14, textAlign: "left" }}>{item.title}</Text>
           {/* <Text style={{ flex: 1, fontSize: 10 }}>
           {item.author.length > 10
             ? item.author.substring(0, 10) + "..."
             : item.author}
         </Text> */}
         </View>
+      </View>
+    </TouchableNativeFeedback>
+  );
+};
+const AuthorView = ({ item, handleAuthorClick }) => {
+  return (
+    <TouchableNativeFeedback onPress={() => handleAuthorClick(item._id)}>
+      <View
+        style={[
+          {
+            width: 90,
+            alignItems: "center",
+            marginHorizontal: 2,
+          },
+        ]}
+      >
+        <Image
+          style={{
+            width: 80,
+            height: 80,
+            resizeMode: "cover",
+            borderRadius: screenWidth / 2,
+            borderWidth: 5,
+            borderColor: "white",
+          }}
+          source={{ uri: item.profile }}
+        />
+        <Text style={[{ textAlign: "left", fontSize: 14 }]}>{item.title}</Text>
+        <Text style={[{ textAlign: "center", fontSize: 12 }]}>{item.name.length > 20 ? item.name.substring(0, 20) + "..." : item.name}</Text>
       </View>
     </TouchableNativeFeedback>
   );
@@ -78,10 +87,42 @@ const SearchScreen = ({ navigation }) => {
     loader: false,
     result: [],
   });
+  const dummyAuthors = [
+    {
+      _id: "6457d3b7ecbd4bd7bcd55121",
+      name: "Vikarm Seth",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      _id: "6457d3b7ecbd4bd7bcd55122",
+      name: "Anita Desai",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      _id: "6457d3b7ecbd4bd7bcd55123",
+      name: "Chetan Bhagat",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      _id: "6457d3b7ecbd4bd7bcd55124",
+      name: "Jhumpa Lahiri",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      _id: "6457d3b7ecbd4bd7bcd55125",
+      name: "R.K Narayan",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      _id: "6457d3b7ecbd4bd7bcd55126",
+      name: "Rabindranath Tagore",
+      profile: "https://i.pravatar.cc/150?img=3",
+    },
+  ];
 
-  const handleGridnavigation=(id)=>{
-    navigation.navigate("bookdetail", {id:id})
-  }
+  const handleGridnavigation = (id) => {
+    navigation.navigate("bookdetail", { id: id });
+  };
 
   const handleDelete = (id) => {
     let config = {
@@ -188,6 +229,9 @@ const SearchScreen = ({ navigation }) => {
     getMatches(key);
   };
 
+  const handleAuthorClick = (key) => {
+    navigation.navigate("author", { id: key });
+  };
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -220,11 +264,9 @@ const SearchScreen = ({ navigation }) => {
         />
       </View>
       {!searchBook.show ? (
-        <>
+        <ScrollView contentContainerStyle={{ width: screenWidth }} showsVerticalScrollIndicator={false}>
           <View style={{ margin: 10 }}>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={{ fontSize: 16, fontWeight: "bold" }}>Recent</Text>
               {searchHistory && searchHistory.length > 0 && (
                 <Text
@@ -242,9 +284,7 @@ const SearchScreen = ({ navigation }) => {
               )}
             </View>
             <ScrollView
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
               horizontal
               style={{ width: screenWidth }}
               contentContainerStyle={{
@@ -281,9 +321,7 @@ const SearchScreen = ({ navigation }) => {
                           textAlign: "center",
                         }}
                       >
-                        {item.text.length > 20
-                          ? item.text.substring(0, 20) + "..."
-                          : item.text}
+                        {item.text.length > 20 ? item.text.substring(0, 20) + "..." : item.text}
                       </Text>
                       <IconButton
                         style={{
@@ -316,16 +354,12 @@ const SearchScreen = ({ navigation }) => {
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}>
-              Top Book Search
-            </Text>
+            <Text style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}>Top Book Search</Text>
             {trendingBooks && (
               <FlatList
                 numColumns={2}
                 data={trendingBooks.slice(0, 8)}
-                renderItem={({ item }) => (
-                  <SearchView item={item} handlePills={handlePills} />
-                )}
+                renderItem={({ item }) => <SearchView item={item} handlePills={handlePills} />}
                 keyExtractor={(item) => item._id}
                 contentContainerStyle={{
                   justifyContent: "center",
@@ -334,7 +368,29 @@ const SearchScreen = ({ navigation }) => {
               />
             )}
           </ScrollView>
-        </>
+          <ScrollView
+            horizontal
+            style={{ width: screenWidth }}
+            contentContainerStyle={{
+              width: screenWidth - 10,
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: 16, fontWeight: "bold", margin: 10 }}>Top Authors</Text>
+            {dummyAuthors && (
+              <FlatList
+                numColumns={4}
+                data={dummyAuthors.slice(0, 4)}
+                renderItem={({ item }) => <AuthorView item={item} handleAuthorClick={handleAuthorClick} />}
+                keyExtractor={(item) => item._id}
+                contentContainerStyle={{
+                  justifyContent: "center",
+                }}
+              />
+            )}
+          </ScrollView>
+        </ScrollView>
       ) : (
         <ScrollView
           horizontal

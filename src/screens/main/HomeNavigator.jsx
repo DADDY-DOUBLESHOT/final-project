@@ -13,6 +13,7 @@ import { Text, View } from "react-native";
 // import UploadBook from "./UploadBook";
 import UploadNavigator from "./UploadNavigator";
 import BookDetail from "../BookDetail/BookDetail";
+import AuthorBooks from "./AuthorBooks";
 
 const HomeDrawer = createDrawerNavigator();
 
@@ -32,14 +33,7 @@ const HomeNavigator = () => {
         options={{
           title: "Home",
           headerShown: false,
-          drawerIcon: ({ color, focused, size }) => (
-            <IconButton
-              size={size}
-              style={{ margin: 0, padding: 0 }}
-              iconColor={color}
-              icon={"home"}
-            />
-          ),
+          drawerIcon: ({ color, focused, size }) => <IconButton size={size} style={{ margin: 0, padding: 0 }} iconColor={color} icon={"home"} />,
         }}
         component={HomeScreen2}
       />
@@ -48,9 +42,7 @@ const HomeNavigator = () => {
         options={{
           title: "",
           headerTitle: "",
-          drawerItemStyle: {
-            display: "none",
-          },
+          drawerItemStyle: {},
         }}
         component={AudioBookScreen}
       />
@@ -65,6 +57,18 @@ const HomeNavigator = () => {
           headerShown: false,
         }}
         component={PopularBooks}
+      />
+      <HomeDrawer.Screen
+        name="author"
+        options={{
+          title: "",
+          headerTitle: "",
+          drawerItemStyle: {
+            display: "none",
+          },
+          headerShown: false,
+        }}
+        component={AuthorBooks}
       />
       <HomeDrawer.Screen
         name="recommend"
@@ -82,14 +86,7 @@ const HomeNavigator = () => {
         name="wishlist"
         options={{
           title: "Wishlist",
-          drawerIcon: ({ color, focused, size }) => (
-            <IconButton
-              size={size}
-              style={{ margin: 0, padding: 0 }}
-              iconColor={color}
-              icon={"bookmark"}
-            />
-          ),
+          drawerIcon: ({ color, focused, size }) => <IconButton size={size} style={{ margin: 0, padding: 0 }} iconColor={color} icon={"bookmark"} />,
           headerShown: false,
         }}
         component={Wishlist}
@@ -122,12 +119,7 @@ const HomeNavigator = () => {
           headerTitle: "Upload Book",
           headerTitleAlign: "center",
           drawerIcon: ({ color, focused, size }) => (
-            <IconButton
-              size={size}
-              style={{ margin: 0, padding: 0 }}
-              iconColor={color}
-              icon={"cloud-upload-outline"}
-            />
+            <IconButton size={size} style={{ margin: 0, padding: 0 }} iconColor={color} icon={"cloud-upload-outline"} />
           ),
           headerShown: true,
         }}
