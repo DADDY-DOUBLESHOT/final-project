@@ -1,13 +1,17 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import UploadBook from "./UploadBook";
 import UploadedBooks from "./UploadedBooks";
 import { Ionicons } from '@expo/vector-icons'; 
 import { View,TouchableOpacity,Text} from "react-native";
+import {uploadedBooksList} from "../../store/actions/booksAction"
 
 const Tab = createMaterialTopTabNavigator();
 
 const UploadNavigator=({ navigation })=>{
+  uploadedBooksList();
+  
+
     return(
       <>
       <View style={{height:60,flexDirection:"row",paddingTop:18}}>

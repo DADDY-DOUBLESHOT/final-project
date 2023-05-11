@@ -73,14 +73,43 @@ const genre_data = [
         return;
       }
   
-      const result = await ImagePicker.launchImageLibraryAsync();
+      const result = await ImagePicker.launchImageLibraryAsync({
+        // mediaTypes:ImagePicker.MediaTypeOptions.Images,
+        // quality:1,
+        // aspect:[4,3]
+      });
+      console.log(result);
       if (!result.canceled) {
         setImage(result.assets[0].uri);
     //    dispatchEvent({type:SET_DEFAULT_IMAGE,payload:result.assets[0].uri})
        toggleModal();
       }
       
+      // if(!result.canceled){
+      //   let newFile={uri:result.assets[0].uri,
+      //     type:`test/${result.assets[0].uri.split(".")[1]}`,
+      //     name:`test.${result.assets[0].uri.split(".")[1]}`
+      // }
+      // handleUploadImage(newFile);
+      // }
+      
     };
+
+
+    const handleUploadImage=(image)=>{
+      const data=new FormData()
+      data.append('file',image)
+      data.append('upload_preset','bookrecom')
+      data.append('cloud_name','bookrecom-cloud')
+
+      fetch("https://api.cloudinary.com/v1_1/bookrecom-cloud",{
+        method:"post",
+        body:data
+      }).then(res=>res.json())
+      .then(data=>{
+        console.log(data)
+      })
+    }
     
 
   const getLabelStyle = (genre) => {
@@ -106,8 +135,8 @@ const genre_data = [
 
 
     const handleDocumentPicker = async () => {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-  
+      const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
+      console.log(result)
       if (result.type === 'success') {
         setSelectedFile(result);
       }
@@ -124,13 +153,13 @@ const genre_data = [
         formData.append('selectedFile', {
           uri: selectedFile.uri,
           type: '*/*',
-          name: selectedFile.name
+          name: selectedFile.name,
         });
-        formData.append('image',{
-          uri:image,
-          type:'image/jpeg',
-          name:image.name,
-        })
+        // formData.append('image',{
+        //   uri:image.uri,
+        //   type:'image/jpeg',
+        //   name:image.name,
+        // })
         
 
         let config = {
@@ -148,7 +177,7 @@ const genre_data = [
               console.log("genres:",selectedGenres);
               console.log("image sent",image.uri,image.name)
               console.log("response sent");
-              console.log(formData)
+              // console.log(formData);
               console.log("formData.selectedFile:",formData.selectedFile);
               console.log("formData.image:",formData.image);
               ToastAndroid.show(
@@ -157,7 +186,7 @@ const genre_data = [
               );
             })
             .catch(function (error) {
-              console.log("Unable to upload Book", error);
+              console.log("Unable to upload Book1", error);
               ToastAndroid.show(
                 `Error in Book Uploaded ${error.message}`,
                 ToastAndroid.SHORT
@@ -171,13 +200,15 @@ const genre_data = [
             );
           }
 
-          setAuthor('');
-          setTitle('');
-          setText('');
-          setImage(null);
-          setSelectedFile('');
-          setSelectedGenres([]);
+          // setAuthor('');
+          // setTitle('');
+          // setText('');
+          // setImage(null);
+          // setSelectedFile('');
+          // setSelectedGenres([]);
     };
+
+   
 
   const goBack = () => {
     navigation.goBack();

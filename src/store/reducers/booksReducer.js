@@ -43,11 +43,6 @@ export const booksReducer = (state = initialState, action) => {
         ...state,
         recomBooks: action.payload.recomBooks,
       };
-    case UPLOADED_BOOKS:
-      return{
-        ...state,
-        uploadedBooks: action.payload.uploadedBooks,
-      }
     default:
       return state;
   }

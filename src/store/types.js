@@ -13,4 +13,4 @@ export const POPULAR_BOOKS = "POPULAR_BOOKS";
 export const GENRE_BOOKS = "GENRE_BOOKS";
 export const RECOM_BOOKS = "RECOM_BOOKS";
 export const WISHLIST = "WISHLIST";
-export const UPLOADED_BOOKS="UPLOADED_BOOKS";
+
