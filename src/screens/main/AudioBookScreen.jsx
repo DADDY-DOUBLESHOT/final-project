@@ -6,13 +6,13 @@ import axios from "axios";
 import { Platform } from "react-native";
 import { Audio } from "expo-av";
 import * as FileSystem from "expo-file-system";
-import { BASE_URL } from "@env";
+import { BASE_URL, ID, KEY } from "@env";
 import { IconButton } from "react-native-paper";
 AWS.config.update({
   region: "us-east-1",
   credentials: new AWS.Credentials({
-    accessKeyId: "AKIAUWWAG4LTQIOF5XZV",
-    secretAccessKey: "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",
+    accessKeyId: "ID",
+    secretAccessKey: "KEY",
   }),
 });
 const polly = new AWS.Polly();
