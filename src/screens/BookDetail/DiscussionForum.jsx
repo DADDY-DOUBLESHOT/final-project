@@ -10,12 +10,13 @@ import {
     TouchableOpacity,
     Dimensions,
     ImageBackground,
-    FlatList
+    FlatList,
+    ToastAndroid
   } from "react-native";
   import axios from "axios";
   import { BASE_URL } from "@env";
   import { Entypo } from '@expo/vector-icons'; 
-
+  import { Ionicons } from '@expo/vector-icons';
 
 
 
@@ -48,7 +49,7 @@ const DiscussionForum=({route,navigation})=>{
   }, []);
 
   
-  const fetchBookdetails = async () => {
+  const fetchBookdetails = async (id) => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -63,6 +64,7 @@ const DiscussionForum=({route,navigation})=>{
             title: response.data.book.title,
             author: response.data.book.author,
           });
+          console.log("book title:",response.data.title)
         })
         .catch(function (error) {
           console.log("Unable to show Book here", error);
@@ -86,6 +88,10 @@ const DiscussionForum=({route,navigation})=>{
       const response=await axios.post(config.url,commentText)
       setCommentText('')
       console.log("response", response.data);
+      ToastAndroid.show(
+        `Comment  Added`,
+        ToastAndroid.SHORT
+      );  
                   
     } catch (error) {
       console.log(commentText);
@@ -108,9 +114,9 @@ const DiscussionForum=({route,navigation})=>{
           console.log("comments are:",response.data)
           setComments(response.data);
           console.log("comments  after are:",response.data)
-          console.log(response.data[0]._id)
-          console.log(response.data[1]._id)
-          console.log(response.data[2]._id)
+          // console.log(response.data[0]._id)
+          // console.log(response.data[1]._id)
+          // console.log(response.data[2]._id)
           // console.log(response.data[2].replies[1].content);
         })
         .catch(function (error) {
@@ -139,7 +145,10 @@ const DiscussionForum=({route,navigation})=>{
       const response=await axios.post(config.url,config.data)
       setReply({commentId:'',content:''});
       console.log("reply sent",response.data);
-      // console.log("response", response.data.reply);                
+      ToastAndroid.show(
+        `Reply sent`,
+        ToastAndroid.SHORT
+      );             
     } catch (error) {
       console.log(reply);
       console.log(showReply);
@@ -151,13 +160,20 @@ const DiscussionForum=({route,navigation})=>{
 
   return (
     <View style={{flex:1,flexDirection:"column"}}>
-        <View style={styles.container}>
-            <Text style={{marginLeft:15,fontSize:24,fontWeight:'600'}}>Discussion Forum</Text>
-            <Text style={{marginLeft:15,fontSize:18,fontWeight:'600',color:'grey'}}>{data.title}</Text>
-            
-        </View>
-        {/* <View style={{height:screenHeight,margin:10,width:screenWidth,position:"absolute",display:"flex",flex:1}}> */}
-        <ScrollView  style={{height:screenHeight-120}}>
+          <View style={styles.container}>
+            <View style={{flexDirection:"row",justifyContent:"space-between"}}>
+            <Text style={{marginLeft:15,fontSize:24,fontWeight:'600'}}>Discussion Forum</Text> 
+            <TouchableOpacity onPress={()=>navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="black" style={{marginLeft:screenWidth-250}}/>
+            </TouchableOpacity>
+            </View> 
+              <Text style={{marginLeft:15,fontSize:18,fontWeight:'600',color:'grey'}}>{data.title}</Text>
+              
+          </View>
+             
+        
+        <View style={{paddingVertical:1,width:screenWidth,display:"flex",flex:1}}>
+        <ScrollView  style={{height:"100%",marginBottom:60}}>
         {comments.map((comment,index)=>{
           return(
             <View style={styles.usercontainer} key={index}>
@@ -175,280 +191,62 @@ const DiscussionForum=({route,navigation})=>{
                     color: "black",
                     }}>{comment.content}
               </Text>
-              <Text>{comments.replies}</Text>
-                  <TouchableOpacity onPress={()=>setShowReply(showReply===comment._id?"":comment._id)}>
-                      <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                        <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/>
-                        <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-                      </View>  
-                  </TouchableOpacity>
-                  {showReply === comment._id &&(
-                    <View style={{height:50,width:screenWidth-50,borderWidth:1,marginHorizontal:10,backgroundColor:"purple",flexDirection:"row",marginVertical:10}}>
-                    <TextInput onChangeText={(text)=>{setReply({...reply,content:text})}} value={reply.content} style={{width:'80%',marginLeft:20}}/>
-                    <Text style={{fontWeight:'600',marginTop:10}} onPress={()=>addReply(comment._id)}>Send</Text>
+                  <View style={{flexDirection:"row"}}>
+                      <TouchableOpacity onPress={()=>setShowReply(showReply===comment._id?"":comment._id)}>
+                          <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:20}}>
+                            <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/>
+                            <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
+                          </View>  
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={()=>setShowRepliesForCommentId(showRepliesForCommentId === comment._id ? null : comment._id)}>
+                        <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:180}}>
+                          <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>View replies({comment.replies.length})</Text>
+                        </View>  
+                      </TouchableOpacity>
                     </View>
-                  )
-                  }
-                  <TouchableOpacity onPress={()=>setShowRepliesForCommentId(showRepliesForCommentId === comment._id ? null : comment._id)}>
-                    <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Text  style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>{comment.replies.length} View</Text>
-                    </View>  
-                  </TouchableOpacity>
-                  {comment._id === showRepliesForCommentId && comment.replies.map((reply)=>(
-                    <View style={{marginLeft: 10}}>
-                      {/* {comment.replies.map((reply, index) => ( */}
-                        <View style={styles.reply}>
-                        <View style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          borderColor: "black",
-                          width: screenWidth - 50,
-                        }}>
-                        <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
-                        <Text style={{
-                              height: 40,
-                              marginStart: 10,
-                              paddingVertical: 5,
-                              color: "black",
-                              }}>{reply.content}</Text>
+                    {showReply === comment._id &&(
+                      <View style={{height:50,width:screenWidth-50,borderWidth:0.5,marginHorizontal:10,backgroundColor:"white",flexDirection:"row",marginVertical:10,borderRadius:20}}>
+                      <TextInput placeholder="Add reply here" onChangeText={(text)=>{setReply({...reply,content:text})}} value={reply.content} style={{width:'80%',marginLeft:20}}/>
+                      <Text style={{fontWeight:'600',marginTop:14}} onPress={()=>addReply(comment._id)}>Send</Text>
                       </View>
-                    </View>
-                      {/* // ))} */}
-                    </View>)
-                  )}
+                    )
+                    }
+                    {comment._id === showRepliesForCommentId && comment.replies.map((reply)=>(
+                      <View style={{marginLeft: 10}}>
+                        {/* {comment.replies.map((reply, index) => ( */}
+                          <View style={styles.reply}>
+                          <View style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            borderColor: "black",
+                            width: screenWidth-100,
+                          }}>
+                          <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
+                          <Text style={{
+                                height: 40,
+                                marginStart: 10,
+                                paddingVertical: 5,
+                                color: "black",
+                                }}>{reply.content}</Text>
+                        </View>
+                      </View>
+                        {/* // ))} */}
+                      </View>)
+                    )}
+              </View>
             </View>
-            
 
-           </View>
           )
           })
         }
-            </ScrollView>
-        {/* </View> */}
-
-        {/* <View>
-          <FlatList
-          data={comments}
-          renderItem={renderComment}
-          keyExtractor={(item) => item.id.toString()}
-          />
-        </View> */}
-       
-        {/* <View>
-        <ScrollView style={{height:screenHeight-120}}>
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width:"100%"
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 1</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>This is some awesome thinking!</Text>
-                    <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-                    </View>  
-            </View>
-           </View> */}
-           {/* reply */}
-                  {/* <View style={styles.reply}>
-                      <View style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        borderColor: "black",
-                        width: screenWidth - 130,
-                      }}>
-                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
-                      <Text style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "black",
-                            }}>You’ve shown so much growth!</Text>
-                    </View>
-                  </View>
-                  <View style={styles.reply}>
-                      <View style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        borderColor: "black",
-                        width: screenWidth - 130,
-                      }}>
-                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 8</Text>
-                      <Text style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "black",
-                            }}>What a powerful argument!!</Text>
-                    </View>
-                  </View>
-                  <View style={styles.reply}>
-                      <View style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        borderColor: "black",
-                        width: screenWidth - 130,
-                      }}>
-                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
-                      <Text style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "black",
-                            }}>This is very perceptive!</Text>
-                    </View>
-                  </View>
-                  
-
-
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width:"100%",
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 2</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>Keep up the incredible work!</Text>
-               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-                </View>  
-            </View>
-           </View>
-
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width: "100%",
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>This is fascinating information!</Text>
-                     <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-                    </View>  
-            </View>
-           </View> */}
-           {/* reply */}
-                  {/* <View style={styles.reply}>
-                      <View style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        borderColor: "black",
-                        width: screenWidth - 130,
-                      }}>
-                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 9</Text>
-                      <Text style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "black",
-                            }}>This is very well thought out!</Text>
-                    </View>
-                  </View>
-                  <View style={styles.reply}>
-                      <View style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        borderColor: "black",
-                        width: screenWidth - 130,
-                      }}>
-                      <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 6</Text>
-                      <Text style={{
-                            height: 40,
-                            marginStart: 10,
-                            paddingVertical: 5,
-                            color: "black",
-                            }}>This is very perceptive!</Text>
-                    </View>
-                  </View>
-
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width: "100%",
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 3</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>What an astounding observation!</Text>
-               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-              </View>  
-            </View>
-           </View>
-           
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width:"100%",
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 4</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>This is very well thought out!</Text>
-               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-                </View>  
-            </View>
-           </View>
-
-           <View style={styles.usercontainer}>
-              <View style={{
-                display: "flex",
-                flexDirection: "column",
-                borderColor: "black",
-                width: "100%",
-              }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
-              <Text style={{
-                    height: 40,
-                    marginStart: 10,
-                    paddingVertical: 5,
-                    color: "black",
-                    }}>This is very well thought out!</Text>
-               <View style={{flexDirection:"row",marginTop:-5,marginVertical:5,marginLeft:280}}>
-                      <Entypo name="reply" size={18} color="grey" style={{marginVertical:5,display:"flex"}}/><Text style={{borderRadius:20,marginHorizontal:5,color:"grey",marginVertical:5}}>Reply</Text>
-               </View>  
-            </View>
-           </View>
-           </ScrollView>
+        </ScrollView>
         </View>
-       */}
-        
 
-        <View style={styles.commentSection}>
+      <View style={styles.commentSection}>
         <TextInput placeholder="type comment here ..." onChangeText={(text)=>{setCommentText({...commentText,content:text})}} value={commentText.content}  style={{width:'80%',marginLeft:20}}/>
         <Text style={{marginRight:30,fontWeight:'600'}} onPress={handleSubmit}>Send</Text>
         </View>
-    </View>
+      </View>
     
   );
 };
@@ -499,21 +297,22 @@ const styles = StyleSheet.create({
     borderWidth:0.5
   },
   reply:{
-    marginLeft:50,
+    marginLeft:10,
     display: "flex",
-    width:screenWidth-65,
+    width:screenWidth-60,
     flexDirection: "row",
     backgroundColor: "#E6E6FA",
     borderRadius: 10,
     color: "black",
     marginRight:10,
     marginTop:10,
-    borderTopLeftRadius:0,
+    borderTopRightRadius:0,
     borderBottomColor:"#E6E6FA",
     borderTopColor:"#554994",
     borderLeftColor:"#554994",
     borderRightColor:"#E6E6FA",
-    borderWidth:0.5
+    borderWidth:0.5,
+    marginVertical:10
   }
   
 });
