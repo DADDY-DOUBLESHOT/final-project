@@ -48,11 +48,11 @@ const genre_data = [
     const [title, setTitle] = useState('');
     const [author,setAuthor]=useState('');
     const [text, setText] = useState('');
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState();
     const [selectedFile, setSelectedFile] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedGenres, setSelectedGenres] = useState([]);
-    
+    const [files, setFiles] = useState({ coverImage: '', bookPdf: '' })
     
     
     const user = useSelector((state) => state.USER);
@@ -74,13 +74,14 @@ const genre_data = [
       }
   
       const result = await ImagePicker.launchImageLibraryAsync({
-        // mediaTypes:ImagePicker.MediaTypeOptions.Images,
-        // quality:1,
-        // aspect:[4,3]
+        mediaTypes:ImagePicker.MediaTypeOptions.Images,
+        quality:1,
+        aspect:[4,3],
       });
-      console.log(result);
+      console.log('------------------------------>', result);
       if (!result.canceled) {
-        setImage(result.assets[0].uri);
+        setImage(result.assets[0]);
+        console.log(image);
     //    dispatchEvent({type:SET_DEFAULT_IMAGE,payload:result.assets[0].uri})
        toggleModal();
       }
@@ -96,20 +97,20 @@ const genre_data = [
     };
 
 
-    const handleUploadImage=(image)=>{
-      const data=new FormData()
-      data.append('file',image)
-      data.append('upload_preset','bookrecom')
-      data.append('cloud_name','bookrecom-cloud')
+    // const handleUploadImage=(image)=>{
+    //   const data=new FormData()
+    //   data.append('file',image)
+    //   data.append('upload_preset','bookrecom')
+    //   data.append('cloud_name','bookrecom-cloud')
 
-      fetch("https://api.cloudinary.com/v1_1/bookrecom-cloud",{
-        method:"post",
-        body:data
-      }).then(res=>res.json())
-      .then(data=>{
-        console.log(data)
-      })
-    }
+    //   fetch("https://api.cloudinary.com/v1_1/bookrecom-cloud",{
+    //     method:"post",
+    //     body:data
+    //   }).then(res=>res.json())
+    //   .then(data=>{
+    //     console.log(data)
+    //   })
+    // }
     
 
   const getLabelStyle = (genre) => {
@@ -144,48 +145,35 @@ const genre_data = [
   
 
     const handleUpload = async () => {
-      
-        const formData = new FormData();
-        formData.append('title',title);
-        formData.append('author',author)
-        formData.append('description',text);
-        formData.append('genres',selectedGenres)
-        formData.append('selectedFile', {
-          uri: selectedFile.uri,
-          type: '*/*',
-          name: selectedFile.name,
-        });
-        // formData.append('image',{
-        //   uri:image.uri,
-        //   type:'image/jpeg',
-        //   name:image.name,
-        // })
-        
 
+      const body = {
+        title, author, description: text, genres: selectedGenres, pdfUrl: files.bookPdf, coverImg: files.coverImage, country: 'India'
+      }
+      
+        // const formData = new FormData();
+        // formData.append('title',title);
+        // formData.append('author',author)
+        // formData.append('description',text);
+        // formData.append('genres',selectedGenres)
+        
         let config = {
           method: "post",
           maxBodyLength: Infinity,
-          url: `${BASE_URL}/admin/book/new`,
-          data:formData,
-          headers: {"Content-type":"multipart/form-data" },
+          url: `${BASE_URL}admin/book/new`,
+          data:body,
         };
         try {
           await axios(config)
-            .then(function () {
-              console.log("response is", title,text,selectedFile.uri,selectedFile.name);
-              console.log("author:",author);
-              console.log("genres:",selectedGenres);
-              console.log("image sent",image.uri,image.name)
-              console.log("response sent");
-              // console.log(formData);
-              console.log("formData.selectedFile:",formData.selectedFile);
-              console.log("formData.image:",formData.image);
+            .then(function (response) {
+              console.log("-----------response------------>", response.data)
               ToastAndroid.show(
                 `Book Uploaded`,
                 ToastAndroid.SHORT
               );
             })
             .catch(function (error) {
+              console.log(formData);
+              console.log(image.uri);
               console.log("Unable to upload Book1", error);
               ToastAndroid.show(
                 `Error in Book Uploaded ${error.message}`,
@@ -208,6 +196,54 @@ const genre_data = [
           // setSelectedGenres([]);
     };
 
+    const handleUploadPdf= ()=>{
+      const formData = new FormData();
+      let pdfFile = {
+        uri: selectedFile.uri, 
+        type: 'multipart/form-data', 
+        name: 'pdf'
+      };
+      let imageFile = {
+        uri: image.uri, 
+        type: 'multipart/form-data', 
+        name: 'coverImage'
+      };
+      formData.append('pdf', pdfFile);
+      formData.append('coverImage', imageFile)
+      let config = {
+        headers: {"Content-type":"multipart/form-data" },
+      };
+      try {
+        console.log({ BASE_URL, formData: JSON.stringify(formData), config })
+        axios.post(`${BASE_URL}admin/book/upload`, formData, config)
+          .then(function (response) {
+            setFiles({
+              bookPdf: response.data.pdfUrl,
+              coverImage: response.data.imgUrl
+            })
+            // console.log(formData);
+            // console.log("formdata.get()",formData.get());
+            ToastAndroid.show(
+              `Book Uploaded`,
+              ToastAndroid.SHORT
+            );
+          })
+          .catch(function (error) {
+            console.log("Unable to upload Image and file here", error.message);
+            ToastAndroid.show(
+              `Error in Book Uploaded ${error.message}`,
+              ToastAndroid.SHORT
+            );
+          });
+        } catch (error) {
+          console.log("Unable to Image and file", error);
+          ToastAndroid.show(
+            `Error in Book Uploaded ${error.message}`,
+            ToastAndroid.SHORT
+          );
+        }
+
+    }
    
 
   const goBack = () => {
@@ -272,7 +308,7 @@ const genre_data = [
          <Text style={styles.uploadbookcover} onPress={toggleModal}>Upload Book Cover</Text>
           <View style={{flexDirection:"row",marginTop:3}}>
           {user && user.user && image &&
-            <><Image source={{uri:((user.user.image)?  user.user.image : image)}}  style={styles.image} />
+            <><Image source={{uri:((user.user.image)?  user.user.image : image.uri)}}  style={styles.image} />
             {/* <Button  style={styles.button} title="Upload File"/> */}
             </>
           }
@@ -295,7 +331,7 @@ const genre_data = [
         {selectedFile && (
           <>
          <Text style={styles.uploadfile}> Selected File: {selectedFile.name}</Text>
-          <Button  style={styles.button} title="Upload File" color="#554994" />
+          <Button  style={styles.button} title="Upload File" onPress={handleUploadPdf} color="#554994" />
           </>)}
           </View>
       </View>

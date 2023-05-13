@@ -9,8 +9,6 @@ import {uploadedBooksList} from "../../store/actions/booksAction"
 const Tab = createMaterialTopTabNavigator();
 
 const UploadNavigator=({ navigation })=>{
-  uploadedBooksList();
-  
 
     return(
       <>
