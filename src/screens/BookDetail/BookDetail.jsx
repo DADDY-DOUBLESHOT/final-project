@@ -13,7 +13,7 @@ import {
   ToastAndroid,
 } from "react-native";
 import axios from "axios";
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Stars from "react-native-stars";
@@ -21,6 +21,8 @@ import * as Haptics from "expo-haptics";
 import photo from "../../images/photo.jpg";
 import bookmark from "../../images/bookmark.png";
 // import ReadMore from "react-native-read-more-text";
+import discussion from "../../images/discussion-forum.png";
+import ReadMore from "react-native-read-more-text";
 import { useSelector, useDispatch } from "react-redux";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { BASE_URL } from "@env";
@@ -76,6 +78,7 @@ const BookDetails = ({ route, navigation }) => {
     rating:0,
     pages:'',
     readCount:0,
+    id:route.params.id,
   });
   const [reviewData,setreviewData]=useState({
     bookId:route.params.id,
@@ -365,7 +368,13 @@ const BookDetails = ({ route, navigation }) => {
           <TouchableOpacity onPress={goBack}>
               <Image source={backarrow} style={styles.closeIcon} />
             </TouchableOpacity>
-        </View>
+        </View> 
+        <View  style={styles.bookmarkIcon}>
+            <TouchableOpacity onPress={()=>navigation.navigate("discussionforum",{id:route.params.id})}>
+                <Image source={discussion} style={styles.bookmarkIcon} />
+            </TouchableOpacity>
+          </View>
+
         <ImageBackground
           style={[
             {
@@ -689,8 +698,8 @@ const styles = StyleSheet.create({
     top: 5,
     marginTop: 25,
     marginRight: 8,
-    right: 10,
-    width: 20,
+    right: 5,
+    width: 30,
     height: 30,
     position: "absolute",
   },
