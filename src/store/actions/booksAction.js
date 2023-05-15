@@ -6,6 +6,7 @@ import {
   RECOM_BOOKS,
   TRENDING_BOOKS,
   WISHLIST,
+  UPLOADED_BOOKS
 } from "../types";
 import { BASE_URL } from "@env";
 
@@ -163,3 +164,5 @@ export const wishlistBooks = async () => async (dispatch) => {
     dispatch({ type: LOADER_STOP });
   }
 };
+
+
