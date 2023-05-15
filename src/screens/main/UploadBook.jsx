@@ -22,9 +22,7 @@ import short from "../../../assets/short.png";
 import study from "../../../assets/study.png";
 import young from "../../../assets/young.png";
 import { BASE_URL } from "@env";
-
 import axios from 'axios';
-import { BASE_URL } from "@env";
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;

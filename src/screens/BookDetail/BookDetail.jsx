@@ -13,7 +13,7 @@ import {
   ToastAndroid,
 } from "react-native";
 import axios from "axios";
-import { Icon } from "@expo/vector-icons";
+// import { Icon } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Stars from "react-native-stars";
@@ -22,7 +22,6 @@ import photo from "../../images/photo.jpg";
 import bookmark from "../../images/bookmark.png";
 // import ReadMore from "react-native-read-more-text";
 import discussion from "../../images/discussion-forum.png";
-import ReadMore from "react-native-read-more-text";
 import { useSelector, useDispatch } from "react-redux";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { BASE_URL } from "@env";
