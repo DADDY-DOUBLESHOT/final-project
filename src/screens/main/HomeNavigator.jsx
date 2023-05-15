@@ -121,7 +121,7 @@ const HomeNavigator = () => {
           drawerIcon: ({ color, focused, size }) => (
             <IconButton size={size} style={{ margin: 0, padding: 0 }} iconColor={color} icon={"cloud-upload-outline"} />
           ),
-          headerShown: true,
+          headerShown: false,
         }}
         component={UploadNavigator}
       />

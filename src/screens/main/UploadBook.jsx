@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal, Pressable, ScrollView } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Image, TouchableOpacity, Text, Dimensions, ImageBackground, Modal, Pressable, ScrollView,ToastAndroid} from 'react-native';
 import { useDispatch,useSelector } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -23,6 +23,7 @@ import study from "../../../assets/study.png";
 import young from "../../../assets/young.png";
 
 import axios from 'axios';
+import { BASE_URL } from "@env";
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -45,12 +46,13 @@ const genre_data = [
 
    const UploadBook=({ navigation })=>{
     const [title, setTitle] = useState('');
+    const [author,setAuthor]=useState('');
     const [text, setText] = useState('');
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState();
     const [selectedFile, setSelectedFile] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const genreCarousel = React.useRef(null);
-    
+    const [selectedGenres, setSelectedGenres] = useState([]);
+    const [files, setFiles] = useState({ coverImage: '', bookPdf: '' })
     
     
     const user = useSelector((state) => state.USER);
@@ -71,53 +73,62 @@ const genre_data = [
         return;
       }
   
-      const result = await ImagePicker.launchImageLibraryAsync();
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:ImagePicker.MediaTypeOptions.Images,
+        quality:1,
+        aspect:[4,3],
+      });
+      console.log('------------------------------>', result);
       if (!result.canceled) {
-        setImage(result.assets[0].uri);
+        setImage(result.assets[0]);
+        console.log(image);
     //    dispatchEvent({type:SET_DEFAULT_IMAGE,payload:result.assets[0].uri})
        toggleModal();
       }
       
+      // if(!result.canceled){
+      //   let newFile={uri:result.assets[0].uri,
+      //     type:`test/${result.assets[0].uri.split(".")[1]}`,
+      //     name:`test.${result.assets[0].uri.split(".")[1]}`
+      // }
+      // handleUploadImage(newFile);
+      // }
+      
     };
+
+
+    // const handleUploadImage=(image)=>{
+    //   const data=new FormData()
+    //   data.append('file',image)
+    //   data.append('upload_preset','bookrecom')
+    //   data.append('cloud_name','bookrecom-cloud')
+
+    //   fetch("https://api.cloudinary.com/v1_1/bookrecom-cloud",{
+    //     method:"post",
+    //     body:data
+    //   }).then(res=>res.json())
+    //   .then(data=>{
+    //     console.log(data)
+    //   })
+    // }
     
 
-    const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
-    const handleButtonPress = (index) => {
-      setSelectedButtonIndex(index);
-    };
+  const getLabelStyle = (genre) => {
+    if (selectedGenres.includes(genre)) {
+      return styles.selectedLabel;
+    }
+    return styles.genrelabel;
+  };
 
-    const renderButton = (item, index) => {
-      return (
-        <TouchableOpacity
-          key={index}
-          onPress={() => handleButtonPress(index)}
-          style={[
-            genre_styles.button,
-            selectedButtonIndex === index && genre_styles.selectedButton,
-          ]}
-        >
-          <ImageBackground
-            blurRadius={2}
-            source={item.img}
-            style={[
-              genre_styles.backgroundImage,
-              selectedButtonIndex === index && genre_styles.selectedCard,
-            ]}
-          >
-            <Text
-              allowFontScaling={false}
-              style={[
-                genre_styles.buttonText,
-                selectedButtonIndex === index && genre_styles.selectedButtonText,
-              ]}
-            >
-              {item.title}
-            </Text>
-          </ImageBackground>
-        </TouchableOpacity>
-      );
-    };
+  const toggleGenreSelection = (genre) => {
+    if (selectedGenres.includes(genre)) {
+      setSelectedGenres(selectedGenres.filter((g) => g !== genre));
+    } else {
+      setSelectedGenres([...selectedGenres, genre]);
+    }
+  };
 
+    
     // const handleSubmit = () => {
     //   // onSubmit(Image);
     //   onClose();
@@ -125,33 +136,115 @@ const genre_data = [
 
 
     const handleDocumentPicker = async () => {
-      const result = await DocumentPicker.getDocumentAsync({ type: '*/*' });
-  
+      const result = await DocumentPicker.getDocumentAsync({ type: 'application/pdf' });
+      console.log(result)
       if (result.type === 'success') {
         setSelectedFile(result);
       }
     };
   
-    const handleUploadFile = async () => {
-      if (!selectedFile || typeof selectedFile !== 'object') {
-        return;
+
+    const handleUpload = async () => {
+
+      const body = {
+        title, author, description: text, genres: selectedGenres, pdfUrl: files.bookPdf, coverImg: files.coverImage, country: 'India'
       }
-  
-      const data = new FormData();
-      data.append('file', {
-        uri: documentUri,
-        type: '*/*',
-        name: 'document',
-      });
-  
+      
+        // const formData = new FormData();
+        // formData.append('title',title);
+        // formData.append('author',author)
+        // formData.append('description',text);
+        // formData.append('genres',selectedGenres)
+        
+        let config = {
+          method: "post",
+          maxBodyLength: Infinity,
+          url: `${BASE_URL}admin/book/new`,
+          data:body,
+        };
+        try {
+          await axios(config)
+            .then(function (response) {
+              console.log("-----------response------------>", response.data)
+              ToastAndroid.show(
+                `Book Uploaded`,
+                ToastAndroid.SHORT
+              );
+            })
+            .catch(function (error) {
+              console.log(formData);
+              console.log(image.uri);
+              console.log("Unable to upload Book1", error);
+              ToastAndroid.show(
+                `Error in Book Uploaded ${error.message}`,
+                ToastAndroid.SHORT
+              );
+            });
+          } catch (error) {
+            console.log("Unable to upload Book", error);
+            ToastAndroid.show(
+              `Error in Book Uploaded ${error.message}`,
+              ToastAndroid.SHORT
+            );
+          }
+
+          // setAuthor('');
+          // setTitle('');
+          // setText('');
+          // setImage(null);
+          // setSelectedFile('');
+          // setSelectedGenres([]);
+    };
+
+    const handleUploadPdf= ()=>{
+      const formData = new FormData();
+      let pdfFile = {
+        uri: selectedFile.uri, 
+        type: 'multipart/form-data', 
+        name: 'pdf'
+      };
+      let imageFile = {
+        uri: image.uri, 
+        type: 'multipart/form-data', 
+        name: 'coverImage'
+      };
+      formData.append('pdf', pdfFile);
+      formData.append('coverImage', imageFile)
+      let config = {
+        headers: {"Content-type":"multipart/form-data" },
+      };
       try {
-        const response = await axios.post('https://example.com/upload', data);
-        console.log(response.data);
-      } catch (error) {
-        console.log(error in upload);
-      }
+        console.log({ BASE_URL, formData: JSON.stringify(formData), config })
+        axios.post(`${BASE_URL}admin/book/upload`, formData, config)
+          .then(function (response) {
+            setFiles({
+              bookPdf: response.data.pdfUrl,
+              coverImage: response.data.imgUrl
+            })
+            // console.log(formData);
+            // console.log("formdata.get()",formData.get());
+            ToastAndroid.show(
+              `Book Uploaded`,
+              ToastAndroid.SHORT
+            );
+          })
+          .catch(function (error) {
+            console.log("Unable to upload Image and file here", error.message);
+            ToastAndroid.show(
+              `Error in Book Uploaded ${error.message}`,
+              ToastAndroid.SHORT
+            );
+          });
+        } catch (error) {
+          console.log("Unable to Image and file", error);
+          ToastAndroid.show(
+            `Error in Book Uploaded ${error.message}`,
+            ToastAndroid.SHORT
+          );
+        }
+
     }
-    
+   
 
   const goBack = () => {
     navigation.goBack();
@@ -169,6 +262,10 @@ const genre_data = [
         <Text style={styles.label}>Book Title:</Text>
         <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" />
       </View>
+      <View style={styles.titleContainer}>
+        <Text style={styles.label}>Author:</Text>
+        <TextInput style={styles.input} value={author} onChangeText={setAuthor} placeholder="Author" />
+      </View>
       <View>
       <Text style={styles.label}>Book Summary:</Text>
        <ScrollView>
@@ -185,17 +282,33 @@ const genre_data = [
           </ScrollView>
         </View>
 
-
-        <View style={genre_styles.container}>
-            {genre_data.map((item, index) => renderButton(item, index))}
+      {/* genre selections */}
+      <View>
+      <View style={{flexDirection:"row",flexWrap:"wrap",marginHorizontal:25,marginVertical:20}}>
+       {genre_data.map((item)=>{
+         return(
+          <View key={item.id}>
+          <TouchableOpacity  key={item.id}
+          style={[styles.checkbox, selectedGenres.includes(`${item.title}`) && styles.selectedCheckbox]}
+          onPress={() => toggleGenreSelection(`${item.title}`)}
+          >
+            <Text style={getLabelStyle(`${item.title}`)} key={item.id}>{item.title}</Text>
+          </TouchableOpacity>
         </View>
+         );
+       })}
+
+        {/* Add more TouchableOpacity components for other genres */}
+      </View>
+        {/* Add more switches for other genres */}
+      </View>
 
 
       <View >
          <Text style={styles.uploadbookcover} onPress={toggleModal}>Upload Book Cover</Text>
           <View style={{flexDirection:"row",marginTop:3}}>
           {user && user.user && image &&
-            <><Image source={{uri:((user.user.image)?  user.user.image : image)}}  style={styles.image} />
+            <><Image source={{uri:((user.user.image)?  user.user.image : image.uri)}}  style={styles.image} />
             {/* <Button  style={styles.button} title="Upload File"/> */}
             </>
           }
@@ -218,12 +331,12 @@ const genre_data = [
         {selectedFile && (
           <>
          <Text style={styles.uploadfile}> Selected File: {selectedFile.name}</Text>
-          <Button  style={styles.button} title="Upload File" color="#554994"/>
+          <Button  style={styles.button} title="Upload File" onPress={handleUploadPdf} color="#554994" />
           </>)}
           </View>
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Submit" color="#554994"/>
+        <Button title="Submit" onPress={handleUpload} color="#554994"/>
       </View>
     </View>
     </ScrollView>
@@ -367,68 +480,44 @@ const styles = StyleSheet.create({
   },
   uploadbutton:{
     width:'50%',
+  },
+
+  checkbox: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    marginBottom: 10
+  },
+  selectedCheckbox: {
+    marginLeft: 8,
+    backgroundColor: 'blue',
+    borderWidth:1,
+    width:150,
+    alignItems:'center',
+    // justifyContent:'center',
+    paddingHorizontal:15,
+    borderRadius:20
+  },
+  genrelabel: {
+    marginLeft: 8,
+    fontSize: 14,
+    borderWidth:1,
+    width:150,
+    alignItems:'center',
+    alignContent:"center",
+    // justifyContent:'center',
+    paddingHorizontal:15,
+    borderRadius:20
+  },
+  selectedLabel: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: 'white',
+    // paddingHorizontal:15,
+    fontWeight: 'bold',  
   }
+  
+
 });
 
-const genre_styles = StyleSheet.create({
-  container: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    width: "100%",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingBottom: 10,
-    flexDirection:"row",
-    flexWrap:"wrap",
-  },
-  button: {
-    borderRadius: 12,
-    backgroundColor: "#eee",
-    overflow: "hidden",
-    marginHorizontal: 5,
-    width:"30%",
-    height:30,
-    marginVertical: 5,
-    display:"flex",
-  },
-  selectedButton: {
-    backgroundColor: "rgba(0,107,255,255)",
-    zIndex: -1,
-  },
-  buttonText: {
-    fontSize: 14,
-    color: "white",
-    fontWeight: "800",
-  },
-  selectedButtonText: {
-    color: "white",
-    fontWeight: "800",
-    zIndex: 1,
-  },
-  contentContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  backgroundImage: {
-    resizeMode: "cover",
-    justifyContent: "center",
-    paddingHorizontal: 13,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  selectedCard: {
-    opacity: 0.2,
-  },
-  viewAll: {
-    fontSize: 10,
-    right: 0,
-    textAlign: "right",
-    marginTop: 5,
-    textDecorationLine: "underline",
-    textDecorationStyle: "solid",
-    textDecorationColor: "#000",
-  },
-});
 
 export default UploadBook;
