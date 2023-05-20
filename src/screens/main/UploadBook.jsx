@@ -259,7 +259,7 @@ const genre_data = [
       </View> */}
       <View style={styles.titleContainer}>
         <Text style={styles.label}>Book Title:</Text>
-        <TextInput style={styles.input} value={title} onChangeText={(text)=>setTitle(text)} placeholder="Title" />
+        <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" />
       </View>
       <View style={styles.titleContainer}>
         <Text style={styles.label}>Author:</Text>
@@ -269,8 +269,8 @@ const genre_data = [
       <Text style={styles.label}>Book Summary:</Text>
        <ScrollView>
           <TextInput
-            value={bookDescription}
-            onChangeText={(text)=>setBookDescription(text)}
+            value={text}
+            onChangeText={setText}
             placeholder="Text"
             multiline
             numberOfLines={4}
@@ -342,6 +342,7 @@ const genre_data = [
   );
 }
    
+  
   
 const styles = StyleSheet.create({
   // #144272
