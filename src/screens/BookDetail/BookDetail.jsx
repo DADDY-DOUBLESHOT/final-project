@@ -13,6 +13,7 @@ import {
   ToastAndroid,
 } from "react-native";
 import axios from "axios";
+import { Ionicons } from "@expo/vector-icons";
 // import { Icon } from "@expo/vector-icons";
 import { Rating, AirbnbRating } from "react-native-ratings";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -82,7 +83,7 @@ const BookDetails = ({ route, navigation }) => {
   const [reviewData,setreviewData]=useState({
     bookId:route.params.id,
     comment:"",
-    rating:null
+    rating:0
   })
   const [reviews,getReviews]=useState([]
   //   ,{
@@ -93,6 +94,8 @@ const BookDetails = ({ route, navigation }) => {
   )
   const [wishlist,setWishlist]=useState([]);
   const [isBookmarked,setIsBookmarked]=useState(false);
+  const [reviewRating, setRating] = useState(0);
+
   
 
   useEffect(() => {
@@ -164,26 +167,44 @@ const BookDetails = ({ route, navigation }) => {
     
   }
   
-  const submitReview = async () => {
-    let config = {
-      method: 'put',
-      maxBodyLength: Infinity,
-      url: `${BASE_URL}/review/`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data:reviewData,
-    };
+  //setting rating
+  const handleRating = (name,value) => {
+    try{
+      setRating(value);
+     setreviewData({
+      [name]:value,
+     });
+    console.log("value",value);
+    console.log("rating",name);
+    console.log("reviewRating",reviewRating);
+    }catch(error){
+      console.log("unsuccessful rating",error);
+    }
+    
+  };
 
+  const submitReview = async () => {
     try {
-        const response=await axios.put(config.url, reviewData);
-        console.log(response.data);
+        const response=await axios.put(`${BASE_URL}review/`, {
+          bookId:route.params.id,
+          comment: reviewData.comment,
+          rating: reviewData.rating
+        }, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("response",response.data);
+        console.log("api rating",reviewData.rating);
         ToastAndroid.show(
-          `Review sent`,
+          `Review sent,Rating:${reviewData.rating}`,
           ToastAndroid.SHORT
           );
-        console.log("review sent");
+        console.log("review sent,rating:",reviewData.rating);
+        // setRating(0);
     } catch (error) {
+      // console.log(bookId);
+      console.log("api rating",reviewData.rating);
       console.error("unsuccesful",error);
     }
   }
@@ -210,7 +231,7 @@ const BookDetails = ({ route, navigation }) => {
           console.log("review response is:",response.data.reviews);
           console.log(response.data.reviews[0].name);
           console.log(response.data.reviews[0].comment);
-          console.log(reviews.length);
+          // console.log(reviews.length);
           })
           .catch(function (error) {
             console.log("Unable to fetch reviews", error);
@@ -511,61 +532,81 @@ const BookDetails = ({ route, navigation }) => {
         {/* <View  style={{width:"100%",alignItems:'center',justifyContent:'center',textAlign:'center'}}><Text style={styles.start}>Start Reading</Text></View> */}
 
 
-      
         <View style={styles.review}>
           <Text style={{ color: "black", padding: 15, fontSize: 16 }}>
             User Reviews:
           </Text>
-          <ScrollView>
-            
-         {reviews.map((review,index)=>(
-                <View style={styles.usercontainer} key={index} >
-                <Image source={photo} style={styles.profileImg} />
-             
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    borderColor: "white",
-                    width: screenWidth - 130,
-                  }}
-                >  
-                  <Text 
-                    style={{ marginStart: 10, marginTop: 10, color: "white" }}>
-                    {review.name}
-                  </Text>
-                  <Text 
+          <ScrollView>      
+          {
+              reviews.slice(0, 2).map((review, index) => (
+                <View style={styles.usercontainer} key={index}>
+                  <Image source={photo} style={styles.profileImg} />
+                  <View
                     style={{
-                      height: 40,
-                      marginStart: 10,
-                      paddingVertical: 5,
-                      color: "white",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderColor: "white",
+                      width: screenWidth - 130,
                     }}
                   >
-                    {review.comment}
-                  </Text>  
-                </View>
-              </View>
-         ))
-            }
+                    <Text style={{ marginStart: 10, marginTop: 10, color: "white" }}>
+                      {review.name}
+                    </Text>
                     <Text
-                onPress={() => navigation.navigate("ReviewList",{id:route.params.id})}
-                style={{
-                  marginRight: 10,
-                  alignSelf: "flex-end",
-                  marginHorizontal: 12,
-                  marginVertical: 10,
-                  fontWeight: "600",
-                  paddingHorizontal: 10,
-                  color: "grey",
-                }}
-              >
-                View More
-              </Text>
+                      style={{
+                        height: 40,
+                        marginStart: 10,
+                        paddingVertical: 5,
+                        color: "white",
+                      }}
+                    >
+                      {review.comment}
+                    </Text>
+                  </View>
+                </View>
+              ))
+            }
+
+            {
+              reviews.length > 2 && (
+                <Text
+                  onPress={() =>
+                    navigation.navigate("ReviewList", {
+                      id: route.params.id,
+                      reviews: reviews,
+                    })
+                  }
+                  style={{
+                    marginRight: 10,
+                    alignSelf: "flex-end",
+                    marginHorizontal: 12,
+                    marginVertical: 10,
+                    fontWeight: "600",
+                    paddingHorizontal: 10,
+                    color: "grey",
+                  }}
+                >
+                  View More
+                </Text>
+              )
+            }
           </ScrollView>
         </View>
 
         {/* Write a review */}
+        <View style={styles.Ratingcontainer}>
+          <Rating
+            type="star"
+            ratingCount={5}
+            startingValue={reviewRating}
+            imageSize={30}
+            showRating={false}
+            onFinishRating={(value)=>handleRating('rating',value)}
+          />
+          <View style={styles.ratingTextCo00000ntainer}>
+            <Text style={styles.ratingText}>{reviewData.rating}</Text>
+          </View>
+        </View>
         <View style={styles.reviewConatiner}>
           <TextInput
             placeholder="Write a Review"
@@ -775,6 +816,22 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     margin: 10,
     width: screenWidth - 100,
+  },
+  Ratingcontainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical:20,
+    marginHorizontal:30,
+    borderWidth: 0.2,
+    borderColor: "#554994",
+    justifyContent:"flex-start"
+  },
+  ratingTextContainer: {
+    marginLeft: 10,
+  },
+  ratingText: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

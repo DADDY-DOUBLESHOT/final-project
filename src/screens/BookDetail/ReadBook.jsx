@@ -149,7 +149,7 @@ const ReadBook = ({ route, navigation }) => {
         {/* <PdfReader url="http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf"/> */}
         <PDFReader
           source={{
-            uri: "https://api.printnode.com/static/test/pdf/multipage.pdf",
+            uri: "https://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684589149/books/Harry%20Potter%20and%20the%20Deathly%20Hallows.pdf",
             // "https://ictactjournals.in/upload/Journal-Template.pdf"
             // uri: data.pdfUrl
             // 
