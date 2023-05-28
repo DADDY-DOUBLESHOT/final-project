@@ -212,7 +212,7 @@ const genre_data = [
             // console.log(formData);
             // console.log("formdata.get()",formData.get());
             ToastAndroid.show(
-              `Book Uploaded`,
+              `Image and Pdf  Uploaded`,
               ToastAndroid.SHORT
             );
           })

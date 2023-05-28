@@ -40,7 +40,7 @@ const genre_data = [
   { id: 12, title: "Horror", img: horror },
 ];
 
-const HomeScreen2 = ({ navigation }) => {
+const HomeScreen2 = ({ route, navigation }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const trendingCarosal = React.useRef(null);
   const genreCarousel = React.useRef(null);
@@ -129,6 +129,8 @@ const HomeScreen2 = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+ 
 
   const handleNavigation = (id) => {
     navigation.navigate("bookdetail", { id });
@@ -594,7 +596,7 @@ const HomeScreen2 = ({ navigation }) => {
           >
             Continue Reading
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("ReadBook")}>
+          <TouchableOpacity onPress={() => navigation.navigate("ReadBook",{id})}>
             <View
               style={{
                 flex: 1,

@@ -183,7 +183,7 @@ const DiscussionForum=({route,navigation})=>{
                 borderColor: "black",
                 width:"100%"
               }}>
-              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>{comment._id}</Text>
+              <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>{comment.userName}</Text>
               <Text style={{
                     height: 40,
                     marginStart: 10,
@@ -221,7 +221,7 @@ const DiscussionForum=({route,navigation})=>{
                             borderColor: "black",
                             width: screenWidth-100,
                           }}>
-                          <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>User 5</Text>
+                          <Text style={{ marginStart: 10, marginTop: 10, color: "black" }}>{reply.userName}</Text>
                           <Text style={{
                                 height: 40,
                                 marginStart: 10,

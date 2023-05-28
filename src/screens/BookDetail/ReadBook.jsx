@@ -45,8 +45,8 @@ const screenHeight = Dimensions.get("window").height;
 // )
 
 
-const ReadBook = ({ route, navigation }) => {
-  const uri=route.params.pdfUrl; 
+const ReadBook = ({ route, navigation}) => {
+  // const uri=route.params.pdfUrl; 
   const [data, setData] = useState({
     title: "",
     author: "",
@@ -62,7 +62,13 @@ const ReadBook = ({ route, navigation }) => {
     fetchBookdetails(route.params.id);
   }, []);
 
-  const fetchBookdetails = async (id) => {
+  //  let defaultUri="https://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684589149/books/Harry%20Potter%20and%20the%20Deathly%20Hallows.pdf";
+
+  //  var dynamicUri=data.pdfUrl;
+
+  //  const uri=dynamicUri ? dynamicUri: defaultUri;
+
+  const fetchBookdetails = async(id) => {
     let config = {
       method: "get",
       maxBodyLength: Infinity,
@@ -130,12 +136,13 @@ const ReadBook = ({ route, navigation }) => {
               >
                 <View style={{  justifyContent:'flex-end',width:100,margin:5,marginTop:55,alignSelf:"flex-end"}}>
                   <View style={{ backgroundColor: '#F0F0F0', padding: 15, opacity:0.95}}>
-                    <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:2}}><FontAwesome5 name="headphones-alt" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Listen</Text></View>
+                    <TouchableOpacity>
+                    <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:2}}><FontAwesome5 name="headphones-alt" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Listen</Text></View></TouchableOpacity>
                     
-                    <View  style={{flexDirection:"row",justifyContent:"space-between",marginTop:8}}><FontAwesome name="pause" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Pause</Text></View>
+                    {/* <View  style={{flexDirection:"row",justifyContent:"space-between",marginTop:8}}><FontAwesome name="pause" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Pause</Text></View>
 
                     <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:8}}><FontAwesome name="stop" size={20} color="black" style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginRight:5}}>Stop</Text></View>
-                    
+                     */}
                     <TouchableOpacity onPress={() => setModalVisible(false)}>
                       <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:8}}>
                       <FontAwesome name="close" size={20} color="black" style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:8}}>Close</Text>
@@ -149,11 +156,12 @@ const ReadBook = ({ route, navigation }) => {
         {/* <PdfReader url="http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf"/> */}
         <PDFReader
           source={{
-            uri: "https://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684589149/books/Harry%20Potter%20and%20the%20Deathly%20Hallows.pdf",
+            uri: data.pdfUrl ? data.pdfUrl : "https://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684589149/books/Harry%20Potter%20and%20the%20Deathly%20Hallows.pdf"
+            // uri: "http://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684442178/books/Harry%20Potter%20And%20The%20Order%20of%20The%20Phoenix.pdf",
             // "https://ictactjournals.in/upload/Journal-Template.pdf"
-            // uri: data.pdfUrl
+            // uri:data.pdfUrl
             // 
-            // data.pdfUrl
+            // data.pdfUrl0
           }}
           style={styles.pdfstyle}
           withPinchZoom="True"
@@ -168,7 +176,7 @@ const ReadBook = ({ route, navigation }) => {
               backgroundColor:"#554994",
               marginBottom:50,
               paddingTop:20,
-              fontSize:30
+              fontSize:14
             },
             readerContainerNavigate:{
                 backgroundColor:"#554994",
@@ -186,8 +194,9 @@ const ReadBook = ({ route, navigation }) => {
                marginBottom:150
             },
             readerContainerNumbersContent:{
-              fontSize:18,
-              height:25
+              fontSize:14,
+              height:20,
+              width:60
             }
           }}
         />

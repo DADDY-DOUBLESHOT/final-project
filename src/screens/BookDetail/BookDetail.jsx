@@ -384,12 +384,12 @@ const BookDetails = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={{ zIndex: -1 }}>
-        <View onPress={goBack}>
+        <View>
           <TouchableOpacity onPress={goBack}>
               <Image source={backarrow} style={styles.closeIcon} />
             </TouchableOpacity>
         </View> 
-        <View  style={styles.bookmarkIcon}>
+        <View  >
             <TouchableOpacity onPress={()=>navigation.navigate("discussionforum",{id:route.params.id})}>
                 <Image source={discussion} style={styles.bookmarkIcon} />
             </TouchableOpacity>
@@ -434,7 +434,7 @@ const BookDetails = ({ route, navigation }) => {
             
             <View style={{ flex: 1, alignItems: "center", color: "white" }}>
               <Text style={{ color: "white" }}>
-                {data.rating}
+                {parseFloat(data.rating).toFixed(2)}
               </Text>
               <Text style={{ color: "white" }}>Rating</Text>
             </View>
@@ -603,7 +603,7 @@ const BookDetails = ({ route, navigation }) => {
             showRating={false}
             onFinishRating={(value)=>handleRating('rating',value)}
           />
-          <View style={styles.ratingTextCo00000ntainer}>
+          <View style={styles.ratingTextContainer}>
             <Text style={styles.ratingText}>{reviewData.rating}</Text>
           </View>
         </View>
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   bookmarkIcon: {
     top: 5,
     marginTop: 25,
-    marginRight: 8,
+    marginRight: 25,
     right: 5,
     width: 30,
     height: 30,
@@ -797,9 +797,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   closeIcon: {
-    top: 20,
+    top: 25,
     // marginTop: 5,
-    left: 10,
+    left: 15,
     width: 30,
     height: 30,
     position: "absolute",
@@ -821,13 +821,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical:20,
-    marginHorizontal:30,
+    marginHorizontal:25,
     borderWidth: 0.2,
     borderColor: "#554994",
-    justifyContent:"flex-start"
+    justifyContent:"space-between",
+    paddingLeft:10,
+    borderRadius:3
   },
   ratingTextContainer: {
     marginLeft: 10,
+    padding:10,
   },
   ratingText: {
     fontSize: 18,
