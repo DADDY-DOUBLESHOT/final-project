@@ -92,6 +92,9 @@ const AudioBookScreen = ({ route }) => {
             Text: chunk,
             VoiceId: "Joanna",
             Engine: "neural",
+            // VoiceId: "Aditi",
+            // Engine: "standard",
+            // LanguageCode: "hi-IN",
           })
           .promise()
       )
