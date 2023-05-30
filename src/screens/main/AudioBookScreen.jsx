@@ -17,7 +17,7 @@ AWS.config.update({
 });
 const polly = new AWS.Polly();
 
-const AudioBookScreen = () => {
+const AudioBookScreen = ({ route }) => {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [soundObjects, setSoundObjects] = useState([]);
@@ -123,7 +123,9 @@ const AudioBookScreen = () => {
   }
 
   useEffect(() => {
-    fetchPdfText("https://www.africau.edu/images/default/sample.pdf");
+    console.log("pdf got ", route.params.pdfUrl);
+    fetchPdfText(route.params.pdfUrl);
+    // fetchPdfText("https://www.africau.edu/images/default/sample.pdf");
   }, []);
 
   async function handlePause() {

@@ -42,7 +42,9 @@ const HomeNavigator = () => {
         options={{
           title: "",
           headerTitle: "",
-          drawerItemStyle: {},
+          drawerItemStyle: {
+            display: "none",
+          },
         }}
         component={AudioBookScreen}
       />
