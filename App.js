@@ -26,6 +26,8 @@ import HomeNavigator from "./src/screens/main/HomeNavigator";
 import BookDetail from "./src/screens/BookDetail/BookDetail";
 import Reviews from "./src/screens/BookDetail/Reviews";
 import ReadBook from "./src/screens/BookDetail/ReadBook";
+import DiscussionForum from "./src/screens/BookDetail/DiscussionForum";
+import AudioBookScreen from "./src/screens/main/AudioBookScreen";
 // import BookDetail from "./src/screens/BookDetail/BookDetail";
 
 DefaultSplash.preventAutoHideAsync();
@@ -88,9 +90,11 @@ const App = () => {
               // </Stack.Group>
               <Stack.Group>
               <Stack.Screen name="homenavi" component={HomeNavigator} />
+              <Stack.Screen name="discussionforum" component={DiscussionForum} />
               <Stack.Screen name="ReviewList" component={Reviews} />
-              <Stack.Screen name="ReadBook" component={ReadBook} />
+              <Stack.Screen name="ReadBook" component={ReadBook} /> 
               <Stack.Screen name="bookdetail" component={BookDetail}/>
+              <Stack.Screen name="AudioScreenBook" component={AudioBookScreen}/>
               </Stack.Group>
             )}
            
