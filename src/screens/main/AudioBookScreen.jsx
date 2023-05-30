@@ -11,8 +11,8 @@ import { IconButton } from "react-native-paper";
 AWS.config.update({
   region: "us-east-1",
   credentials: new AWS.Credentials({
-    accessKeyId: "ID",
-    secretAccessKey: "KEY",
+    accessKeyId: ID,
+    secretAccessKey: KEY,
   }),
 });
 const polly = new AWS.Polly();
@@ -34,16 +34,19 @@ const AudioBookScreen = ({ route }) => {
     });
 
     var config = {
-      method: "get",
-      url: `http://192.168.0.165:5000/api/v1/pdf-text`,
+      method: "post",
+      url: `${BASE_URL}pdf-text`,
       headers: {
         "Content-Type": "application/json",
       },
       data,
     };
+    // const formdata = new FormData();
+    // formdata.append("pdf", url);
 
     try {
       axios
+        // .post(`${BASE_URL}pdf-text`, { formdata })
         .request(config)
         .then((response) => {
           console.log("got it ", JSON.stringify(response.data.data));
@@ -51,7 +54,7 @@ const AudioBookScreen = ({ route }) => {
         })
         .catch((error) => {
           synthesizeSpeech("Sorry !!! there was some trouble with the server");
-          console.log(error);
+          console.log(error.response.data);
         });
     } catch (error) {
       console.log("error in fetching pdf text ", error);
