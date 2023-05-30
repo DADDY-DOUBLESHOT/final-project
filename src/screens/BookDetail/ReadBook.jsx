@@ -136,7 +136,7 @@ const ReadBook = ({ route, navigation}) => {
               >
                 <View style={{  justifyContent:'flex-end',width:100,margin:5,marginTop:55,alignSelf:"flex-end"}}>
                   <View style={{ backgroundColor: '#F0F0F0', padding: 15, opacity:0.95}}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>navigation.navigate("AudioBookScreen",{pdfUrl:data.pdfUrl})}>
                     <View style={{flexDirection:"row",justifyContent:"space-between",marginTop:2}}><FontAwesome5 name="headphones-alt" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Listen</Text></View></TouchableOpacity>
                     
                     {/* <View  style={{flexDirection:"row",justifyContent:"space-between",marginTop:8}}><FontAwesome name="pause" size={20} color="black"  style={{marginHorizontal:2}}/><Text style={{fontWeight:"800",marginLeft:4}}>Pause</Text></View>
@@ -156,7 +156,7 @@ const ReadBook = ({ route, navigation}) => {
         {/* <PdfReader url="http://unec.edu.az/application/uploads/2014/12/pdf-sample.pdf"/> */}
         <PDFReader
           source={{
-            uri: data.pdfUrl ? data.pdfUrl : "https://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684589149/books/Harry%20Potter%20and%20the%20Deathly%20Hallows.pdf"
+            uri: data.pdfUrl ? data.pdfUrl : "http://res.cloudinary.com/dfyvyvvvy/raw/upload/v1685432853/books/Harry_Potter_and_the_Half_Blood_Prince.pdf"
             // uri: "http://res.cloudinary.com/dfyvyvvvy/raw/upload/v1684442178/books/Harry%20Potter%20And%20The%20Order%20of%20The%20Phoenix.pdf",
             // "https://ictactjournals.in/upload/Journal-Template.pdf"
             // uri:data.pdfUrl
