@@ -1,22 +1,17 @@
-import {
-  GENRE_BOOKS,
-  POPULAR_BOOKS,
-  RECOM_BOOKS,
-  TRENDING_BOOKS,
-  WISHLIST,
-  UPLOADED_BOOKS
-} from "../types";
+import { GENRE_BOOKS, POPULAR_BOOKS, RECOM_BOOKS, TRENDING_BOOKS, WISHLIST, UPLOADED_BOOKS, AUTHOR_BOOKS, CONTINUE_BOOK } from "../types";
 const initialState = {
   trendingBooks: [],
   popularBooks: [],
   genreBooks: [],
   wishlist: [],
   recomBooks: [],
-  uploadedBooks:[],
+  uploadedBooks: [],
+  authorBooks: [],
+  continueBook: null,
 };
 
 export const booksReducer = (state = initialState, action) => {
-  console.log("action", action.payload);
+  // console.log("action", action.payload);
   switch (action.type) {
     case TRENDING_BOOKS:
       return {
@@ -42,6 +37,16 @@ export const booksReducer = (state = initialState, action) => {
       return {
         ...state,
         recomBooks: action.payload.recomBooks,
+      };
+    case AUTHOR_BOOKS:
+      return {
+        ...state,
+        authorBooks: action.payload.authorBooks,
+      };
+    case CONTINUE_BOOK:
+      return {
+        ...state,
+        continueBook: action.payload.continueBook,
       };
     default:
       return state;

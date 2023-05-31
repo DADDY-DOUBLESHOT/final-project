@@ -1,25 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Image,
-  Animated,
-  ActivityIndicator,
-  ToastAndroid,
-} from "react-native";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
+import { StyleSheet, View, Text, TextInput, Image, Animated, ActivityIndicator, ToastAndroid } from "react-native";
+import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import dummy_profile from "../../images/profile.png";
 import { useSelector, useDispatch } from "react-redux";
 import { IconButton, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { BASE_URL } from "@env";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
-import { loadUser, userLogout } from "../../store/actions/userAction";
+import { loadUser, userLogout, userMe } from "../../store/actions/userAction";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -32,10 +20,13 @@ const ProfileView = (props) => {
     nameLoader: null,
   });
   const user = useSelector((state) => state.USER.user);
+  const token = useSelector((state) => state.USER.token);
   const loader = useSelector((state) => state.LOADER);
   const dispatch = useDispatch();
   const editRef = useRef(new Animated.Value(0)).current;
   const profileeditRef = useRef(new Animated.Value(0)).current;
+
+  const [profile_file, setProfileFile] = useState(null);
   useEffect(() => {
     loadProfile();
     dispatch(loaderStop());
@@ -105,7 +96,7 @@ const ProfileView = (props) => {
     });
 
     var config = {
-      method: "put",
+      method: "post",
       url: `${BASE_URL}/me/update`,
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +112,7 @@ const ProfileView = (props) => {
           setUserChange({ ...userChange, nameLoader: false });
         })
         .catch(function (error) {
-          // console.log(error);
+          console.log(error);
           setUserChange({ ...userChange, name: user.name, nameLoader: false });
           ToastAndroid.show("Error updating username", ToastAndroid.SHORT);
         });
@@ -129,37 +120,54 @@ const ProfileView = (props) => {
       setUserChange({ ...userChange, name: user.name });
       console.log("Error", error);
       setUserChange({ ...userChange, nameLoader: false });
-      ToastAndroid.show("Error updating username", ToastAndroid.SHORT);
+      ToastAndroid.show("Problem updating username", ToastAndroid.SHORT);
     }
     animateEdit();
   };
-  const updateProfilePic = async () => {
-    var data = JSON.stringify({
-      profile: userChange.profile,
-    });
+  const updateProfilePic = async (imageFile) => {
+    // var data = JSON.stringify({
+    //   profile:
+    // });
+    const formdata = new FormData();
+    formdata.append("profile", imageFile);
 
-    var config = {
-      method: "put",
-      url: `${BASE_URL}/me/update`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
+    // var config = {
+    //   method: "put",
+    //   url: `${BASE_URL}/me/update`,
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   formdata,
+    // };
+    let config = {
+      headers: { "Content-type": "multipart/form-data" },
     };
     try {
-      return await axios(config)
+      return await axios
+        .post(`${BASE_URL}/me/update`, formdata, config)
         .then(function (response) {
           // console.log(JSON.stringify(response.data));
           ToastAndroid.show("Profile pic updated", ToastAndroid.SHORT);
         })
         .catch(function (error) {
-          // console.log(error);
+          console.log(error);
           ToastAndroid.show("Error updating profile pic", ToastAndroid.SHORT);
         });
     } catch (error) {
-      ToastAndroid.show("Error updating profile pic", ToastAndroid.SHORT);
+      console.log("error", error);
+      ToastAndroid.show("Problem updating profile pic", ToastAndroid.SHORT);
     }
   };
+
+  function makeid(length) {
+    var result = "";
+    var characters = "abcdefghijklmnopqrstuvwxyz";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
 
   const pickImage = async () => {
     dispatch(loaderStart());
@@ -172,8 +180,16 @@ const ProfileView = (props) => {
     // console.log("image res", result);
 
     if (!result.canceled) {
-      setUserChange({ ...userChange, profile: result.assets[0].uri });
-      await updateProfilePic();
+      let imageFile = {
+        uri: result.assets[0].uri,
+        type: "multipart/form-data",
+        name: await makeid(8),
+      };
+      await setUserChange({ ...userChange, profile: result.assets[0].uri });
+      await setProfileFile(imageFile);
+      console.log("new profile", imageFile);
+      await updateProfilePic(imageFile);
+      dispatch(await userMe(token));
       animateProfileEdit();
     }
     dispatch(loaderStop());
@@ -183,23 +199,12 @@ const ProfileView = (props) => {
     <DrawerContentScrollView contentContainerStyle={styles.container}>
       <View style={styles.profile_container}>
         <Animated.View style={styles.profileContainer}>
-          {loader && loader.active ? (
-            <ActivityIndicator
-              style={{ width: 150, height: 150 }}
-              size="large"
-              color="#810CA8"
-            />
-          ) : (
-            <Image
-              resizeMode="contain"
-              source={
-                user && user.profile
-                  ? { uri: userChange.profile }
-                  : require("../../images/profile.png")
-              }
-              style={styles.profile}
-            />
-          )}
+          <Image
+            resizeMode="contain"
+            source={user && userChange.profile ? { uri: userChange.profile } : require("../../images/profile.png")}
+            style={styles.profile}
+          />
+
           {editPic ? (
             <Animated.View
               style={{
@@ -263,13 +268,7 @@ const ProfileView = (props) => {
               },
             ]}
           >
-            <TextInput
-              style={styles.edit_name}
-              value={userChange.name}
-              onChangeText={(text) =>
-                setUserChange({ ...userChange, name: text })
-              }
-            />
+            <TextInput style={styles.edit_name} value={userChange.name} onChangeText={(text) => setUserChange({ ...userChange, name: text })} />
             <Button
               contentStyle={{ flexDirection: "row-reverse" }}
               onPress={() => {

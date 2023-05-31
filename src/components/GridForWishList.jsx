@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Dimensions, FlatList, Image , TouchableOpacity} from "react-native";
+import { Dimensions, FlatList, Image, TouchableOpacity } from "react-native";
 import { Text, View } from "react-native";
 import Stars from "react-native-stars";
 import { IconButton } from "react-native-paper";
@@ -18,7 +18,7 @@ const colorSelector = (rating) => {
   }
 };
 
-const BookView = ({ handleGridnavigation ,item }) => {
+const BookView = ({ handleGridnavigation, item }) => {
   return (
     // <View
     //   style={[
@@ -58,10 +58,10 @@ const BookView = ({ handleGridnavigation ,item }) => {
     //     />
     //   </View>
     // </View>
-    <TouchableOpacity onPress={() => handleGridnavigation(item._id)} >
-    <View style={card_style.item}>
-      <Image style={card_style.image} source={{ uri: item.coverImg }} />
-      {/* <View style={card_style.header_container}>
+    <TouchableOpacity onPress={() => handleGridnavigation(item._id)}>
+      <View style={card_style.item}>
+        <Image style={card_style.image} source={{ uri: item.coverImg }} />
+        {/* <View style={card_style.header_container}>
         <View>
           <Text allowFontScaling={false} style={card_style.title}>
             {item.title}
@@ -103,70 +103,63 @@ const BookView = ({ handleGridnavigation ,item }) => {
         />
       </View> */}
 
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-        }}
-      >
         <View
           style={{
             flex: 1,
-            flexDirection: "column",
-            margin: 10,
+            flexDirection: "row",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
           }}
         >
-          <Text>{item.title}</Text>
-          <Text style={{ marginVertical: 5 }}>{item.author}</Text>
-          <View style={{ flexDirection: "row", marginVertical: 10 }}>
-            <Text
-              style={{
-                padding: 5,
-                borderWidth: 1,
-                borderColor: "rgba(0,0,0,0.1)",
-                borderRadius: 7,
-              }}
-            >
-              Publisher:
-              {item.publisher.length > 8
-                ? item.publisher.substring(0, 5) + "..."
-                : item.publisher}
-            </Text>
-            <Text
-              style={{
-                padding: 5,
-                borderWidth: 1,
-                borderColor: "rgba(0,0,0,0.1)",
-                borderRadius: 7,
-                marginLeft: 7,
-              }}
-            >
-              Pages:{item.pages}
-            </Text>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              margin: 10,
+            }}
+          >
+            <Text>{item.title}</Text>
+            <Text style={{ marginVertical: 5 }}>{item?.author}</Text>
+            <View style={{ flexDirection: "row", marginVertical: 10 }}>
+              <Text
+                style={{
+                  padding: 5,
+                  borderWidth: 1,
+                  borderColor: "rgba(0,0,0,0.1)",
+                  borderRadius: 7,
+                }}
+              >
+                Publisher:
+                {item?.publisher?.length > 8 ? item?.publisher.substring(0, 5) + "..." : item?.publisher}
+              </Text>
+              <Text
+                style={{
+                  padding: 5,
+                  borderWidth: 1,
+                  borderColor: "rgba(0,0,0,0.1)",
+                  borderRadius: 7,
+                  marginLeft: 7,
+                }}
+              >
+                Pages:{item?.pages}
+              </Text>
+            </View>
           </View>
+          <IconButton style={{ flex: 0.2 }} icon={"bookmark"} iconColor="#C147E9" />
         </View>
-        <IconButton
-          style={{ flex: 0.2 }}
-          icon={"bookmark"}
-          iconColor="#C147E9"
-        />
       </View>
-    </View>
     </TouchableOpacity>
   );
 };
 
-const GridForWishList = ({ items,  handleGridnavigation }) => {
+const GridForWishList = ({ items, handleGridnavigation }) => {
   return (
     <FlatList
       // numColumns={2}
       initialNumToRender={10}
       horizontal={false}
       data={items}
-      renderItem={({ item }) => <BookView item={item.book} 
-      handleGridnavigation={handleGridnavigation}/>}
+      renderItem={({ item }) => <BookView item={item.book} handleGridnavigation={handleGridnavigation} />}
       keyExtractor={(item) => item._id}
       style={{ flex: 1 }}
       contentContainerStyle={{

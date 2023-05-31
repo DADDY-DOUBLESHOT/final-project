@@ -6,9 +6,12 @@ import {
   RECOM_BOOKS,
   TRENDING_BOOKS,
   WISHLIST,
-  UPLOADED_BOOKS
+  UPLOADED_BOOKS,
+  AUTHOR_BOOKS,
+  CONTINUE_BOOK,
 } from "../types";
 import { BASE_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getTrendingBooks = async () => async (dispatch) => {
   var config = {
@@ -103,14 +106,17 @@ export const getGenreBooks = async (genre) => async (dispatch) => {
     dispatch({ type: LOADER_STOP });
   }
 };
-export const getRecommendedBooks = async (genre) => async (dispatch) => {
-  console.log("from api", genre);
+export const getRecommendedBooks = async (genres) => async (dispatch) => {
+  var data = JSON.stringify({
+    userFavGenres: genres,
+  });
   var config = {
     method: "get",
-    url: `${BASE_URL}popular-books`,
+    url: `${BASE_URL}get-recommendations`,
     headers: {
       "Content-Type": "application/json",
     },
+    data,
   };
 
   try {
@@ -119,7 +125,40 @@ export const getRecommendedBooks = async (genre) => async (dispatch) => {
       dispatch({
         type: RECOM_BOOKS,
         payload: {
-          recomBooks: response.data.popular_books,
+          recomBooks: response.data.matchedBooks,
+        },
+      });
+      dispatch({ type: LOADER_STOP });
+      return true;
+    } else {
+      dispatch({ type: LOADER_STOP });
+      return false;
+    }
+  } catch (error) {
+    console.log("error in fetching recommended books ", error);
+    dispatch({ type: LOADER_STOP });
+  }
+};
+export const getTopAuthorBooks = async (author) => async (dispatch) => {
+  var data = JSON.stringify({
+    author,
+  });
+  var config = {
+    method: "get",
+    url: `${BASE_URL}get-recommendations`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
+  };
+
+  try {
+    const response = await axios(config);
+    if (response.status === 200) {
+      dispatch({
+        type: AUTHOR_BOOKS,
+        payload: {
+          authorBooks: response.data.authorBooks,
         },
       });
       dispatch({ type: LOADER_STOP });
@@ -135,6 +174,7 @@ export const getRecommendedBooks = async (genre) => async (dispatch) => {
 };
 
 export const wishlistBooks = async () => async (dispatch) => {
+  // console.log("api called");
   var config = {
     method: "get",
     url: `${BASE_URL}whishlist`,
@@ -146,7 +186,7 @@ export const wishlistBooks = async () => async (dispatch) => {
   try {
     const response = await axios(config);
     if (response.status === 200) {
-      console.log("got books");
+      // console.log("got wishlist books", response.data);
       dispatch({
         type: WISHLIST,
         payload: {
@@ -164,5 +204,29 @@ export const wishlistBooks = async () => async (dispatch) => {
     dispatch({ type: LOADER_STOP });
   }
 };
+export const continueBook = async (id) => async (dispatch) => {
+  // console.log("api called");
+  AsyncStorage.setItem("@continue", id);
+  var config = {
+    method: "get",
+    url: `${BASE_URL}book/${id}`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
 
-
+  try {
+    const response = await axios(config);
+    if (response.status === 200) {
+      console.log("got book", response.data.book.title);
+      dispatch({
+        type: CONTINUE_BOOK,
+        payload: {
+          continueBook: response.data.book,
+        },
+      });
+    }
+  } catch (error) {
+    console.log("error in fetching continue book ", error);
+  }
+};

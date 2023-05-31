@@ -20,8 +20,9 @@ import cont2 from "../../../assets/continue_read_2.jpg";
 import WelcomeStatus from "./WelcomeStatus";
 import { Avatar, IconButton } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { getGenreBooks } from "../../store/actions/booksAction";
+import { continueBook, getGenreBooks } from "../../store/actions/booksAction";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -102,16 +103,24 @@ const HomeScreen2 = ({ route, navigation }) => {
       profile: "https://i.pravatar.cc/150?img=3",
     },
   ];
+  const getContinueBook = async () => {
+    let id = await AsyncStorage.getItem("@continue");
+    dispatch(await continueBook(id));
+  };
+  useEffect;
 
   const trendingBooks = useSelector((state) => state.BOOKS.trendingBooks);
   const popularBooks = useSelector((state) => state.BOOKS.popularBooks);
   const recommendedBooks = useSelector((state) => state.BOOKS.genreBooks);
   const genreBooks = useSelector((state) => state.BOOKS.genreBooks);
   const wishlist = useSelector((state) => state.BOOKS.wishlist);
+  const continueB = useSelector((state) => state.BOOKS.continueBook);
+
+  console.log("cotinue book", continueBook);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(0);
   const handleButtonPress = async (index) => {
     setSelectedButtonIndex(index);
-    dispatch(await getGenreBooks(genre_data[index].title));
+    await dispatch(await getGenreBooks(genre_data[index].title));
   };
 
   const renderButton = (item, index) => {
@@ -129,8 +138,6 @@ const HomeScreen2 = ({ route, navigation }) => {
       </TouchableOpacity>
     );
   };
-
- 
 
   const handleNavigation = (id) => {
     navigation.navigate("bookdetail", { id });
@@ -311,11 +318,11 @@ const HomeScreen2 = ({ route, navigation }) => {
         }}
       >
         <View style={genre_card_styles.item}>
-          <Image style={genre_card_styles.image} source={{ uri: item.coverImg }} />
+          <Image style={genre_card_styles.image} source={{ uri: item?.coverImg }} />
           <View style={genre_card_styles.header_container}>
             <View>
               <Text allowFontScaling={false} style={genre_card_styles.title}>
-                {item.title}
+                {item?.title}
               </Text>
               <Text allowFontScaling={false} style={genre_card_styles.author}>
                 {/* {item.author.length > 20
@@ -323,16 +330,18 @@ const HomeScreen2 = ({ route, navigation }) => {
                   : item.author} */}
               </Text>
             </View>
-            <Stars
-              style={genre_card_styles.rating}
-              default={parseInt(item.rating)}
-              spacing={5}
-              starSize={25}
-              count={5}
-              fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
-              emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
-              disabled={true}
-            />
+            {item.rating && (
+              <Stars
+                style={genre_card_styles.rating}
+                default={parseInt(item.rating)}
+                spacing={5}
+                starSize={25}
+                count={5}
+                fullStar={<Ionicons name="star" size={20} color="rgb(255, 204, 0)" />}
+                emptyStar={<Ionicons name="star" size={20} color="rgba(0,0,0,0.9)" />}
+                disabled={true}
+              />
+            )}
           </View>
         </View>
       </TouchableNativeFeedback>
@@ -344,12 +353,15 @@ const HomeScreen2 = ({ route, navigation }) => {
       <View style={{ flex: 1 }}>
         <WelcomeStatus navigation={navigation} />
       </View>
+      {/* search */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.searchBar} onPress={() => navigation.navigate("search")}>
           <Ionicons name="search" size={24} color="black" style={styles.searchIcon} />
           <Text style={styles.searchText}>Search any book</Text>
         </TouchableOpacity>
       </View>
+
+      {/* top trending */}
       <Text style={styles.trendingText}>Top Trending</Text>
       <View style={styles.trendingContainer}>
         <IconButton
@@ -396,6 +408,8 @@ const HomeScreen2 = ({ route, navigation }) => {
           icon={"chevron-right"}
         />
       </View>
+
+      {/* popular */}
       <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 10 }}>
         <View
           style={{
@@ -444,6 +458,7 @@ const HomeScreen2 = ({ route, navigation }) => {
           />
         )}
       </View>
+      {/* recommend */}
       <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 10 }}>
         <View
           style={{
@@ -493,6 +508,8 @@ const HomeScreen2 = ({ route, navigation }) => {
           />
         )}
       </View>
+
+      {/* top autors */}
       <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 10 }}>
         <View
           style={{
@@ -542,6 +559,8 @@ const HomeScreen2 = ({ route, navigation }) => {
           />
         )}
       </View>
+
+      {/* genre */}
       <View style={genre_styles.container}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {genre_data.map((item, index) => renderButton(item, index))}
@@ -572,6 +591,7 @@ const HomeScreen2 = ({ route, navigation }) => {
           )}
         </View>
       </View>
+      {/* containue  */}
       <View
         style={{
           flex: 1,
@@ -596,7 +616,7 @@ const HomeScreen2 = ({ route, navigation }) => {
           >
             Continue Reading
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("ReadBook",{id})}>
+          <TouchableOpacity onPress={() => navigation.navigate("ReadBook", { id })}>
             <View
               style={{
                 flex: 1,
@@ -618,7 +638,7 @@ const HomeScreen2 = ({ route, navigation }) => {
                   alignItems: "center",
                 }}
               >
-                <Avatar.Image source={{ uri: wishlist[0]?.book?.coverImg }} />
+                <Avatar.Image source={{ uri: continueB?.coverImg }} />
                 <View
                   style={{
                     flex: 1,
@@ -628,8 +648,8 @@ const HomeScreen2 = ({ route, navigation }) => {
                     alignItems: "flex-start",
                   }}
                 >
-                  {wishlist && <Text style={{ flex: 1, fontSize: 14, paddingHorizontal: 5 }}>{wishlist[0]?.book?.title}</Text>}
-                  {wishlist && (
+                  {continueB && <Text style={{ flex: 1, fontSize: 14, paddingHorizontal: 5 }}>{continueB?.title}</Text>}
+                  {continueB && (
                     <Text
                       style={{
                         flex: 1,
@@ -639,12 +659,12 @@ const HomeScreen2 = ({ route, navigation }) => {
                         paddingHorizontal: 5,
                       }}
                     >
-                      {wishlist[0]?.book?.author}
+                      {continueB?.author}
                     </Text>
                   )}
-                  {wishlist && (
+                  {continueB && (
                     <Stars
-                      default={parseInt(wishlist[0]?.book?.rating)}
+                      default={parseInt(continueB?.rating)}
                       spacing={5}
                       starSize={25}
                       count={5}
@@ -660,6 +680,8 @@ const HomeScreen2 = ({ route, navigation }) => {
           </TouchableOpacity>
         </LinearGradient>
       </View>
+
+      {/* wishlist */}
       <View style={{ flex: 1, marginHorizontal: 10, marginBottom: 20 }}>
         <View
           style={{

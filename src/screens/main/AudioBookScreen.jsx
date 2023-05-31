@@ -135,7 +135,8 @@ const AudioBookScreen = ({ route }) => {
   }, []);
 
   async function handlePause() {
-    await soundObject.pauseAsync();
+    await soundObject.stopAsync();
+    // await soundObject.pauseAsync();
     setIsPlaying(!isPlaying);
   }
   async function handlePlay() {

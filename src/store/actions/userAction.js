@@ -1,12 +1,4 @@
-import {
-  LOADER_STOP,
-  LOADUSER,
-  LOADUSERTOKEN,
-  LOGIN,
-  LOGOUT,
-  SIGNUP,
-  SIGNUP_PRE,
-} from "../types";
+import { LOADER_STOP, LOADUSER, LOADUSERTOKEN, LOGIN, LOGOUT, SIGNUP, SIGNUP_PRE } from "../types";
 import axios from "axios";
 import store from "../../../store";
 import { BASE_URL } from "@env";
@@ -61,20 +53,65 @@ export const userLogin = async (email, password) => async (dispatch) => {
     dispatch({ type: LOADER_STOP });
   }
 };
-export const userRegisterPre =
-  async (email, password, name) => async (dispatch) => {
-    dispatch({
-      type: SIGNUP_PRE,
-      payload: {
-        user: {
-          email: email,
-          password: password,
-          name: name,
+export const userMe = async (token) => async (dispatch) => {
+  console.log("token is ", token);
+  var config = {
+    method: "get",
+    url: `${BASE_URL}me`,
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: `token=${token}`,
+    },
+  };
+
+  try {
+    const response = await axios(config);
+    if (response.status === 200) {
+      dispatch({
+        type: LOGIN,
+        payload: {
+          logged: true,
+          token: response.data.token,
+          user: response.data.user,
         },
+      });
+      AsyncStorage.setItem("@user", JSON.stringify(response.data.user));
+      // AsyncStorage.setItem("@token", token);
+      dispatch(loadUser(response.data.user));
+      dispatch({ type: LOADER_STOP });
+      return true;
+    } else {
+      dispatch({ type: LOADER_STOP });
+      return false;
+    }
+  } catch (error) {
+    console.log("error in get me ", error);
+
+    dispatch({
+      type: LOGIN,
+      payload: {
+        logged: false,
+        token: null,
+        user: null,
       },
     });
+
     dispatch({ type: LOADER_STOP });
-  };
+  }
+};
+export const userRegisterPre = async (email, password, name) => async (dispatch) => {
+  dispatch({
+    type: SIGNUP_PRE,
+    payload: {
+      user: {
+        email: email,
+        password: password,
+        name: name,
+      },
+    },
+  });
+  dispatch({ type: LOADER_STOP });
+};
 export const userRegister = async (genres) => async (dispatch) => {
   const { email, password, name } = store.getState().USER.user;
   var data = JSON.stringify({
@@ -109,7 +146,7 @@ export const userRegister = async (genres) => async (dispatch) => {
         return true;
       })
       .catch(function (error) {
-        console.log("Error in register", error);
+        console.log("Error in register", error.response.data);
         dispatch(loaderStop());
         return false;
       });

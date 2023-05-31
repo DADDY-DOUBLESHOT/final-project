@@ -1,26 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Animated,
-  Easing,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  ToastAndroid,
-} from "react-native";
+import { ActivityIndicator, Animated, Easing, Image, StyleSheet, Text, View, ToastAndroid } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import splash from "../../../assets/book_icon.png";
 import { loaderStart, loaderStop } from "../../store/actions/loaderAction";
 import { quotes } from "../../utils/quotes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { loadUserToken } from "../../store/actions/userAction";
-import {
-  getGenreBooks,
-  getPopularBooks,
-  getTrendingBooks,
-  wishlistBooks,
-} from "../../store/actions/booksAction";
+import { loadUserToken, userMe } from "../../store/actions/userAction";
+import { getGenreBooks, getPopularBooks, getTrendingBooks, wishlistBooks } from "../../store/actions/booksAction";
 
 const SplashScreen = ({ navigation }) => {
   const [quote, setQuote] = useState(null);
@@ -38,6 +24,7 @@ const SplashScreen = ({ navigation }) => {
       if (user && token) {
         // console.log("Preload user from storage ", user, token);
         dispatch(loadUserToken(JSON.parse(user), token));
+        await dispatch(await userMe(token));
         await dispatch(await getTrendingBooks());
         await dispatch(await getPopularBooks());
         await dispatch(await getGenreBooks("Comedy"));
@@ -48,10 +35,7 @@ const SplashScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.log("error caught in splash", error.message);
-      ToastAndroid.show(
-        `Error in connecting server ${error.message}`,
-        ToastAndroid.SHORT
-      );
+      ToastAndroid.show(`Error in connecting server ${error.message}`, ToastAndroid.SHORT);
       dispatch(loaderStop());
     } finally {
     }
@@ -97,13 +81,7 @@ const SplashScreen = ({ navigation }) => {
       <Animated.View style={[style.quote_container, { opacity: textAnim }]}>
         <Text style={style.quote}>{quote?.quote}</Text>
         <Text style={style.writer}>~{quote?.writer}</Text>
-        {loader && loader.active && (
-          <ActivityIndicator
-            size="small"
-            color="white"
-            style={{ paddingLeft: 12 }}
-          />
-        )}
+        {loader && loader.active && <ActivityIndicator size="small" color="white" style={{ paddingLeft: 12 }} />}
       </Animated.View>
     </View>
   );

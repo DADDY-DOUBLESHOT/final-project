@@ -1,19 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 import { IconButton } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GridForWishList from "../../components/GridForWishList";
+import { wishlistBooks } from "../../store/actions/booksAction";
+import { useIsFocused } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 const Wishlist = ({ navigation }) => {
-  const wishlistBooks = useSelector((state) => state.BOOKS.wishlist);
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
+  const wishlistBook = useSelector((state) => state.BOOKS.wishlist);
 
-  const handleGridnavigation=(id)=>{
-    navigation.navigate("bookdetail", {id:id})
-  }
+  const handleGridnavigation = (id) => {
+    navigation.navigate("bookdetail", { id: id });
+  };
 
+  const getBooks = async () => {
+    dispatch(await wishlistBooks());
+  };
+
+  useEffect(() => {
+    getBooks();
+  }, [isFocused]);
 
   return (
     <View style={styles.con}>
@@ -25,14 +36,10 @@ const Wishlist = ({ navigation }) => {
           }}
         />
         <Text style={{ fontSize: 18, fontWeight: "500" }}>Wishlist Books</Text>
-        <IconButton
-          size={25}
-          icon={"magnify"}
-          onPress={() => navigation.navigate("search")}
-        />
+        <IconButton size={25} icon={"magnify"} onPress={() => navigation.navigate("search")} />
       </View>
       <ScrollView horizontal style={styles.content}>
-        <GridForWishList items={wishlistBooks} handleGridnavigation={handleGridnavigation}/>
+        <GridForWishList items={wishlistBook} handleGridnavigation={handleGridnavigation} />
       </ScrollView>
     </View>
   );
